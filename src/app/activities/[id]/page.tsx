@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { ActivityChart } from "@/components/charts/ActivityChart";
 import ActivityMap from "@/components/charts/ActivityMap";
+import { EditActivityDialog } from "@/components/activities/EditActivityDialog";
 
 export const dynamic = "force-dynamic";
 
@@ -42,13 +43,6 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
         return `${mins}:${secs.toString().padStart(2, '0')} /km`;
     };
 
-    async function updateGear(formData: FormData) {
-        "use server";
-        const gearId = formData.get("gearId") as string;
-        await db.update(activities).set({ gearId }).where(eq(activities.id, id));
-        revalidatePath(`/activities/${id}`);
-    }
-
     return (
         <>
             <div className="flex items-center justify-between mb-8">
@@ -62,22 +56,14 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                     <p className="text-white/50">{new Date(activity.startTime).toLocaleString()}</p>
                 </div>
 
-                <div className="glass-panel p-2 rounded-xl flex items-center gap-4">
-                    <form action={updateGear} className="flex items-center gap-3 px-3">
-                        <Footprints size={16} className="text-primary" />
-                        <select
-                            name="gearId"
-                            defaultValue={activity.gearId || ""}
-                            className="bg-transparent text-sm text-white/80 outline-none focus:text-white"
-                        >
-                            <option value="" className="bg-background">No Gear Assigned</option>
-                            {allGear.map(g => (
-                                <option key={g.id} value={g.id} className="bg-background">{g.name} ({g.brand})</option>
-                            ))}
-                        </select>
-                        <button type="submit" className="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded border border-primary/20 hover:bg-primary/20 transition">Save</button>
-                    </form>
-                </div>
+                <EditActivityDialog
+                    activity={{
+                        id: activity.id,
+                        name: activity.name,
+                        gearId: activity.gearId
+                    }}
+                    allGear={allGear}
+                />
             </div>
 
             <div className="mb-8">
