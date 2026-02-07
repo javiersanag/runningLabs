@@ -54,11 +54,11 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
                 const samples = JSON.parse(act.samples);
                 samples.forEach((s: any) => {
                     if (s.heartRate) {
-                        const pct = s.heartRate / maxHr;
-                        if (pct < 0.6) existing.z[1] += 1;
-                        else if (pct < 0.7) existing.z[2] += 1;
-                        else if (pct < 0.8) existing.z[3] += 1;
-                        else if (pct < 0.9) existing.z[4] += 1;
+                        const hr = s.heartRate;
+                        if (hr < 117) existing.z[1] += 1;
+                        else if (hr < 135) existing.z[2] += 1;
+                        else if (hr < 153) existing.z[3] += 1;
+                        else if (hr < 165) existing.z[4] += 1;
                         else existing.z[5] += 1;
                     }
                 });
