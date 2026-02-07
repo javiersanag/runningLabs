@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { activities, gear } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { MapPin, Clock, Zap, TrendingUp, Heart, Mountain } from "lucide-react";
+import { MapPin, Clock, Zap, TrendingUp, Heart, Mountain, Tag } from "lucide-react";
 import Link from "next/link";
 import { ActivityChart } from "@/components/charts/ActivityChart";
 import ActivityMap from "@/components/charts/ActivityMap";
@@ -22,6 +22,8 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
     const allGear = await db.query.gear.findMany({
         where: (t, { eq }) => eq(t.athleteId, "default_athlete")
     });
+
+    const currentGear = allGear.find(g => g.id === activity.gearId);
 
     const samples = activity.samples ? JSON.parse(activity.samples) : [];
 
@@ -128,14 +130,22 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                     <p className="text-white/40 text-sm">{new Date(activity.startTime).toLocaleString()}</p>
                 </div>
 
-                <EditActivityDialog
-                    activity={{
-                        id: activity.id,
-                        name: activity.name,
-                        gearId: activity.gearId
-                    }}
-                    allGear={allGear}
-                />
+                <div className="flex items-center gap-4">
+                    {currentGear && (
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg">
+                            <Tag size={14} className="text-white/40" />
+                            <span className="text-sm font-medium text-white/70">{currentGear.name}</span>
+                        </div>
+                    )}
+                    <EditActivityDialog
+                        activity={{
+                            id: activity.id,
+                            name: activity.name,
+                            gearId: activity.gearId
+                        }}
+                        allGear={allGear}
+                    />
+                </div>
             </div>
 
             {/* Key Metrics Strip */}
