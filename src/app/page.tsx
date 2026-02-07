@@ -162,7 +162,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
         <div className="lg:col-span-2 h-[350px] flex flex-col">
           <h3 className="text-sm font-bold text-white/60 mb-3">Fitness & Freshness</h3>
           <div className="flex-1 min-h-0 bg-white/[0.02] rounded-xl p-4">
-            <FitnessChart data={chartData} />
+            <FitnessChart data={periodHistory} />
           </div>
         </div>
         <div className="h-[350px] flex flex-col">
@@ -178,7 +178,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
         <div className="h-[250px] flex flex-col">
           <h3 className="text-sm font-bold text-white/60 mb-3">ACWR</h3>
           <div className="flex-1 min-h-0 bg-white/[0.02] rounded-xl p-4">
-            <ACWRChart data={chartData} />
+            <ACWRChart data={periodHistory} />
           </div>
         </div>
 
