@@ -66,6 +66,7 @@ export const dailyMetrics = sqliteTable("daily_metrics", {
     totalDuration: real("total_duration").default(0),
     averagePace: real("average_pace"),
     averageHr: integer("average_hr"),
+    maxHr: integer("max_hr"),
     sleepScore: integer("sleep_score"),
     readinessScore: integer("readiness_score"),
     createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),

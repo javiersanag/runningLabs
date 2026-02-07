@@ -43,8 +43,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
   const validHrDays = periodHistory.filter(d => d.averageHr);
   const avgHr = validHrDays.length > 0 ? validHrDays.reduce((acc, d) => acc + d.averageHr, 0) / validHrDays.length : null;
 
-  // Estimate Max HR in period from daily averages (not perfect but best we have in summaries)
-  const maxHr = validHrDays.length > 0 ? Math.max(...validHrDays.map(d => d.averageHr)) : null;
+  // Calculate Max HR in period from daily maxes
+  const maxHr = periodHistory.length > 0 ? Math.max(...periodHistory.map(d => d.maxHr || 0)) : null;
 
   const fmt = (n: number | null | undefined) => n !== null && n !== undefined ? Math.round(n) : "-";
 

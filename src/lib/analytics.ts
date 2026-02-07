@@ -34,11 +34,11 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
     });
 
     // Group by date
-    const dailyData = new Map<string, { load: number, distance: number, duration: number, hrSum: number, hrCount: number, z: number[] }>();
+    const dailyData = new Map<string, { load: number, distance: number, duration: number, hrSum: number, hrCount: number, maxHr: number, z: number[] }>();
 
     for (const act of relevantActivities) {
         const day = act.startTime.split('T')[0];
-        const existing = dailyData.get(day) || { load: 0, distance: 0, duration: 0, hrSum: 0, hrCount: 0, z: [0, 0, 0, 0, 0, 0] };
+        const existing = dailyData.get(day) || { load: 0, distance: 0, duration: 0, hrSum: 0, hrCount: 0, maxHr: 0, z: [0, 0, 0, 0, 0, 0] };
 
         // Prioritize TSS (Power) over TRIMP (HR)
         const load = act.tss ? act.tss : (act.trimp || 0);
@@ -48,6 +48,9 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
         if (act.averageHr) {
             existing.hrSum += act.averageHr;
             existing.hrCount += 1;
+        }
+        if (act.maxHr && act.maxHr > existing.maxHr) {
+            existing.maxHr = act.maxHr;
         }
 
         // Parse samples for high-res zone distribution if available
@@ -76,7 +79,7 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
     const cursor = new Date(startDate);
     while (cursor <= lastDate) {
         const dayStr = cursor.toISOString().split('T')[0];
-        const data = dailyData.get(dayStr) || { load: 0, distance: 0, duration: 0, hrSum: 0, hrCount: 0, z: [0, 0, 0, 0, 0, 0] };
+        const data = dailyData.get(dayStr) || { load: 0, distance: 0, duration: 0, hrSum: 0, hrCount: 0, maxHr: 0, z: [0, 0, 0, 0, 0, 0] };
 
         // Load is either TSS (Power) or TRIMP (HR) fallback. 
         // We shouldn't add them as it doubles the daily stress.
@@ -106,6 +109,7 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
             totalDuration: data.duration,
             averagePace: data.duration > 0 && data.distance > 0 ? (data.duration / (data.distance / 1000)) : 0,
             averageHr: data.hrCount > 0 ? Math.round(data.hrSum / data.hrCount) : null,
+            maxHr: data.maxHr > 0 ? data.maxHr : null,
         }).onConflictDoUpdate({
             target: dailyMetrics.id,
             set: {
@@ -122,6 +126,7 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
                 totalDuration: data.duration,
                 averagePace: data.duration > 0 && data.distance > 0 ? (data.duration / (data.distance / 1000)) : 0,
                 averageHr: data.hrCount > 0 ? Math.round(data.hrSum / data.hrCount) : null,
+                maxHr: data.maxHr > 0 ? data.maxHr : null,
             }
         });
 
