@@ -4,7 +4,6 @@ import { db } from "@/lib/db";
 import { dailyMetrics } from "@/lib/schema";
 import { desc } from "drizzle-orm";
 import { FitnessChart } from "@/components/charts/FitnessChart";
-import { ACWRChart } from "@/components/charts/ACWRChart";
 import { IntensityChart } from "@/components/charts/IntensityChart";
 import { refreshAiInsightAction } from "@/app/actions/activities";
 
@@ -78,6 +77,19 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
     return diff > 0 ? <TrendingUp size={12} className="text-green-500" /> : <TrendingDown size={12} className="text-red-500" />;
   };
 
+  // Calculate dynamic readiness based on TSB
+  const tsb = today?.tsb || 0;
+  // If TSB is very low (-30), readiness is low (~50%). If TSB is positive, readiness is high.
+  // Base 80 at TSB 0.
+  let readiness = 80 + tsb; 
+  if (readiness > 100) readiness = 100;
+  if (readiness < 0) readiness = 0;
+  
+  // Color coding for readiness
+  let readinessColor = "text-green-400";
+  if (readiness < 70) readinessColor = "text-yellow-400";
+  if (readiness < 50) readinessColor = "text-red-400";
+
   const performanceStats = [
     { label: "Distance", value: (totalDistance / 1000).toFixed(1), unit: "km", icon: "📍" },
     { label: "Avg Pace", value: avgPace > 0 ? `${Math.floor(avgPace / 60)}:${Math.floor(avgPace % 60).toString().padStart(2, '0')}` : "-", unit: "/km", icon: "⏱" },
@@ -89,7 +101,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
     { label: "Fitness", sublabel: "CTL", value: fmt(today?.ctl), color: "text-blue-400", tendency: getTendency('ctl') },
     { label: "Fatigue", sublabel: "ATL", value: fmt(today?.atl), color: "text-purple-400", tendency: getTendency('atl') },
     { label: "Form", sublabel: "TSB", value: fmt(today?.tsb), color: (today?.tsb || 0) >= 0 ? "text-green-400" : "text-yellow-400", tendency: getTendency('tsb') },
-    { label: "Readiness", sublabel: "", value: "84%", color: "text-green-400", tendency: <Minus size={12} className="text-white/20" /> },
+    { label: "Readiness", sublabel: "", value: `${Math.round(readiness)}%`, color: readinessColor, tendency: <Minus size={12} className="text-white/20" /> },
   ];
 
   return (
