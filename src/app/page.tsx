@@ -1,4 +1,4 @@
-import { Activity, Zap, TrendingUp, Clock, TrendingDown, Minus } from "lucide-react";
+import { Activity, Zap, TrendingUp, Clock, TrendingDown, Minus, Bot, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { dailyMetrics } from "@/lib/schema";
@@ -182,16 +182,51 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
           </div>
         </div>
 
-        <div className="lg:col-span-2 h-[250px] flex flex-col items-center justify-center bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-6">
-          <Zap className="text-primary mb-2" size={24} />
-          <h3 className="text-lg font-bold text-white mb-1">Training Insight</h3>
-          <p className="text-white/50 text-sm text-center mb-4 max-w-md">
-            Your ACWR is currently <strong className="text-white">{(today?.acwr || 1.1).toFixed(2)}</strong>.
-            {(today?.acwr || 1.1) > 1.3 ? " You are increasing load rapidly." : " You are in the optimal training zone."}
-          </p>
-          <Link href="/coach" className="px-5 py-2 bg-primary text-black rounded-lg font-bold text-sm shadow-[0_0_20px_rgba(0,229,255,0.4)] transition">
-            Discuss with AI Coach
-          </Link>
+        <div className="lg:col-span-2 h-[250px] flex flex-col items-center justify-center bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-6 overflow-hidden">
+          {athlete?.lastAiInsight ? (
+            (() => {
+              const insight = JSON.parse(athlete.lastAiInsight);
+              return (
+                <div className="w-full h-full flex flex-col">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Zap className="text-primary" size={20} />
+                    <h3 className="text-lg font-bold text-white">AI Training Insight</h3>
+                    {athlete.lastAiInsightDate && (
+                      <span className="text-[10px] text-white/20 ml-auto">
+                        Updated {new Date(athlete.lastAiInsightDate).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-white/70 text-sm mb-4 line-clamp-3">
+                    {insight.message}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {insight.actionItems?.map((action: string, idx: number) => (
+                      <div key={idx} className="flex items-center gap-1.5 text-[11px] font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
+                        <Sparkles size={10} />
+                        {action}
+                      </div>
+                    ))}
+                    <Link href="/coach" className="text-[11px] font-bold text-white/40 hover:text-white px-3 py-1.5 ml-auto flex items-center gap-1">
+                      Full Coach <Bot size={12} />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })()
+          ) : (
+            <>
+              <Zap className="text-primary mb-2" size={24} />
+              <h3 className="text-lg font-bold text-white mb-1">Training Insight</h3>
+              <p className="text-white/50 text-sm text-center mb-4 max-w-md">
+                Your ACWR is currently <strong className="text-white">{(today?.acwr || 1.1).toFixed(2)}</strong>.
+                {(today?.acwr || 1.1) > 1.3 ? " You are increasing load rapidly." : " You are in the optimal training zone."}
+              </p>
+              <Link href="/coach" className="px-5 py-2 bg-primary text-black rounded-lg font-bold text-sm shadow-[0_0_20px_rgba(0,229,255,0.4)] transition">
+                Discuss with AI Coach
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </>

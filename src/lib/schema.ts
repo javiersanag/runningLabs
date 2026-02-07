@@ -8,6 +8,8 @@ export const athletes = sqliteTable("athletes", {
     ftp: integer("ftp").default(250),
     maxHr: integer("max_hr").default(190),
     weight: real("weight"),
+    lastAiInsight: text("last_ai_insight"),
+    lastAiInsightDate: text("last_ai_insight_date"),
     createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 

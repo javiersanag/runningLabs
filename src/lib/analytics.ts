@@ -1,7 +1,8 @@
 import { db } from "./db";
-import { activities, dailyMetrics } from "./schema";
-import { calculateNextCTL, calculateNextATL, calculateTSB } from "./metrics";
-import { eq, gte, asc, sql } from "drizzle-orm";
+import { activities, dailyMetrics, athletes } from "./schema";
+import { calculateNextCTL, calculateNextATL } from "./metrics";
+import { eq, gte, asc, desc } from "drizzle-orm";
+import { generateTrainingInsight } from "./ai/service";
 
 export async function recalculateMetricsChain(startDateStr: string, athleteId: string) {
     // 1. Get the baseline (day before start date)
@@ -120,5 +121,47 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
         });
 
         cursor.setDate(cursor.getDate() + 1);
+    }
+
+    // AI Insight Generation
+    try {
+        const latestMetric = await db.query.dailyMetrics.findFirst({
+            where: (t, { eq }) => eq(t.athleteId, athleteId),
+            orderBy: [desc(dailyMetrics.date)]
+        });
+
+        if (latestMetric) {
+            const last45Days = new Date();
+            last45Days.setDate(last45Days.getDate() - 45);
+            const recentActs = await db.query.activities.findMany({
+                where: (t, { and, eq, gte }) => and(eq(t.athleteId, athleteId), gte(t.startTime, last45Days.toISOString())),
+                orderBy: [desc(activities.startTime)],
+                limit: 10
+            });
+
+            const context = {
+                ctl: latestMetric.ctl || 0,
+                atl: latestMetric.atl || 0,
+                tsb: latestMetric.tsb || 0,
+                recentActivities: recentActs.map(a => ({
+                    name: a.name,
+                    type: a.type,
+                    date: a.startTime,
+                    distance: a.distance,
+                    tss: a.tss
+                }))
+            };
+
+            const insight = await generateTrainingInsight(context);
+            
+            await db.update(athletes)
+                .set({
+                    lastAiInsight: JSON.stringify(insight),
+                    lastAiInsightDate: new Date().toISOString()
+                })
+                .where(eq(athletes.id, athleteId));
+        }
+    } catch (aiError) {
+        console.error("Failed to generate AI insight:", aiError);
     }
 }
