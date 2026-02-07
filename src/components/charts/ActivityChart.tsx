@@ -34,7 +34,8 @@ export function ActivityChart({ samples }: ActivityChartProps) {
             hr: s.heartRate,
             altitude: s.altitude,
             pace: pace && pace < 15 ? pace : null, // Filter crazy outliers
-            power: s.power
+            power: s.power,
+            distance: s.distance
         };
     });
 
@@ -49,7 +50,17 @@ export function ActivityChart({ samples }: ActivityChartProps) {
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
-                    <XAxis dataKey="index" hide />
+                    <XAxis
+                        dataKey="distance"
+                        type="number"
+                        domain={['dataMin', 'dataMax']}
+                        tickFormatter={(val) => `${(val / 1000).toFixed(1)}km`}
+                        stroke="#ffffff40"
+                        fontSize={10}
+                        tickLine={false}
+                        axisLine={false}
+                        minTickGap={30}
+                    />
 
                     {/* HR Axis */}
                     <YAxis yAxisId="hr" domain={['dataMin - 10', 'dataMax + 10']} hide />
@@ -66,7 +77,8 @@ export function ActivityChart({ samples }: ActivityChartProps) {
                             backdropFilter: "blur(10px)",
                         }}
                         itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
-                        labelStyle={{ display: 'none' }}
+                        labelStyle={{ color: 'rgba(255,255,255,0.4)', fontSize: '10px', marginBottom: '4px' }}
+                        labelFormatter={(val) => `Distance: ${(val / 1000).toFixed(2)} km`}
                         formatter={(value: any, name: string | undefined) => {
                             if (name === "hr") return [`${Math.round(value)} bpm`, "Heart Rate"];
                             if (name === "alt") return [`${Math.round(value)} m`, "Elevation"];

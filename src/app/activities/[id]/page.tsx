@@ -6,6 +6,7 @@ import { Clock, MapPin, Zap, TrendingUp, Footprints } from "lucide-react";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { ActivityChart } from "@/components/charts/ActivityChart";
+import ActivityMap from "@/components/charts/ActivityMap";
 
 export const dynamic = "force-dynamic";
 
@@ -79,12 +80,21 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                 </div>
             </div>
 
+            <div className="mb-8">
+                <div className="glass-panel p-6 rounded-2xl h-[500px] relative overflow-hidden flex flex-col">
+                    <h3 className="text-lg font-bold text-white mb-4">Route Map</h3>
+                    <div className="flex-1 relative group">
+                        <ActivityMap samples={samples} />
+                    </div>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
                 {[
                     { label: "Distance", value: formatDistance(activity.distance), icon: MapPin },
                     { label: "Duration", value: formatDuration(activity.duration), icon: Clock },
                     { label: "Avg Pace", value: formatPace(activity.distance! / activity.duration!), icon: TrendingUp },
-                    { label: "Total Load", value: Math.round(activity.tss || 0), icon: Zap },
+                    { label: "Total Load", value: Math.round((activity.tss || 0) + (activity.trimp || 0)), icon: Zap },
                 ].map((stat, i) => (
                     <div key={i} className="glass-card">
                         <p className="text-white/40 text-xs font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
@@ -102,17 +112,6 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                         <h3 className="text-lg font-bold text-white mb-6">Pace, HR & Elevation</h3>
                         <div className="flex-1 min-h-0">
                             <ActivityChart samples={samples} />
-                        </div>
-                    </div>
-
-                    <div className="glass-panel p-6 rounded-2xl h-[400px] relative overflow-hidden flex flex-col">
-                        <h3 className="text-lg font-bold text-white mb-4">Route Map</h3>
-                        <div className="flex-1 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center relative group">
-                            <div className="text-center opacity-30 group-hover:opacity-50 transition">
-                                <MapPin size={48} className="mx-auto mb-2 text-primary" />
-                                <p>GPS Path Visualization</p>
-                                <p className="text-xs">Connecting to map provider...</p>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -146,8 +145,8 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                             Training Effect
                         </h3>
                         <p className="text-sm text-white/70 leading-relaxed">
-                            This activity contributed <strong>{Math.round(activity.tss || 0)} TSS</strong> to your chronic load.
-                            Based on your current TSB, this was a {(activity.tss || 0) > 100 ? 'strenuous' : 'moderate'} session.
+                            This activity contributed <strong>{Math.round((activity.tss || 0) + (activity.trimp || 0))} Load Units</strong> to your chronic load.
+                            Based on your current TSB, this was a {((activity.tss || 0) + (activity.trimp || 0)) > 100 ? 'strenuous' : 'moderate'} session.
                         </p>
                     </div>
                 </div>

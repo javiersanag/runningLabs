@@ -72,18 +72,48 @@ export async function uploadActivity(formData: FormData) {
         }
 
         // 4. Extract Samples for Charts/Map
-        // We'll filter records to reduce data size for the MVP (~1 pt per 5-10s if possible, or just take first 1000)
-        const allRecords = fitData.activity?.sessions?.[0]?.laps?.[0]?.records || fitData.records || [];
-        const samples = allRecords.map((r: any) => ({
-            timestamp: r.timestamp,
-            lat: r.position_lat,
-            lng: r.position_long,
-            distance: r.distance,
-            altitude: r.altitude,
-            speed: r.speed,
-            heartRate: r.heart_rate,
-            power: r.power
-        })).filter((_: any, i: number) => i % 5 === 0); // Downsample for performance
+        // Aggregate records from all sessions and all laps to ensure full coverage
+        let allRecords: any[] = [];
+        if (fitData.activity?.sessions) {
+            fitData.activity.sessions.forEach((sess: any) => {
+                if (sess.laps) {
+                    sess.laps.forEach((lap: any) => {
+                        if (lap.records) {
+                            allRecords = allRecords.concat(lap.records);
+                        }
+                    });
+                }
+            });
+        }
+
+        // Fallback to top-level records if sessions/laps structure is different
+        if (allRecords.length === 0) {
+            allRecords = fitData.records || [];
+        }
+
+        let lastDistance = 0;
+        let cumulativeDistanceOffset = 0;
+
+        const samples = allRecords.map((r: any) => {
+            let d = r.distance || 0;
+            // Handle cases where distance might reset per lap
+            if (d < lastDistance && lastDistance - d > 10) {
+                cumulativeDistanceOffset += lastDistance;
+            }
+            lastDistance = d;
+            const currentDistance = d + cumulativeDistanceOffset;
+
+            return {
+                timestamp: r.timestamp,
+                lat: r.position_lat,
+                lng: r.position_long,
+                distance: currentDistance,
+                altitude: r.altitude,
+                speed: r.speed,
+                heartRate: r.heart_rate,
+                power: r.power
+            };
+        }).filter((_: any, i: number) => i % 5 === 0);
 
         // 5. Save to DB
         const startTimeStr = new Date(session.start_time).toISOString();
@@ -99,7 +129,7 @@ export async function uploadActivity(formData: FormData) {
             elevationGain: session.total_ascent,
             averageHr: session.avg_heart_rate,
             maxHr: session.max_heart_rate,
-            averagePower: session.avg_power,
+            averagePower: session.avg_power || session.average_power,
             normalizedPower: session.normalized_power,
             tss: tss || 0,
             trimp: trimp || 0,
