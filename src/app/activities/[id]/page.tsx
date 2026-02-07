@@ -55,7 +55,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
             const s = samples[i];
             const dist = s.distance || 0;
             if (s.heartRate) hrValues.push(s.heartRate);
-            if (i > 0 && s.altitude > samples[i - 1].altitude) {
+            if (i > 0) {
                 elevGain += (s.altitude - samples[i - 1].altitude);
             }
 
@@ -77,7 +77,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
 
         const finalDist = samples[samples.length - 1].distance || 0;
         const remainingDist = finalDist - lastSplitDistance;
-        if (remainingDist > 100) {
+        if (remainingDist > 50) {
             const duration = (new Date(samples[samples.length - 1].timestamp).getTime() - new Date(startTime).getTime()) / 1000;
             splits.push({
                 km: (finalDist / 1000).toFixed(2),
@@ -93,7 +93,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
     const splits = calculateSplits(samples);
     const formatPaceSecs = (s: number) => {
         const mins = Math.floor(s / 60);
-        const secs = Math.floor(s % 60);
+        const secs = Math.round(s % 60);
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
@@ -140,9 +140,9 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                     <span className="text-white/40 text-xs">/km</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Zap size={14} className="text-primary" />
-                    <span className="text-primary font-bold">{totalLoad}</span>
-                    <span className="text-white/40 text-xs">Load</span>
+                    <Mountain size={14} className="text-green-400" />
+                    <span className="text-white font-bold">{activity.elevationGain || 0}</span>
+                    <span className="text-white/30 text-xs">m</span>
                 </div>
             </div>
 
@@ -167,10 +167,9 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                     <span className="text-white/30 text-xs">W</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Mountain size={14} className="text-green-400" />
-                    <span className="text-white/40">Elevation</span>
-                    <span className="text-white font-bold">{activity.elevationGain || 0}</span>
-                    <span className="text-white/30 text-xs">m</span>
+                    <Zap size={14} className="text-primary" />
+                    <span className="text-primary font-bold">{totalLoad}</span>
+                    <span className="text-white/40 text-xs">Load</span>
                 </div>
             </div>
 
@@ -199,7 +198,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                                     <tr key={i} className="hover:bg-white/[0.03] transition-colors">
                                         <td className="py-2.5 px-3 text-white/50">{s.km}</td>
                                         <td className="py-2.5 px-2 text-right text-white font-mono">{formatPaceSecs(s.pace)}</td>
-                                        <td className="py-2.5 px-2 text-right text-green-400">+{s.elev}m</td>
+                                        <td className="py-2.5 px-2 text-right text-green-400">{s.elev}m</td>
                                         <td className="py-2.5 px-2 text-right text-white">{s.avgHr || '--'}</td>
                                         <td className="py-2.5 px-2 text-right text-white/60 pr-3">{s.maxHr || '--'}</td>
                                     </tr>

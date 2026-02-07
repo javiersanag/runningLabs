@@ -111,8 +111,7 @@ export default async function Home() {
     <>
       <div className="flex items-center justify-between mb-2">
         <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Dashboard</h2>
-          <p className="text-white/40 text-sm">Welcome back, {athlete?.name || "Performance Athlete"}</p>
+          <h2 className="text-2xl font-bold text-white tracking-tight">Welcome back, {athlete?.name || "Performance Athlete"}</h2>
         </div>
         <Link href="/upload">
           <button className="px-4 py-2 bg-primary text-black rounded-lg text-sm font-bold shadow-[0_0_20px_rgba(0,229,255,0.4)] hover:shadow-[0_0_30px_rgba(0,229,255,0.6)] transition">
