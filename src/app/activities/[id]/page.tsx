@@ -46,43 +46,58 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
     const calculateSplits = (samples: any[]) => {
         if (!samples || samples.length === 0) return [];
         const splits = [];
-        let lastSplitDistance = 0;
-        let startTime = samples[0].timestamp;
-        let elevGain = 0;
+        let targetDist = 1000;
+        let lastSplitTime = new Date(samples[0].timestamp).getTime();
+        let elevSinceLastSplit = 0;
         let hrValues: number[] = [];
 
         for (let i = 0; i < samples.length; i++) {
             const s = samples[i];
             const dist = s.distance || 0;
-            if (s.heartRate) hrValues.push(s.heartRate);
-            if (i > 0) {
-                elevGain += (s.altitude - samples[i - 1].altitude);
-            }
+            const time = new Date(s.timestamp).getTime();
 
-            if (dist - lastSplitDistance >= 1000) {
-                const duration = (new Date(s.timestamp).getTime() - new Date(startTime).getTime()) / 1000;
+            if (s.heartRate) hrValues.push(s.heartRate);
+            const elevDiff = i > 0 ? (s.altitude - samples[i - 1].altitude) : 0;
+            elevSinceLastSplit += elevDiff;
+
+            while (dist >= targetDist) {
+                const prevS = samples[i - 1] || s;
+                const prevDist = prevS.distance || 0;
+                const prevTime = new Date(prevS.timestamp).getTime();
+
+                // Interpolation ratio: how far between prev and curr is the 1km mark?
+                const ratio = dist === prevDist ? 1 : (targetDist - prevDist) / (dist - prevDist);
+                const timeAtTarget = prevTime + ratio * (time - prevTime);
+
+                const splitDuration = (timeAtTarget - lastSplitTime) / 1000;
+                const splitElev = elevSinceLastSplit - elevDiff + (elevDiff * ratio);
+
                 splits.push({
                     km: splits.length + 1,
-                    pace: duration,
-                    elev: Math.round(elevGain),
+                    pace: splitDuration,
+                    elev: Math.round(splitElev),
                     avgHr: hrValues.length > 0 ? Math.round(hrValues.reduce((a, b) => a + b, 0) / hrValues.length) : null,
                     maxHr: hrValues.length > 0 ? Math.max(...hrValues) : null
                 });
-                lastSplitDistance = dist;
-                startTime = s.timestamp;
-                elevGain = 0;
+
+                lastSplitTime = timeAtTarget;
+                elevSinceLastSplit = elevDiff * (1 - ratio);
+                targetDist += 1000;
                 hrValues = [];
             }
         }
 
-        const finalDist = samples[samples.length - 1].distance || 0;
-        const remainingDist = finalDist - lastSplitDistance;
+        const finalS = samples[samples.length - 1];
+        const finalDist = finalS.distance || 0;
+        const remainingDist = finalDist - (targetDist - 1000);
+
         if (remainingDist > 50) {
-            const duration = (new Date(samples[samples.length - 1].timestamp).getTime() - new Date(startTime).getTime()) / 1000;
+            const finalTime = new Date(finalS.timestamp).getTime();
+            const splitDuration = (finalTime - lastSplitTime) / 1000;
             splits.push({
                 km: (finalDist / 1000).toFixed(2),
-                pace: duration * (1000 / remainingDist),
-                elev: Math.round(elevGain),
+                pace: splitDuration * (1000 / remainingDist),
+                elev: Math.round(elevSinceLastSplit),
                 avgHr: hrValues.length > 0 ? Math.round(hrValues.reduce((a, b) => a + b, 0) / hrValues.length) : null,
                 maxHr: hrValues.length > 0 ? Math.max(...hrValues) : null
             });
@@ -93,7 +108,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
     const splits = calculateSplits(samples);
     const formatPaceSecs = (s: number) => {
         const mins = Math.floor(s / 60);
-        const secs = Math.round(s % 60);
+        const secs = Math.floor(s % 60);
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
