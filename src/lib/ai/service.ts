@@ -1,6 +1,11 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+
 /**
- * Mock AI Coach Service
- * Simulates RAG and LLM responses based on athlete metrics.
+ * AI Coach Service
+ * Uses Gemini to provide training advice based on athlete metrics.
  */
 
 interface CoachResponse {
@@ -9,43 +14,59 @@ interface CoachResponse {
     actionItems?: string[];
 }
 
-export async function askCoach(query: string, context: any): Promise<CoachResponse> {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+export interface CoachContext {
+    ctl: number;
+    atl: number;
+    tsb: number;
+    recentActivities: {
+        name: string;
+        type: string;
+        date: string;
+        distance: number | null;
+        tss: number | null;
+    }[];
+}
 
-    const { ctl, tsb, recentActivities } = context;
+export async function askCoach(query: string, context: CoachContext): Promise<CoachResponse> {
+    const { ctl, atl, tsb, recentActivities } = context;
 
-    // Simple rule-based logic to mock "Intelligence"
+    const prompt = `
+You are an expert endurance sports coach (Running/Cycling).
+Your athlete asks: "${query}"
 
-    if (query.toLowerCase().includes("ready") || query.toLowerCase().includes("train")) {
-        if (tsb < -20) {
-            return {
-                message: "Your Training Stress Balance (TSB) is quite low (-20). You are in a 'High Risk' zone for overreaching. I recommend a light recovery ride or complete rest today to let your fatigue subside.",
-                actionItems: ["Schedule a Rest Day", "Focus on Sleep (8h+)"]
-            };
-        } else if (tsb > 10) {
-            return {
-                message: "You are fresh and ready to go! Your TSB is positive. This is a great day for a high-intensity interval session or a tempo run to build fitness.",
-                actionItems: ["Interval Session: 4x8min Threshold", "Tempo Run: 45min"]
-            };
-        } else {
-            return {
-                message: "Your readiness is neutral. You can train normally today, but pay attention to how you feel during the warm-up.",
-                actionItems: ["Aerobic Maintenance Run"]
-            };
-        }
-    }
+Here is their current physiological status:
+- Fitness (CTL): ${Math.round(ctl)}
+- Fatigue (ATL): ${Math.round(atl)}
+- Form (TSB): ${Math.round(tsb)}
+${recentActivities && recentActivities.length > 0 ? `- Recent Activities: ${JSON.stringify(recentActivities)}` : ''}
 
-    if (query.toLowerCase().includes("fitness") || query.toLowerCase().includes("progress")) {
+Based on this data, provide a concise, encouraging, and scientifically sound response.
+If the TSB is very negative (<-20), suggest recovery.
+If the TSB is positive (>10), suggest intensity.
+Otherwise, suggest maintenance or steady training.
+
+Format your response as a JSON object with the following structure:
+{
+  "message": "The main response text to the athlete.",
+  "actionItems": ["Short actionable bullet point 1", "Short actionable bullet point 2"]
+}
+Only return the JSON object. Do not wrap it in markdown code blocks.
+`;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const response = result.response;
+        const text = response.text();
+
+        // Clean up markdown code blocks if present
+        const jsonString = text.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+
+        return JSON.parse(jsonString);
+    } catch (error) {
+        console.error("Gemini API Error:", error);
         return {
-            message: `Your Chronic Training Load (Fitness) is currently ${Math.round(ctl)}. You've been consistent lately. To push this higher, consider increasing volume by ~10% next week.`,
-            actionItems: ["Increase Weekly Volume by 10%", "Add one Long Run"]
+            message: "I'm having trouble analyzing your data right now. Please try again later.",
+            actionItems: ["Check back later"]
         };
     }
-
-    // Default Fallback
-    return {
-        message: "I analyzed your recent training data. You are maintaining a consistent load. Remember that 'Consistency is King'. How else can I help you regarding your training plan or recovery?",
-        sources: ["Dr. Stephen Seiler - Polarization", "Joe Friel - Training Bible"]
-    };
 }
