@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+:root {
+  /* Base - Dark Mode First */
+  --background: #0a0a0c;
+  --foreground: #ededed;
+
+  /* Glass Surface */
+  --surface-glass: rgba(255, 255, 255, 0.03);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --surface-highlight: rgba(255, 255, 255, 0.05);
+
+  /* Brand Colors */
+  --primary: #00e5ff;
+  /* Cyan Neon */
+  --primary-foreground: #000000;
+
+  --secondary: #22c55e;
+  /* Green Neon */
+  --secondary-foreground: #000000;
+
+  --accent: #d946ef;
+  /* Fuchsia Neon */
+  --accent-foreground: #ffffff;
+
+  /* Functional */
+  --success: #22c55e;
+  --warning: #eab308;
+  --danger: #ef4444;
+
+  /* Chart Colors */
+  --chart-1: #00e5ff;
+  --chart-2: #22c55e;
+  --chart-3: #d946ef;
+  --chart-4: #f59e0b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+
+  --color-surface-glass: var(--surface-glass);
+  --color-surface-border: var(--surface-border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  background-image:
+    radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.06), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(217, 70, 239, 0.05), transparent 25%);
+  min-height: 100vh;
+}
+
+/* Utilities */
+.glass-panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.glass-card {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  @apply rounded-xl p-6 transition-all duration-300 hover:bg-white/[0.05];
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
