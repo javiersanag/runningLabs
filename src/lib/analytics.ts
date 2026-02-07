@@ -40,7 +40,8 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
         const day = act.startTime.split('T')[0];
         const existing = dailyData.get(day) || { load: 0, distance: 0, duration: 0, hrSum: 0, hrCount: 0, z: [0, 0, 0, 0, 0, 0] };
 
-        const load = (act.tss || 0) + (act.trimp || 0);
+        // Prioritize TSS (Power) over TRIMP (HR)
+        const load = act.tss ? act.tss : (act.trimp || 0);
         existing.load += load;
         existing.distance += act.distance || 0;
         existing.duration += act.duration || 0;
@@ -77,9 +78,13 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
         const dayStr = cursor.toISOString().split('T')[0];
         const data = dailyData.get(dayStr) || { load: 0, distance: 0, duration: 0, hrSum: 0, hrCount: 0, z: [0, 0, 0, 0, 0, 0] };
 
+        // Load is either TSS (Power) or TRIMP (HR) fallback. 
+        // We shouldn't add them as it doubles the daily stress.
+        const dailyLoad = data.load; 
+
         // Calculate new metrics
-        currentCtl = calculateNextCTL(currentCtl, data.load);
-        currentAtl = calculateNextATL(currentAtl, data.load);
+        currentCtl = calculateNextCTL(currentCtl, dailyLoad);
+        currentAtl = calculateNextATL(currentAtl, dailyLoad);
         const tsb = currentCtl - currentAtl;
         const acwr = currentCtl > 0 ? currentAtl / currentCtl : 0;
 

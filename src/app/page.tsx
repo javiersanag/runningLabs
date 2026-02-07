@@ -1,4 +1,4 @@
-import { Activity, Zap, TrendingUp, Clock, TrendingDown, Minus, Bot, Sparkles } from "lucide-react";
+import { Activity, Zap, TrendingUp, Clock, TrendingDown, Minus, Bot, Sparkles, RotateCw } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { dailyMetrics } from "@/lib/schema";
@@ -6,6 +6,7 @@ import { desc } from "drizzle-orm";
 import { FitnessChart } from "@/components/charts/FitnessChart";
 import { ACWRChart } from "@/components/charts/ACWRChart";
 import { IntensityChart } from "@/components/charts/IntensityChart";
+import { refreshAiInsightAction } from "@/app/actions/activities";
 
 export const dynamic = "force-dynamic";
 
@@ -173,16 +174,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
         </div>
       </div>
 
-      {/* Secondary Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="h-[250px] flex flex-col">
-          <h3 className="text-sm font-bold text-white/60 mb-3">ACWR</h3>
-          <div className="flex-1 min-h-0 bg-white/[0.02] rounded-xl p-4">
-            <ACWRChart data={periodHistory} />
-          </div>
-        </div>
-
-        <div className="lg:col-span-2 h-[250px] flex flex-col items-center justify-center bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-6 overflow-hidden">
+      {/* Secondary Row - Training Insight */}
+      <div className="w-full">
+        <div className="h-[250px] flex flex-col items-center justify-center bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-8 overflow-hidden border border-white/5">
           {athlete?.lastAiInsight ? (
             (() => {
               const insight = JSON.parse(athlete.lastAiInsight);
@@ -191,13 +185,18 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="text-primary" size={20} />
                     <h3 className="text-lg font-bold text-white">AI Training Insight</h3>
+                    <form action={refreshAiInsightAction} className="ml-1">
+                      <button type="submit" className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/40 hover:text-white" title="Refresh Insight">
+                        <RotateCw size={14} />
+                      </button>
+                    </form>
                     {athlete.lastAiInsightDate && (
                       <span className="text-[10px] text-white/20 ml-auto">
                         Updated {new Date(athlete.lastAiInsightDate).toLocaleDateString()}
                       </span>
                     )}
                   </div>
-                  <p className="text-white/70 text-sm mb-4 line-clamp-3">
+                  <p className="text-white/70 text-sm mb-4 max-w-3xl">
                     {insight.message}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-auto">
@@ -217,10 +216,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
           ) : (
             <>
               <Zap className="text-primary mb-2" size={24} />
-              <h3 className="text-lg font-bold text-white mb-1">Training Insight</h3>
-              <p className="text-white/50 text-sm text-center mb-4 max-w-md">
-                Your ACWR is currently <strong className="text-white">{(today?.acwr || 1.1).toFixed(2)}</strong>.
-                {(today?.acwr || 1.1) > 1.3 ? " You are increasing load rapidly." : " You are in the optimal training zone."}
+              <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                Training Insight
+                <form action={refreshAiInsightAction}>
+                  <button type="submit" className="p-1 hover:bg-white/10 rounded transition-colors">
+                    <RotateCw size={14} className="text-white/40" />
+                  </button>
+                </form>
+              </h3>
+              <p className="text-white/50 text-sm text-center mb-6 max-w-md">
+                Analyzing your data to provide personalized training advice...
               </p>
               <Link href="/coach" className="px-5 py-2 bg-primary text-black rounded-lg font-bold text-sm shadow-[0_0_20px_rgba(0,229,255,0.4)] transition">
                 Discuss with AI Coach

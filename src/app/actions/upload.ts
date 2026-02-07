@@ -6,6 +6,7 @@ import { parseFitFile } from "@/lib/parser";
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "crypto";
 import { recalculateMetricsChain } from "@/lib/analytics";
+import { calculateTSS, calculateTRIMP } from "@/lib/metrics";
 
 export async function uploadActivity(formData: FormData) {
     const file = formData.get("file") as File;
@@ -59,16 +60,11 @@ export async function uploadActivity(formData: FormData) {
         let trimp = 0;
 
         if (!tss && session.normalized_power && session.total_elapsed_time) {
-            const intensityFactor = session.normalized_power / ftp;
-            tss = (session.total_elapsed_time * session.normalized_power * intensityFactor) / (ftp * 36);
+            tss = calculateTSS(session.total_elapsed_time, session.normalized_power, ftp);
         }
 
         if (session.avg_heart_rate) {
-            const durationMin = session.total_elapsed_time / 60;
-            const hrReserve = maxHr - restHr;
-            const avgHrFraction = (session.avg_heart_rate - restHr) / hrReserve;
-            const b = 1.92;
-            trimp = durationMin * avgHrFraction * 0.64 * Math.exp(b * avgHrFraction);
+            trimp = calculateTRIMP(session.total_elapsed_time / 60, session.avg_heart_rate, maxHr, restHr);
         }
 
         // 4. Extract Samples for Charts/Map
