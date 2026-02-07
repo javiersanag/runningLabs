@@ -6,19 +6,20 @@ import { desc } from "drizzle-orm";
 import { FitnessChart } from "@/components/charts/FitnessChart";
 import { ACWRChart } from "@/components/charts/ACWRChart";
 import { IntensityChart } from "@/components/charts/IntensityChart";
-import { PerformanceStrip } from "@/components/layout/PerformanceStrip";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
+  const { period = '7d' } = await searchParams;
+  const daysToShow = period === '30d' ? 30 : 7;
+
   const athlete = await db.query.athletes.findFirst({
     where: (t, { eq }) => eq(t.id, "default_athlete")
   });
 
   let chartData: any[] = [];
   let today: any = null;
-  let last7Days: any[] = [];
-  let last30Days: any[] = [];
+  let periodHistory: any[] = [];
 
   try {
     const history = await db.query.dailyMetrics.findMany({
@@ -29,117 +30,128 @@ export default async function Home() {
 
     chartData = history.reverse();
     today = chartData.length > 0 ? chartData[chartData.length - 1] : null;
-    last7Days = chartData.slice(-7);
-    last30Days = chartData.slice(-30);
+    periodHistory = chartData.slice(-daysToShow);
   } catch (e) {
     console.error("Failed to fetch metrics", e);
   }
 
-  // Calculate performance data for both periods
-  const calcPerformance = (days: any[]) => {
-    const avgDistance = days.reduce((acc, d) => acc + (d.totalDistance || 0), 0) / days.length;
-    const validHrDays = days.filter(d => d.averageHr);
-    const avgHr = validHrDays.length > 0 ? validHrDays.reduce((acc, d) => acc + d.averageHr, 0) / validHrDays.length : null;
-    const totalDuration = days.reduce((acc, d) => acc + (d.totalDuration || 0), 0);
-    const totalDistance = days.reduce((acc, d) => acc + (d.totalDistance || 0), 0);
-    const avgPace = totalDistance > 0 ? totalDuration / (totalDistance / 1000) : 0;
-    return { avgDistance, avgPace, avgHr };
-  };
+  // Calculate performance data for the selected period
+  const totalDistance = periodHistory.reduce((acc, d) => acc + (d.totalDistance || 0), 0);
+  const totalDuration = periodHistory.reduce((acc, d) => acc + (d.totalDuration || 0), 0);
+  const avgPace = totalDistance > 0 ? totalDuration / (totalDistance / 1000) : 0;
 
-  const perf7d = calcPerformance(last7Days);
-  const perf30d = calcPerformance(last30Days);
+  const validHrDays = periodHistory.filter(d => d.averageHr);
+  const avgHr = validHrDays.length > 0 ? validHrDays.reduce((acc, d) => acc + d.averageHr, 0) / validHrDays.length : null;
+
+  // Estimate Max HR in period from daily averages (not perfect but best we have in summaries)
+  const maxHr = validHrDays.length > 0 ? Math.max(...validHrDays.map(d => d.averageHr)) : null;
 
   const fmt = (n: number | null | undefined) => n !== null && n !== undefined ? Math.round(n) : "-";
 
-  // Prep Intensity Data
+  // Prep Intensity Data based on period
   const intensityData = [
-    { name: "Z1", value: last7Days.reduce((acc, d) => acc + (d.z1Time || 0), 0), color: "#3b82f6" },
-    { name: "Z2", value: last7Days.reduce((acc, d) => acc + (d.z2Time || 0), 0), color: "#22c55e" },
-    { name: "Z3", value: last7Days.reduce((acc, d) => acc + (d.z3Time || 0), 0), color: "#eab308" },
-    { name: "Z4", value: last7Days.reduce((acc, d) => acc + (d.z4Time || 0), 0), color: "#f97316" },
-    { name: "Z5", value: last7Days.reduce((acc, d) => acc + (d.z5Time || 0), 0), color: "#ef4444" },
+    { name: "Z1", value: periodHistory.reduce((acc, d) => acc + (d.z1Time || 0), 0), color: "#3b82f6" },
+    { name: "Z2", value: periodHistory.reduce((acc, d) => acc + (d.z2Time || 0), 0), color: "#22c55e" },
+    { name: "Z3", value: periodHistory.reduce((acc, d) => acc + (d.z3Time || 0), 0), color: "#eab308" },
+    { name: "Z4", value: periodHistory.reduce((acc, d) => acc + (d.z4Time || 0), 0), color: "#f97316" },
+    { name: "Z5", value: periodHistory.reduce((acc, d) => acc + (d.z5Time || 0), 0), color: "#ef4444" },
   ];
 
-  const last3Days = chartData.slice(-3);
-  const prev7Days = chartData.slice(-10, -3);
+  // Dynamic Tendency logic
+  const currWindowSize = period === '30d' ? 7 : 3;
+  const prevWindowSize = period === '30d' ? 30 : 7;
+
+  const currWindow = chartData.slice(-currWindowSize);
+  const prevWindow = chartData.slice(-(currWindowSize + prevWindowSize), -currWindowSize);
 
   const getAvg = (days: any[], key: string) =>
     days.length > 0 ? days.reduce((acc, d) => acc + (d[key] || 0), 0) / days.length : 0;
 
   const getTendency = (key: string) => {
-    const currAvg = getAvg(last3Days, key);
-    const prevAvg = getAvg(prev7Days, key);
+    const currAvg = getAvg(currWindow, key);
+    const prevAvg = getAvg(prevWindow, key);
     const diff = currAvg - prevAvg;
 
     if (Math.abs(diff) < 0.1) return <Minus size={12} className="text-white/20" />;
-
-    // For ATL, increasing (positive diff) is red/up
-    if (key === 'atl') {
-      return diff > 0 ? <TrendingUp size={12} className="text-red-500" /> : <TrendingDown size={12} className="text-green-500" />;
-    }
-
-    // For CTL and TSB, increasing is green/up
+    if (key === 'atl') return diff > 0 ? <TrendingUp size={12} className="text-red-500" /> : <TrendingDown size={12} className="text-green-500" />;
     return diff > 0 ? <TrendingUp size={12} className="text-green-500" /> : <TrendingDown size={12} className="text-red-500" />;
   };
 
+  const performanceStats = [
+    { label: "Distance", value: (totalDistance / 1000).toFixed(1), unit: "km", icon: "📍" },
+    { label: "Avg Pace", value: avgPace > 0 ? `${Math.floor(avgPace / 60)}:${Math.floor(avgPace % 60).toString().padStart(2, '0')}` : "-", unit: "/km", icon: "⏱" },
+    { label: "Avg HR", value: fmt(avgHr), unit: "bpm", icon: "❤️" },
+    { label: "Max HR", value: fmt(maxHr), unit: "bpm", icon: "🔥" },
+  ];
+
   const trainingStats = [
-    {
-      label: "Fitness",
-      sublabel: "CTL",
-      value: fmt(today?.ctl),
-      color: "text-blue-400",
-      tendency: getTendency('ctl')
-    },
-    {
-      label: "Fatigue",
-      sublabel: "ATL",
-      value: fmt(today?.atl),
-      color: "text-purple-400",
-      tendency: getTendency('atl')
-    },
-    {
-      label: "Form",
-      sublabel: "TSB",
-      value: fmt(today?.tsb),
-      color: (today?.tsb || 0) >= 0 ? "text-green-400" : "text-yellow-400",
-      tendency: getTendency('tsb')
-    },
+    { label: "Fitness", sublabel: "CTL", value: fmt(today?.ctl), color: "text-blue-400", tendency: getTendency('ctl') },
+    { label: "Fatigue", sublabel: "ATL", value: fmt(today?.atl), color: "text-purple-400", tendency: getTendency('atl') },
+    { label: "Form", sublabel: "TSB", value: fmt(today?.tsb), color: (today?.tsb || 0) >= 0 ? "text-green-400" : "text-yellow-400", tendency: getTendency('tsb') },
     { label: "Readiness", sublabel: "", value: "84%", color: "text-green-400", tendency: <Minus size={12} className="text-white/20" /> },
   ];
 
   return (
     <>
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-white tracking-tight">Welcome back, {athlete?.name || "Performance Athlete"}</h2>
         </div>
-        <Link href="/upload">
-          <button className="px-4 py-2 bg-primary text-black rounded-lg text-sm font-bold shadow-[0_0_20px_rgba(0,229,255,0.4)] hover:shadow-[0_0_30px_rgba(0,229,255,0.6)] transition">
-            + Upload Activity
-          </button>
-        </Link>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
+            <Link
+              href="/?period=7d"
+              className={`px-3 py-1 text-xs font-bold rounded transition ${period === '7d' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-white/40 hover:text-white'}`}
+            >
+              7d
+            </Link>
+            <Link
+              href="/?period=30d"
+              className={`px-3 py-1 text-xs font-bold rounded transition ${period === '30d' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-white/40 hover:text-white'}`}
+            >
+              30d
+            </Link>
+          </div>
+          <Link href="/upload">
+            <button className="px-4 py-2 bg-primary text-black rounded-lg text-sm font-bold shadow-[0_0_20px_rgba(0,229,255,0.4)] hover:shadow-[0_0_30px_rgba(0,229,255,0.6)] transition">
+              + Upload Activity
+            </button>
+          </Link>
+        </div>
       </div>
 
-      {/* Performance Strip with 7d/30d toggle */}
-      <PerformanceStrip last7Days={perf7d} last30Days={perf30d} />
-
-      {/* Training Status Bar */}
-      <div className="flex items-center justify-center gap-12 bg-white/[0.02] border border-white/5 rounded-xl px-4 py-4 mb-6 relative">
-        <span className="absolute left-6 text-[10px] font-bold text-white/20 uppercase tracking-widest hidden xl:block">Training Status</span>
-        <div className="flex items-center gap-10">
-          {trainingStats.map((stat, i) => (
-            <div key={i} className="flex items-center gap-10">
-              <div className="flex flex-col items-center">
-                <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-1">{stat.label}</p>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-bold text-white leading-none">{stat.value}</span>
-                    {stat.sublabel && <span className={`text-[10px] font-bold ${stat.color}`}>{stat.sublabel}</span>}
-                  </div>
-                  {stat.tendency}
-                </div>
+      {/* Unified Metrics Bar */}
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-6 bg-white/[0.02] border border-white/5 rounded-xl p-6 mb-6">
+        {/* Performance Section */}
+        <div className="flex-1 flex items-center justify-around xl:justify-start xl:gap-12">
+          {performanceStats.map((stat, i) => (
+            <div key={i} className="flex flex-col items-start">
+              <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-1 flex items-center gap-2">
+                <span>{stat.icon}</span> {stat.label}
+              </p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-white leading-none">{stat.value}</span>
+                <span className="text-[10px] font-bold text-white/20">{stat.unit}</span>
               </div>
-              {i < trainingStats.length - 1 && <div className="w-px h-8 bg-white/5" />}
+            </div>
+          ))}
+        </div>
+
+        {/* Separator */}
+        <div className="hidden lg:block w-px h-12 bg-white/5 shrink-0" />
+
+        {/* Training Status Section */}
+        <div className="flex-1 flex items-center justify-around xl:justify-start xl:gap-12">
+          {trainingStats.map((stat, i) => (
+            <div key={i} className="flex flex-col items-center xl:items-start">
+              <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-1">{stat.label}</p>
+              <div className="flex items-center gap-2">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-bold text-white leading-none">{stat.value}</span>
+                  {stat.sublabel && <span className={`text-[10px] font-bold ${stat.color}`}>{stat.sublabel}</span>}
+                </div>
+                {stat.tendency}
+              </div>
             </div>
           ))}
         </div>
