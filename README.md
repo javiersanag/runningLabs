@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏃‍♂️ RunningLabs
 
-## Getting Started
+### Performance Athletics Analytics & Training Intelligence
 
-First, run the development server:
+**RunningLabs** is a state-of-the-art performance tracking ecosystem designed for endurance athletes. It transforms raw activity data from FIT and CSV files into actionable training insights using advanced physiological modeling (CTL, ATL, TSB) and workload analysis (ACWR).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 💎 Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Performance Dashboard**: Real-time tracking of **Fitness (CTL)**, **Fatigue (ATL)**, and **Form (TSB)**.
+- **Workload Management**: Automated **ACWR (Acute:Chronic Workload Ratio)** calculation to identify your training "sweet spot" and minimize injury risk.
+- **Intensity Distribution**: Visual breakdown of training time across Heart Rate zones (Z1-Z5).
+- **AI Coaching Integration**: Advanced training insights and personalized discussions powered by AI.
+- **Activity Ingestion**: Seamlessly import activity data via `.fit` and `.csv` parsers.
+- **Gear Tracking**: Monitor mileage and lifespan for your running equipment.
+- **Premium UI**: A sleek, high-performance interface built with **Glassmorphism** aesthetics and fluid animations.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
-## Learn More
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict Mode)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) with Custom Glassmorphism System
+- **Database**: [SQLite](https://www.sqlite.org/) with [Drizzle ORM](https://orm.drizzle.team/)
+- **Charts**: [Recharts](https://recharts.org/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Parsers**: `fit-file-parser` & custom CSV logic
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Getting Started
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prerequisites
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Node.js (Latest LTS recommended)
+- `npm` or `bun`
 
-## Deploy on Vercel
+### Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Clone the repository:
+   ```bash
+   git clone [repository-url]
+   cd running-labs
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Setup the database:
+   ```bash
+   npx drizzle-kit push
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+Open [http://localhost:3000](http://localhost:3000) to view your dashboard.
+
+## 📁 Project Structure
+
+- `src/app/`: Next.js App Router pages and layouts.
+- `src/components/`: Reusable UI components and complex charts.
+- `src/lib/`: Core logic, database schema, and data parsing utilities.
+- `drizzle/`: Database migrations and configuration.
+
+## ✨ Design Philosophy
+
+RunningLabs follows the **Antigravity Premium** design standard:
+- **Glassmorphism**: Translucent panels with background blur for depth.
+- **Micro-interactions**: Subtle Framer Motion transitions for every user action.
+- **Data-First**: Clean, high-contrast typography ensuring performance metrics remain the focus.
+
+---
+
+Built with precision for the modern athlete.
+
