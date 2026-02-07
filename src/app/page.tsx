@@ -81,10 +81,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
   const tsb = today?.tsb || 0;
   // If TSB is very low (-30), readiness is low (~50%). If TSB is positive, readiness is high.
   // Base 80 at TSB 0.
-  let readiness = 80 + tsb; 
+  let readiness = 80 + tsb;
   if (readiness > 100) readiness = 100;
   if (readiness < 0) readiness = 0;
-  
+
   // Color coding for readiness
   let readinessColor = "text-green-400";
   if (readiness < 70) readinessColor = "text-yellow-400";
@@ -188,7 +188,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
 
       {/* Secondary Row - Training Insight */}
       <div className="w-full">
-        <div className="h-[250px] flex flex-col items-center justify-center bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-8 overflow-hidden border border-white/5">
+        <div className="h-[350px] flex flex-col items-center justify-center bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-8 overflow-hidden border border-white/5">
           {athlete?.lastAiInsight ? (
             (() => {
               const insight = JSON.parse(athlete.lastAiInsight);

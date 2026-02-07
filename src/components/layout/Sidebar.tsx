@@ -8,9 +8,8 @@ import { cn } from "@/lib/utils";
 const items = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Activities", href: "/activities", icon: Activity },
-    { label: "Analytics", href: "/analytics", icon: BarChart2 },
     { label: "Gear", href: "/gear", icon: Footprints },
-    { label: "Coach AI", href: "/coach", icon: Bot },
+    { label: "AI Coach", href: "/coach", icon: Bot },
     { label: "Settings", href: "/settings", icon: Settings },
 ];
 
