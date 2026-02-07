@@ -47,67 +47,68 @@ export default async function GearPage() {
 
     return (
         <>
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h2 className="text-3xl font-bold text-white tracking-tight">Gear Tracking</h2>
-                    <p className="text-white/50">Manage your equipment and monitor usage</p>
+                    <h2 className="text-2xl font-bold text-white tracking-tight">Gear Tracking</h2>
+                    <p className="text-white/40 text-sm">Manage your equipment and monitor usage</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
                     {gearStats.length === 0 ? (
-                        <div className="glass-panel rounded-2xl p-12 text-center border-dashed border-2 border-white/10">
+                        <div className="rounded-xl border border-dashed border-white/10 p-12 text-center">
                             <Footprints className="mx-auto text-white/10 mb-4" size={48} />
                             <p className="text-white/30">No gear added yet.</p>
                         </div>
                     ) : (
-                        gearStats.map((item) => (
-                            <div key={item.id} className="glass-card flex items-center justify-between group">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-primary">
-                                        {item.type === "Ride" ? <Bike size={24} /> : <Footprints size={24} />}
+                        <div className="space-y-2">
+                            {gearStats.map((item) => (
+                                <div key={item.id} className="flex items-center justify-between py-3 px-4 bg-white/[0.02] hover:bg-white/[0.04] rounded-lg transition">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-primary">
+                                            {item.type === "Ride" ? <Bike size={16} /> : <Footprints size={16} />}
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-white text-sm">{item.name}</h4>
+                                            <p className="text-xs text-white/40">{item.brand} {item.model}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold text-white">{item.name}</h4>
-                                        <p className="text-xs text-white/40">{item.brand} {item.model}</p>
+                                    <div className="text-right">
+                                        <p className="text-white font-bold">{(item.realDistance / 1000).toFixed(1)} km</p>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-lg font-bold text-white">{(item.realDistance / 1000).toFixed(1)} km</p>
-                                    <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Total Distance</p>
-                                </div>
-                            </div>
-                        ))
+                            ))}
+                        </div>
                     )}
                 </div>
 
-                <div className="glass-panel p-6 rounded-2xl h-fit sticky top-8">
-                    <h3 className="font-bold text-white mb-6 flex items-center gap-2">
-                        <Plus size={18} className="text-primary" />
+                <div className="bg-white/[0.02] rounded-xl p-5 h-fit sticky top-8">
+                    <h3 className="font-bold text-white mb-4 text-sm flex items-center gap-2">
+                        <Plus size={14} className="text-primary" />
                         Add New Gear
                     </h3>
-                    <form action={addGear} className="space-y-4">
-                        <div className="space-y-1">
+                    <form action={addGear} className="space-y-3">
+                        <div>
                             <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Type</label>
-                            <select name="type" className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white outline-none">
+                            <select name="type" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-white text-sm outline-none mt-1">
                                 <option value="Run" className="bg-background">Running Shoes</option>
                                 <option value="Ride" className="bg-background">Bike</option>
                             </select>
                         </div>
-                        <div className="space-y-1">
+                        <div>
                             <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Name</label>
-                            <input name="name" required className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white outline-none" />
+                            <input name="name" required className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-white text-sm outline-none mt-1" />
                         </div>
-                        <div className="space-y-1">
+                        <div>
                             <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Brand</label>
-                            <input name="brand" className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white outline-none" />
+                            <input name="brand" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-white text-sm outline-none mt-1" />
                         </div>
-                        <div className="space-y-1">
+                        <div>
                             <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Model</label>
-                            <input name="model" className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white outline-none" />
+                            <input name="model" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-white text-sm outline-none mt-1" />
                         </div>
-                        <button type="submit" className="w-full py-3 bg-primary text-black font-bold rounded-xl shadow-[0_0_20px_rgba(0,229,255,0.4)] transition mt-4">
+                        <button type="submit" className="w-full py-2.5 bg-primary text-black font-bold rounded-lg text-sm shadow-[0_0_20px_rgba(0,229,255,0.4)] transition mt-2">
                             Add Gear
                         </button>
                     </form>

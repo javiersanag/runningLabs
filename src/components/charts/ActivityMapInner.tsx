@@ -31,7 +31,7 @@ export default function ActivityMap({ samples }: ActivityMapProps) {
     }, []);
 
     const path = samples
-        .filter(s => s.lat !== null && s.lng !== null)
+        .filter(s => s && typeof s.lat === 'number' && typeof s.lng === 'number')
         .map(s => [s.lat!, s.lng!] as [number, number]);
 
     if (!isClient || path.length === 0) {
