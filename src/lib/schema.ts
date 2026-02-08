@@ -44,6 +44,7 @@ export const activities = sqliteTable("activities", {
     trimp: real("trimp"),
     samples: text("samples"), // JSON blob for GPS/HR/Pace/Alt points
     sourceFile: text("source_file"),
+    aiInsight: text("ai_insight"),
     createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
