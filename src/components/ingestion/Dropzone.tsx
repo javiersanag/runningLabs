@@ -73,7 +73,7 @@ export function Dropzone() {
                 className={cn(
                     "relative border-2 border-dashed rounded-3xl p-16 transition-all duration-500 flex flex-col items-center justify-center text-center cursor-pointer overflow-hidden",
                     isDragOver
-                        ? "border-primary bg-primary/5 scale-[1.01] shadow-xl shadow-orange-100/50"
+                        ? "border-primary bg-primary/5 scale-[1.01] shadow-xl shadow-blue-100/50"
                         : "border-neutral-200 bg-white hover:border-primary/40 hover:bg-neutral-50/50",
                     "min-h-[350px] shadow-sm"
                 )}
@@ -108,40 +108,46 @@ export function Dropzone() {
                 </div>
             </div>
 
-            {status === "error" && (
-                <div className="mt-8 p-5 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-4 text-red-600 font-bold text-sm animate-in fade-in slide-in-from-top-4">
-                    <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-                        <AlertCircle size={20} />
+            {
+                status === "error" && (
+                    <div className="mt-8 p-5 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-4 text-red-600 font-bold text-sm animate-in fade-in slide-in-from-top-4">
+                        <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                            <AlertCircle size={20} />
+                        </div>
+                        {message}
                     </div>
-                    {message}
-                </div>
-            )}
+                )
+            }
 
-            {status === "success" && (
-                <div className="mt-8 p-5 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center gap-4 text-emerald-600 font-bold text-sm animate-in fade-in slide-in-from-top-4">
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                        <CheckCircle size={20} />
+            {
+                status === "success" && (
+                    <div className="mt-8 p-5 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center gap-4 text-emerald-600 font-bold text-sm animate-in fade-in slide-in-from-top-4">
+                        <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                            <CheckCircle size={20} />
+                        </div>
+                        {message}
                     </div>
-                    {message}
-                </div>
-            )}
+                )
+            }
 
-            {file && status !== "success" && (
-                <div className="mt-8 flex justify-center">
-                    <button
-                        onClick={handleUpload}
-                        disabled={isPending}
-                        className="px-12 py-4 bg-primary text-white font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-primary/90 hover:shadow-2xl hover:shadow-orange-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 shadow-xl shadow-orange-100"
-                    >
-                        {isPending ? (
-                            <Loader2 className="animate-spin" size={20} />
-                        ) : (
-                            <FileIcon size={18} />
-                        )}
-                        {isPending ? "Processing Data..." : "Synchronize Activity"}
-                    </button>
-                </div>
-            )}
-        </div>
+            {
+                file && status !== "success" && (
+                    <div className="mt-8 flex justify-center">
+                        <button
+                            onClick={handleUpload}
+                            disabled={isPending}
+                            className="px-12 py-4 bg-primary text-white font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-primary/90 hover:shadow-2xl hover:shadow-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 shadow-xl shadow-blue-100"
+                        >
+                            {isPending ? (
+                                <Loader2 className="animate-spin" size={20} />
+                            ) : (
+                                <FileIcon size={18} />
+                            )}
+                            {isPending ? "Processing Data..." : "Synchronize Activity"}
+                        </button>
+                    </div>
+                )
+            }
+        </div >
     );
 }

@@ -122,10 +122,10 @@ export function ActivityChart({ samples }: ActivityChartProps) {
                         type="monotone"
                         dataKey="pace"
                         name="pace"
-                        stroke="#ff6d00"
+                        stroke="#3b82f6"
                         strokeWidth={2.5}
                         dot={false}
-                        activeDot={{ r: 4, fill: '#ff6d00', strokeWidth: 0 }}
+                        activeDot={{ r: 4, fill: '#3b82f6', strokeWidth: 0 }}
                     />
                 </AreaChart>
             </ResponsiveContainer>

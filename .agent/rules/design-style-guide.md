@@ -24,7 +24,7 @@ Avoid decorative or verbose text in dashboards — focus on insights.
 
 🟦 Primary Brand Color (Energetic Accent)
 
-Example: Electric Orange — for KPIs, key buttons, emphasis
+Example: Vibrant Blue — for KPIs, key buttons, emphasis
 
 ⚪ Neutral Backgrounds & Surfaces
 

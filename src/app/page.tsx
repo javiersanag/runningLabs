@@ -56,7 +56,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
     { name: "Z1", value: periodHistory.reduce((acc, d) => acc + (d.z1Time || 0), 0), color: "#3b82f6" },
     { name: "Z2", value: periodHistory.reduce((acc, d) => acc + (d.z2Time || 0), 0), color: "#22c55e" },
     { name: "Z3", value: periodHistory.reduce((acc, d) => acc + (d.z3Time || 0), 0), color: "#eab308" },
-    { name: "Z4", value: periodHistory.reduce((acc, d) => acc + (d.z4Time || 0), 0), color: "#f97316" },
+    { name: "Z4", value: periodHistory.reduce((acc, d) => acc + (d.z4Time || 0), 0), color: "#a855f7" },
     { name: "Z5", value: periodHistory.reduce((acc, d) => acc + (d.z5Time || 0), 0), color: "#ef4444" },
   ];
 

@@ -82,7 +82,7 @@ export default function CoachPage() {
                                 "rounded-2xl p-5 max-w-[80%] text-sm leading-relaxed shadow-sm transition-all",
                                 msg.role === "assistant"
                                     ? "bg-neutral-50 text-foreground border border-neutral-100 rounded-tl-none"
-                                    : "bg-primary text-white font-bold rounded-tr-none shadow-orange-100"
+                                    : "bg-primary text-white font-bold rounded-tr-none shadow-blue-100"
                             )}>
                                 <p className={cn(msg.role === "user" ? "text-white" : "text-neutral-700 font-medium")}>{msg.content}</p>
                                 {msg.actions && (
@@ -100,11 +100,13 @@ export default function CoachPage() {
                                 )}
                             </div>
 
-                            {msg.role === "user" && (
-                                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary mt-1 shrink-0">
-                                    <User size={18} />
-                                </div>
-                            )}
+                            {
+                                msg.role === "user" && (
+                                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary mt-1 shrink-0">
+                                        <User size={18} />
+                                    </div>
+                                )
+                            }
                         </div>
                     ))}
                     {isTyping && (
@@ -135,7 +137,7 @@ export default function CoachPage() {
                         <button
                             onClick={handleSend}
                             disabled={!input.trim() || isTyping}
-                            className="absolute right-2 top-2 bottom-2 px-4 bg-primary text-white rounded-xl hover:bg-primary/90 disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed transition-all shadow-lg shadow-orange-100"
+                            className="absolute right-2 top-2 bottom-2 px-4 bg-primary text-white rounded-xl hover:bg-primary/90 disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-100"
                         >
                             <Send size={18} />
                         </button>
@@ -144,7 +146,7 @@ export default function CoachPage() {
                         Neural Core • Performance Analytics Engine v2.0
                     </p>
                 </div>
-            </div>
+            </div >
         </>
     );
 }

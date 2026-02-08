@@ -29,12 +29,12 @@ export function FitnessChart({ data }: FitnessChartProps) {
                 <ComposedChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                     <defs>
                         <linearGradient id="colorCtl" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#ff6d00" stopOpacity={0.1} />
-                            <stop offset="95%" stopColor="#ff6d00" stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="colorAtl" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
                             <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="colorAtl" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1} />
+                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
@@ -85,7 +85,7 @@ export function FitnessChart({ data }: FitnessChartProps) {
                         type="monotone"
                         dataKey="ctl"
                         name="Fitness"
-                        stroke="#ff6d00"
+                        stroke="#3b82f6"
                         strokeWidth={3}
                         fillOpacity={1}
                         fill="url(#colorCtl)"
@@ -95,7 +95,7 @@ export function FitnessChart({ data }: FitnessChartProps) {
                         type="monotone"
                         dataKey="atl"
                         name="Fatigue"
-                        stroke="#3b82f6"
+                        stroke="#6366f1"
                         strokeWidth={2}
                         dot={false}
                     />

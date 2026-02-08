@@ -8,12 +8,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 /**
  * Premium Button component following the design style guide.
- * Primary: Solid Electric Orange.
+ * Primary: Solid Vibrant Blue.
  * Secondary: Outlined/Neutral.
  */
 export function Button({ variant = "primary", children, className, ...props }: ButtonProps) {
     const variants = {
-        primary: "bg-primary text-primary-foreground shadow-[0_4px_14px_0_rgba(255,109,0,0.39)] hover:shadow-[0_6px_20px_rgba(255,109,0,0.23)] hover:bg-[#e66200] active:scale-[0.98]",
+        primary: "bg-primary text-primary-foreground shadow-[0_4px_14px_0_rgba(59,130,246,0.39)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.23)] hover:bg-[#2563eb] active:scale-[0.98]",
         secondary: "bg-white text-foreground border border-neutral-200 hover:bg-neutral-50 active:scale-[0.98]",
         ghost: "text-neutral-500 hover:text-foreground hover:bg-neutral-100",
     };

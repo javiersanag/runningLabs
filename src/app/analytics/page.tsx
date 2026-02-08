@@ -28,8 +28,8 @@ export default async function AnalyticsPage() {
                         <h3 className="text-xs font-black text-neutral-400 uppercase tracking-[0.2em] ml-1">Performance Management Chart (PMC)</h3>
                         <div className="flex gap-4">
                             <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-primary" /><span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Fitness</span></div>
-                            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-amber-400" /><span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Fatigue</span></div>
-                            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-400" /><span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Freshness</span></div>
+                            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-purple-500" /><span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Fatigue</span></div>
+                            <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-400" /><span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Freshness</span></div>
                         </div>
                     </div>
                     <div className="h-[550px] bg-white rounded-3xl p-8 border border-neutral-100 shadow-xl shadow-neutral-100/50">
@@ -48,14 +48,14 @@ export default async function AnalyticsPage() {
                     </div>
                     <div className="p-6 bg-white border border-neutral-100 rounded-2xl shadow-sm">
                         <p className="text-foreground font-black uppercase tracking-widest mb-3 text-xs flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-amber-400" />
+                            <div className="w-2 h-2 rounded-full bg-purple-500" />
                             Fatigue (ATL)
                         </p>
                         <p className="text-neutral-500 font-medium leading-relaxed">7-day exponentially weighted average. Represents recent training stress and immediate physiological demand.</p>
                     </div>
                     <div className="p-6 bg-white border border-neutral-100 rounded-2xl shadow-sm">
                         <p className="text-foreground font-black uppercase tracking-widest mb-3 text-xs flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                            <div className="w-2 h-2 rounded-full bg-blue-400" />
                             Form (TSB)
                         </p>
                         <p className="text-neutral-500 font-medium leading-relaxed">CTL minus ATL. Positive values indicate freshness and race readiness, while negative values suggest you are building fitness.</p>

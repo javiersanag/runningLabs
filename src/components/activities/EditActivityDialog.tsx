@@ -159,7 +159,7 @@ export function EditActivityDialog({ activity, allGear }: EditActivityDialogProp
                                     <button
                                         onClick={handleSave}
                                         disabled={isSaving}
-                                        className="flex items-center gap-3 px-8 py-3 bg-primary text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-orange-100 hover:shadow-orange-200 transition-all text-[11px] disabled:opacity-50"
+                                        className="flex items-center gap-3 px-8 py-3 bg-primary text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-100 hover:shadow-blue-200 transition-all text-[11px] disabled:opacity-50"
                                     >
                                         {isSaving ? (
                                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -58,7 +58,7 @@ export default function ActivityMap({ samples }: ActivityMapProps) {
                 <Polyline
                     positions={path}
                     pathOptions={{
-                        color: "#ff6d00",
+                        color: "#3b82f6",
                         weight: 5,
                         opacity: 0.9,
                         lineJoin: "round"
