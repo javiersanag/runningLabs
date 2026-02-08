@@ -36,8 +36,8 @@ export default function ActivityMap({ samples }: ActivityMapProps) {
 
     if (!isClient || path.length === 0) {
         return (
-            <div className="w-full h-full bg-white/5 flex items-center justify-center text-white/40">
-                <p>No map data available</p>
+            <div className="w-full h-full bg-neutral-50 flex items-center justify-center text-neutral-400">
+                <p className="text-xs font-bold uppercase tracking-widest">No map data available</p>
             </div>
         );
     }
@@ -45,22 +45,22 @@ export default function ActivityMap({ samples }: ActivityMapProps) {
     const bounds = L.latLngBounds(path);
 
     return (
-        <div className="w-full h-full rounded-xl overflow-hidden border border-white/10">
+        <div className="w-full h-full rounded-xl overflow-hidden border border-neutral-100 shadow-inner">
             <MapContainer
                 bounds={bounds}
-                style={{ height: "100%", width: "100%", background: "#1a1a1a" }}
+                style={{ height: "100%", width: "100%", background: "#f8f9fa" }}
                 zoomControl={false}
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                 />
                 <Polyline
                     positions={path}
                     pathOptions={{
-                        color: "#00E5FF",
-                        weight: 4,
-                        opacity: 0.8,
+                        color: "#ff6d00",
+                        weight: 5,
+                        opacity: 0.9,
                         lineJoin: "round"
                     }}
                 />

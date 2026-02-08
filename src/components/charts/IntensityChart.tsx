@@ -26,12 +26,12 @@ export function IntensityChart({ data }: IntensityChartProps) {
                     <YAxis
                         dataKey="name"
                         type="category"
-                        stroke="#ffffff40"
-                        fontSize={12}
+                        stroke="#e5e5e5"
+                        fontSize={10}
                         width={40}
                         tickLine={false}
                         axisLine={false}
-                        tick={{ fill: 'rgba(255,255,255,0.4)' }}
+                        tick={{ fill: '#888888', fontWeight: 600 }}
                     />
                     <YAxis
                         yAxisId="right"
@@ -42,22 +42,23 @@ export function IntensityChart({ data }: IntensityChartProps) {
                             const item = data.find(d => d.name === name);
                             return item && total > 0 ? `${Math.round((item.value / total) * 100)}%` : "0%";
                         }}
-                        stroke="#ffffff40"
-                        fontSize={12}
+                        stroke="#e5e5e5"
+                        fontSize={10}
                         tickLine={false}
                         axisLine={false}
                         width={50}
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}
+                        tick={{ fill: '#888888', fontWeight: 800 }}
                     />
                     <Tooltip
-                        cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                        cursor={{ fill: 'rgba(0,0,0,0.02)' }}
                         contentStyle={{
-                            backgroundColor: "rgba(13, 13, 13, 0.9)",
-                            border: "1px solid rgba(255, 255, 255, 0.1)",
+                            backgroundColor: "#ffffff",
+                            border: "1px solid #f0f0f0",
                             borderRadius: "12px",
-                            backdropFilter: "blur(10px)",
+                            boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
                         }}
-                        itemStyle={{ fontSize: '12px', color: '#fff' }}
+                        itemStyle={{ fontSize: '12px', fontWeight: 600, color: '#111' }}
+                        labelStyle={{ fontSize: '10px', color: '#888', fontWeight: 800, textTransform: 'uppercase', marginBottom: '4px' }}
                         formatter={(value: number | undefined) => [
                             value ? `${Math.round(value / 60)} min (${total > 0 ? Math.round((value / total) * 100) : 0}%)` : "0 min (0%)",
                             "Duration"

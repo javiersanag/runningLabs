@@ -19,7 +19,7 @@ interface ActivityChartProps {
 export function ActivityChart({ samples }: ActivityChartProps) {
     if (!samples || samples.length === 0) {
         return (
-            <div className="w-full h-full flex items-center justify-center text-white/20">
+            <div className="w-full h-full flex items-center justify-center text-neutral-300 font-bold uppercase tracking-widest text-xs">
                 No telemetry data available for this activity.
             </div>
         );
@@ -45,21 +45,22 @@ export function ActivityChart({ samples }: ActivityChartProps) {
                 <AreaChart data={data}>
                     <defs>
                         <linearGradient id="colorAlt" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#ffffff" stopOpacity={0.1} />
-                            <stop offset="95%" stopColor="#ffffff" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
+                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
                     <XAxis
                         dataKey="distance"
                         type="number"
                         domain={['dataMin', 'dataMax']}
                         tickFormatter={(val) => `${(val / 1000).toFixed(1)}km`}
-                        stroke="#ffffff40"
+                        stroke="#e5e5e5"
                         fontSize={10}
                         tickLine={false}
                         axisLine={false}
                         minTickGap={30}
+                        tick={{ fill: '#888888', fontWeight: 600 }}
                     />
 
                     {/* HR Axis */}
@@ -71,13 +72,13 @@ export function ActivityChart({ samples }: ActivityChartProps) {
 
                     <Tooltip
                         contentStyle={{
-                            backgroundColor: "rgba(13, 13, 13, 0.9)",
-                            border: "1px solid rgba(255, 255, 255, 0.1)",
+                            backgroundColor: "#ffffff",
+                            border: "1px solid #f0f0f0",
                             borderRadius: "12px",
-                            backdropFilter: "blur(10px)",
+                            boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
                         }}
-                        itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
-                        labelStyle={{ color: 'rgba(255,255,255,0.4)', fontSize: '10px', marginBottom: '4px' }}
+                        itemStyle={{ fontSize: '12px', fontWeight: 700 }}
+                        labelStyle={{ color: '#888888', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '4px' }}
                         labelFormatter={(val) => `Distance: ${(val / 1000).toFixed(2)} km`}
                         formatter={(value: any, name: string | undefined) => {
                             if (name === "hr") return [`${Math.round(value)} bpm`, "Heart Rate"];
@@ -97,7 +98,8 @@ export function ActivityChart({ samples }: ActivityChartProps) {
                         type="monotone"
                         dataKey="altitude"
                         name="alt"
-                        stroke="#ffffff20"
+                        stroke="#10b981"
+                        strokeWidth={1}
                         fillOpacity={1}
                         fill="url(#colorAlt)"
                     />
@@ -108,10 +110,10 @@ export function ActivityChart({ samples }: ActivityChartProps) {
                         type="monotone"
                         dataKey="hr"
                         name="hr"
-                        stroke="#ff4d4d"
-                        strokeWidth={2}
+                        stroke="#f43f5e"
+                        strokeWidth={2.5}
                         dot={false}
-                        activeDot={{ r: 4, fill: '#ff4d4d' }}
+                        activeDot={{ r: 4, fill: '#f43f5e', strokeWidth: 0 }}
                     />
 
                     {/* Pace */}
@@ -120,10 +122,10 @@ export function ActivityChart({ samples }: ActivityChartProps) {
                         type="monotone"
                         dataKey="pace"
                         name="pace"
-                        stroke="#00e5ff"
-                        strokeWidth={2}
+                        stroke="#ff6d00"
+                        strokeWidth={2.5}
                         dot={false}
-                        activeDot={{ r: 4, fill: '#00e5ff' }}
+                        activeDot={{ r: 4, fill: '#ff6d00', strokeWidth: 0 }}
                     />
                 </AreaChart>
             </ResponsiveContainer>

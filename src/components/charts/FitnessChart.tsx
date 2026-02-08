@@ -17,7 +17,7 @@ interface FitnessChartProps {
 export function FitnessChart({ data }: FitnessChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="h-full w-full flex items-center justify-center text-white/30 text-sm">
+            <div className="h-full w-full flex items-center justify-center text-neutral-300 text-sm font-bold uppercase tracking-widest">
                 No data available. Upload activities to generate chart.
             </div>
         );
@@ -29,46 +29,64 @@ export function FitnessChart({ data }: FitnessChartProps) {
                 <ComposedChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                     <defs>
                         <linearGradient id="colorCtl" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#00e5ff" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#ff6d00" stopOpacity={0.1} />
+                            <stop offset="95%" stopColor="#ff6d00" stopOpacity={0} />
                         </linearGradient>
                         <linearGradient id="colorAtl" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#d946ef" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#d946ef" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
+                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
                     <XAxis
                         dataKey="date"
                         tickFormatter={(value) => format(new Date(value), 'MMM d')}
-                        stroke="rgba(255,255,255,0.3)"
-                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
+                        stroke="#e5e5e5"
+                        tick={{ fontSize: 10, fill: '#888888', fontWeight: 600 }}
+                        axisLine={false}
+                        tickLine={false}
+                        dy={10}
                     />
                     <YAxis
                         yAxisId="load"
-                        stroke="rgba(255,255,255,0.3)"
-                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
-                        label={{ value: 'Load', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.2)' }}
+                        stroke="#e5e5e5"
+                        tick={{ fontSize: 10, fill: '#888888', fontWeight: 600 }}
+                        axisLine={false}
+                        tickLine={false}
                     />
                     <YAxis
                         yAxisId="form"
                         orientation="right"
-                        stroke="rgba(255,255,255,0.3)"
-                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
+                        stroke="#e5e5e5"
+                        tick={{ fontSize: 10, fill: '#888888', fontWeight: 600 }}
+                        axisLine={false}
+                        tickLine={false}
                     />
                     <Tooltip
-                        contentStyle={{ backgroundColor: 'rgba(20, 20, 25, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                        itemStyle={{ fontSize: '12px' }}
+                        contentStyle={{
+                            backgroundColor: '#ffffff',
+                            border: '1px solid #f0f0f0',
+                            borderRadius: '12px',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
+                        }}
+                        itemStyle={{ fontSize: '12px', fontWeight: 600 }}
+                        labelStyle={{ color: '#888', fontWeight: 700, marginBottom: '4px' }}
                         labelFormatter={(value) => format(new Date(value), 'MMM d, yyyy')}
                     />
-                    <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                    <Legend
+                        verticalAlign="top"
+                        align="right"
+                        wrapperStyle={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', paddingBottom: '20px' }}
+                        iconType="circle"
+                    />
 
                     <Area
                         yAxisId="load"
                         type="monotone"
                         dataKey="ctl"
-                        name="Fitness (CTL)"
-                        stroke="#00e5ff"
+                        name="Fitness"
+                        stroke="#ff6d00"
+                        strokeWidth={3}
                         fillOpacity={1}
                         fill="url(#colorCtl)"
                     />
@@ -76,18 +94,19 @@ export function FitnessChart({ data }: FitnessChartProps) {
                         yAxisId="load"
                         type="monotone"
                         dataKey="atl"
-                        name="Fatigue (ATL)"
-                        stroke="#d946ef"
-                        strokeWidth={1}
+                        name="Fatigue"
+                        stroke="#3b82f6"
+                        strokeWidth={2}
                         dot={false}
                     />
                     <Bar
                         yAxisId="form"
                         dataKey="tsb"
-                        name="Form (TSB)"
-                        fill="#eab308"
-                        opacity={0.6}
-                        barSize={4}
+                        name="Form"
+                        fill="#10b981"
+                        opacity={0.3}
+                        radius={[2, 2, 0, 0]}
+                        barSize={6}
                     />
                 </ComposedChart>
             </ResponsiveContainer>

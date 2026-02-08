@@ -53,42 +53,46 @@ export default function CoachPage() {
 
     return (
         <>
-            <div className="h-[calc(100vh-8rem)] flex flex-col max-w-4xl mx-auto glass-panel rounded-2xl overflow-hidden border border-white/10">
-                <div className="p-4 border-b border-white/10 bg-white/5 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                        <Bot size={24} />
-                    </div>
-                    <div>
-                        <h3 className="font-bold text-white">AI Performance Coach</h3>
-                        <p className="text-xs text-white/50 flex items-center gap-1">
-                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                            Online • Access to Real-time Metrics
-                        </p>
+            <div className="h-[calc(100vh-8rem)] flex flex-col max-w-4xl mx-auto bg-white rounded-3xl overflow-hidden border border-neutral-100 shadow-xl shadow-neutral-100/50">
+                <div className="p-6 border-b border-neutral-100 bg-neutral-50/50 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+                            <Bot size={28} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-foreground text-lg">AI Performance Coach</h3>
+                            <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                                Synchronized • {new Date().toLocaleDateString()}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div className="flex-1 overflow-y-auto p-8 space-y-8 scroll-smooth">
                     {messages.map((msg, i) => (
                         <div key={i} className={cn("flex gap-4", msg.role === "assistant" ? "justify-start" : "justify-end")}>
                             {msg.role === "assistant" && (
-                                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary mt-1 shrink-0">
-                                    <Bot size={16} />
+                                <div className="w-9 h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-400 mt-1 shrink-0">
+                                    <Bot size={18} />
                                 </div>
                             )}
 
                             <div className={cn(
-                                "rounded-2xl p-4 max-w-[80%] text-sm leading-relaxed",
+                                "rounded-2xl p-5 max-w-[80%] text-sm leading-relaxed shadow-sm transition-all",
                                 msg.role === "assistant"
-                                    ? "bg-white/5 text-white border border-white/10"
-                                    : "bg-primary text-black font-medium"
+                                    ? "bg-neutral-50 text-foreground border border-neutral-100 rounded-tl-none"
+                                    : "bg-primary text-white font-bold rounded-tr-none shadow-orange-100"
                             )}>
-                                <p>{msg.content}</p>
+                                <p className={cn(msg.role === "user" ? "text-white" : "text-neutral-700 font-medium")}>{msg.content}</p>
                                 {msg.actions && (
-                                    <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
-                                        <p className="text-xs opacity-50 uppercase tracking-widest font-bold mb-2">Recommended Actions</p>
+                                    <div className="mt-4 pt-4 border-t border-neutral-200/50 space-y-2.5">
+                                        <p className="text-[10px] text-neutral-400 uppercase tracking-[0.2em] font-black mb-3">Priority Actions</p>
                                         {msg.actions.map((action, idx) => (
-                                            <div key={idx} className="flex items-center gap-2 text-primary text-xs bg-primary/5 p-2 rounded border border-primary/20">
-                                                <Sparkles size={12} />
+                                            <div key={idx} className="flex items-center gap-3 text-primary text-xs bg-white p-3 rounded-xl border border-neutral-100 shadow-sm font-bold">
+                                                <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                                                    <Sparkles size={10} />
+                                                </div>
                                                 {action}
                                             </div>
                                         ))}
@@ -97,47 +101,47 @@ export default function CoachPage() {
                             </div>
 
                             {msg.role === "user" && (
-                                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white mt-1 shrink-0">
-                                    <User size={16} />
+                                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary mt-1 shrink-0">
+                                    <User size={18} />
                                 </div>
                             )}
                         </div>
                     ))}
                     {isTyping && (
                         <div className="flex gap-4">
-                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary mt-1">
-                                <Bot size={16} />
+                            <div className="w-9 h-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-400 mt-1">
+                                <Bot size={18} />
                             </div>
-                            <div className="bg-white/5 rounded-2xl p-4 flex items-center gap-2">
-                                <span className="w-2 h-2 bg-white/50 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                                <span className="w-2 h-2 bg-white/50 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                                <span className="w-2 h-2 bg-white/50 rounded-full animate-bounce" />
+                            <div className="bg-neutral-50 rounded-2xl p-4 flex items-center gap-2 border border-neutral-100">
+                                <span className="w-1.5 h-1.5 bg-neutral-300 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                <span className="w-1.5 h-1.5 bg-neutral-300 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                <span className="w-1.5 h-1.5 bg-neutral-300 rounded-full animate-bounce" />
                             </div>
                         </div>
                     )}
                     <div ref={scrollRef} />
                 </div>
 
-                <div className="p-4 border-t border-white/10 bg-black/20">
-                    <div className="relative">
+                <div className="p-6 bg-neutral-50/50 border-t border-neutral-100">
+                    <div className="relative group">
                         <input
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                            placeholder="Ask about your fitness, recovery, or training plan..."
-                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-4 pr-12 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-primary/50 transition-colors"
+                            placeholder="Ask about your performance or recovery..."
+                            className="w-full bg-white border border-neutral-200 rounded-2xl pl-5 pr-14 py-5 text-foreground font-medium placeholder:text-neutral-400 shadow-sm focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all text-sm"
                         />
                         <button
                             onClick={handleSend}
                             disabled={!input.trim() || isTyping}
-                            className="absolute right-2 top-2 p-2 bg-primary text-black rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            className="absolute right-2 top-2 bottom-2 px-4 bg-primary text-white rounded-xl hover:bg-primary/90 disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed transition-all shadow-lg shadow-orange-100"
                         >
-                            <Send size={20} />
+                            <Send size={18} />
                         </button>
                     </div>
-                    <p className="text-center text-[10px] text-white/20 mt-3">
-                        AI Coach predictions are based on estimated physiological models. Consult a professional for medical advice.
+                    <p className="text-center text-[10px] text-neutral-400 mt-4 font-bold uppercase tracking-widest">
+                        Neural Core • Performance Analytics Engine v2.0
                     </p>
                 </div>
             </div>

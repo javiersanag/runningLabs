@@ -5,8 +5,8 @@ import dynamic from "next/dynamic";
 const ActivityMapInner = dynamic(() => import("./ActivityMapInner"), {
     ssr: false,
     loading: () => (
-        <div className="w-full h-full bg-white/5 animate-pulse rounded-2xl border border-white/10 flex items-center justify-center">
-            <p className="text-white/20 text-sm">Loading Map...</p>
+        <div className="w-full h-full bg-neutral-50 animate-pulse rounded-2xl border border-neutral-100 flex items-center justify-center">
+            <p className="text-neutral-400 text-sm font-bold uppercase tracking-widest">Loading Map...</p>
         </div>
     )
 });

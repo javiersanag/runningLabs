@@ -1,8 +1,9 @@
 import { db } from "@/lib/db";
 import { activities } from "@/lib/schema";
 import { desc } from "drizzle-orm";
-import { Activity, Plus } from "lucide-react";
+import { Activity, Plus, ChevronRight, MapPin, Clock, Zap } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 export const dynamic = "force-dynamic";
 
@@ -24,64 +25,101 @@ export default async function ActivitiesPage() {
 
     const formatDate = (dateStr: string) => {
         const d = new Date(dateStr);
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     };
 
     return (
         <>
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h2 className="text-2xl font-bold text-white tracking-tight">Activities</h2>
-                    <p className="text-white/40 text-sm">Your latest training sessions</p>
+                    <h2 className="text-3xl font-bold text-foreground tracking-tight">Activities</h2>
+                    <p className="text-sm text-neutral-500 font-medium">Your historical training data and session details.</p>
                 </div>
                 <Link href="/upload">
-                    <button className="flex items-center gap-2 px-5 py-2 bg-primary text-black rounded-lg font-bold text-sm shadow-[0_0_20px_rgba(0,229,255,0.4)] hover:shadow-[0_0_30px_rgba(0,229,255,0.6)] transition">
+                    <Button className="flex items-center gap-2">
                         <Plus size={16} />
-                        Upload
-                    </button>
+                        Upload Session
+                    </Button>
                 </Link>
             </div>
 
             {list.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-white/10 p-12 text-center">
-                    <Activity className="mx-auto text-white/10 mb-4" size={48} />
-                    <h3 className="text-xl font-bold text-white mb-2">No Activities Yet</h3>
-                    <p className="text-white/30 max-w-xs mx-auto mb-6">Upload your first .FIT file to start analyzing your performance.</p>
-                    <Link href="/upload" className="px-6 py-2 bg-primary text-black rounded-lg font-bold inline-block">Upload Now</Link>
+                <div className="rounded-2xl border-2 border-dashed border-neutral-100 p-16 text-center bg-neutral-50/50">
+                    <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4 text-neutral-400">
+                        <Activity size={32} />
+                    </div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">No Activities Found</h3>
+                    <p className="text-neutral-500 max-w-xs mx-auto mb-8 font-medium">Upload your first .FIT file to unlock personalized performance analytics.</p>
+                    <Link href="/upload">
+                        <Button>Upload Now</Button>
+                    </Link>
                 </div>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-white/10">
-                                <th className="text-left py-3 px-2 text-xs font-bold text-white/30 uppercase tracking-widest">Date</th>
-                                <th className="text-left py-3 px-2 text-xs font-bold text-white/30 uppercase tracking-widest">Name</th>
-                                <th className="text-right py-3 px-2 text-xs font-bold text-white/30 uppercase tracking-widest">Time</th>
-                                <th className="text-right py-3 px-2 text-xs font-bold text-white/30 uppercase tracking-widest">Distance</th>
-                                <th className="text-right py-3 px-2 text-xs font-bold text-white/30 uppercase tracking-widest">Elev</th>
-                                <th className="text-right py-3 px-2 text-xs font-bold text-white/30 uppercase tracking-widest">TSS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {list.map((act) => (
-                                <tr
-                                    key={act.id}
-                                    className="border-b border-white/5 hover:bg-white/[0.02] transition cursor-pointer group"
-                                >
-                                    <td className="py-3 px-2 text-white/50">{formatDate(act.startTime)}</td>
-                                    <td className="py-3 px-2">
-                                        <Link href={`/activities/${act.id}`} className="text-white font-medium group-hover:text-primary transition">
-                                            {act.name}
-                                        </Link>
-                                    </td>
-                                    <td className="py-3 px-2 text-right text-white font-mono">{formatDuration(act.duration)}</td>
-                                    <td className="py-3 px-2 text-right text-white">{formatDistance(act.distance)} km</td>
-                                    <td className="py-3 px-2 text-right text-white/50">{act.elevationGain || 0} m</td>
-                                    <td className="py-3 px-2 text-right text-primary font-bold">{Math.round((act.tss || 0) + (act.trimp || 0))}</td>
+                <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                            <thead>
+                                <tr className="border-b border-neutral-100 bg-neutral-50/50">
+                                    <th className="text-left py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Activity</th>
+                                    <th className="text-right py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Distance</th>
+                                    <th className="text-right py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Duration</th>
+                                    <th className="text-right py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Elevation</th>
+                                    <th className="text-right py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">TSS</th>
+                                    <th className="w-10"></th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-neutral-100">
+                                {list.map((act) => (
+                                    <tr
+                                        key={act.id}
+                                        className="group hover:bg-neutral-50/50 transition-all cursor-pointer"
+                                    >
+                                        <td className="py-5 px-6">
+                                            <Link href={`/activities/${act.id}`} className="block">
+                                                <div className="flex flex-col">
+                                                    <span className="text-foreground font-bold group-hover:text-primary transition-colors mb-0.5">
+                                                        {act.name || "Morning Run"}
+                                                    </span>
+                                                    <span className="text-[11px] text-neutral-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                                                        {formatDate(act.startTime)}
+                                                    </span>
+                                                </div>
+                                            </Link>
+                                        </td>
+                                        <td className="py-5 px-6 text-right">
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-foreground font-bold">{formatDistance(act.distance)}</span>
+                                                <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">KM</span>
+                                            </div>
+                                        </td>
+                                        <td className="py-5 px-6 text-right">
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-foreground font-bold font-mono">{formatDuration(act.duration)}</span>
+                                                <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">TIME</span>
+                                            </div>
+                                        </td>
+                                        <td className="py-5 px-6 text-right">
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-neutral-600 font-bold">{act.elevationGain || 0}</span>
+                                                <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">M</span>
+                                            </div>
+                                        </td>
+                                        <td className="py-5 px-6 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <div className="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-bold flex items-center gap-1">
+                                                    <Zap size={10} />
+                                                    {Math.round((act.tss || 0) + (act.trimp || 0))}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="py-5 px-6 text-right">
+                                            <ChevronRight size={16} className="text-neutral-200 group-hover:text-primary transition-colors" />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
         </>

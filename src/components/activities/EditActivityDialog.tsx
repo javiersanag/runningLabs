@@ -61,10 +61,10 @@ export function EditActivityDialog({ activity, allGear }: EditActivityDialogProp
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white rounded-lg transition-all duration-300 border border-white/5 hover:border-white/20"
+                className="flex items-center gap-2 px-5 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-foreground rounded-xl transition-all duration-300 font-bold border border-neutral-100 hover:border-neutral-300"
             >
-                <Settings size={16} />
-                <span className="text-sm font-medium">Edit Activity</span>
+                <Settings size={18} />
+                <span className="text-sm">Manage Activity</span>
             </button>
 
             <AnimatePresence>
@@ -75,102 +75,96 @@ export function EditActivityDialog({ activity, allGear }: EditActivityDialogProp
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsOpen(false)}
-                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                            className="absolute inset-0 bg-neutral-900/40 backdrop-blur-md"
                         />
 
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="relative w-full max-w-md glass-panel p-8 rounded-2xl border border-white/10 shadow-2xl"
+                            className="relative w-full max-w-md bg-white p-8 rounded-[2rem] border border-neutral-100 shadow-2xl shadow-neutral-900/20"
                         >
                             <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-                                        <Settings size={18} />
+                                <h3 className="text-2xl font-black text-foreground tracking-tight flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+                                        <Settings size={28} />
                                     </div>
-                                    Edit Activity
+                                    Settings
                                 </h3>
                                 <button
                                     onClick={() => setIsOpen(false)}
-                                    className="p-2 hover:bg-white/5 rounded-full text-white/40 hover:text-white transition"
+                                    className="p-3 hover:bg-neutral-100 rounded-full text-neutral-300 hover:text-neutral-500 transition-colors"
                                 >
-                                    <X size={20} />
+                                    <X size={24} />
                                 </button>
                             </div>
 
-                            <div className="space-y-6">
+                            <div className="space-y-8">
                                 {/* Name Input */}
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-white/30 uppercase tracking-widest flex items-center gap-2">
-                                        <Type size={12} />
-                                        Activity Name
+                                <div className="space-y-2.5">
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] flex items-center gap-2 ml-1">
+                                        <Type size={14} />
+                                        Activity Identifier
                                     </label>
                                     <input
                                         type="text"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition"
+                                        className="w-full bg-neutral-50 border border-neutral-100 rounded-2xl px-5 py-4 text-foreground font-bold placeholder:text-neutral-300 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all text-sm shadow-inner"
                                         placeholder="Morning Run..."
                                     />
                                 </div>
 
                                 {/* Gear Select */}
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-white/30 uppercase tracking-widest flex items-center gap-2">
-                                        <Footprints size={12} />
-                                        Gear Used
+                                <div className="space-y-2.5">
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] flex items-center gap-2 ml-1">
+                                        <Footprints size={14} />
+                                        Equipment Tracking
                                     </label>
-                                    <div className="relative">
+                                    <div className="relative group">
                                         <select
                                             value={gearId}
                                             onChange={(e) => setGearId(e.target.value)}
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:border-primary/50 transition"
+                                            className="w-full bg-neutral-50 border border-neutral-100 rounded-2xl px-5 py-4 text-foreground font-bold appearance-none focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all text-sm shadow-inner"
                                         >
-                                            <option value="" className="bg-background">No Gear Assigned</option>
+                                            <option value="">No Gear Assigned</option>
                                             {allGear.map((g) => (
-                                                <option key={g.id} value={g.id} className="bg-background">
+                                                <option key={g.id} value={g.id}>
                                                     {g.name} ({g.brand})
                                                 </option>
                                             ))}
                                         </select>
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20">
-                                            <Footprints size={16} />
+                                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-300 group-focus-within:text-primary transition-colors">
+                                            <Footprints size={20} />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between mt-10">
+                            <div className="flex items-center justify-between mt-12 pt-8 border-t border-neutral-100">
                                 <button
                                     onClick={handleDelete}
                                     disabled={isDeleting}
-                                    className="flex items-center gap-2 px-4 py-2 hover:bg-red-500/10 text-red-500/60 hover:text-red-500 rounded-lg transition font-medium text-sm"
+                                    className="flex items-center gap-2.5 px-5 py-3 hover:bg-red-50 text-red-400 hover:text-red-600 rounded-xl transition-all font-black uppercase tracking-widest text-[10px] border border-transparent hover:border-red-100"
                                 >
                                     {isDeleting ? (
                                         <div className="w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
                                     ) : (
                                         <Trash2 size={16} />
                                     )}
-                                    Delete
+                                    Discard
                                 </button>
 
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={() => setIsOpen(false)}
-                                        className="px-6 py-2 text-sm font-medium text-white/40 hover:text-white transition"
-                                    >
-                                        Cancel
-                                    </button>
+                                <div className="flex gap-4">
                                     <button
                                         onClick={handleSave}
                                         disabled={isSaving}
-                                        className="flex items-center gap-2 px-6 py-2 bg-primary text-black rounded-lg font-bold shadow-[0_0_20px_rgba(0,229,255,0.3)] hover:shadow-[0_0_30px_rgba(0,229,255,0.5)] transition text-sm disabled:opacity-50"
+                                        className="flex items-center gap-3 px-8 py-3 bg-primary text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-orange-100 hover:shadow-orange-200 transition-all text-[11px] disabled:opacity-50"
                                     >
                                         {isSaving ? (
-                                            <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                         ) : (
-                                            <Check size={16} />
+                                            <Check size={18} />
                                         )}
                                         Save Changes
                                     </button>

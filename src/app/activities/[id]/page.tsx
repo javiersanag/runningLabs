@@ -2,11 +2,14 @@ import { db } from "@/lib/db";
 import { activities, gear } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { MapPin, Clock, Zap, TrendingUp, Heart, Mountain, Tag } from "lucide-react";
+import { MapPin, Clock, Zap, TrendingUp, Heart, Mountain, Tag, ChevronLeft, Calendar, Share2, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { ActivityChart } from "@/components/charts/ActivityChart";
 import ActivityMap from "@/components/charts/ActivityMap";
 import { EditActivityDialog } from "@/components/activities/EditActivityDialog";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { MetricCard } from "@/components/ui/MetricCard";
 
 export const dynamic = "force-dynamic";
 
@@ -67,7 +70,6 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                 const prevDist = prevS.distance || 0;
                 const prevTime = new Date(prevS.timestamp).getTime();
 
-                // Interpolation ratio: how far between prev and curr is the 1km mark?
                 const ratio = dist === prevDist ? 1 : (targetDist - prevDist) / (dist - prevDist);
                 const timeAtTarget = prevTime + ratio * (time - prevTime);
 
@@ -117,133 +119,157 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
     const totalLoad = Math.round((activity.tss || 0) + (activity.trimp || 0));
 
     return (
-        <>
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <Link href="/activities" className="text-xs text-white/40 hover:text-primary transition">Activities</Link>
-                        <span className="text-white/20">/</span>
-                        <span className="text-xs text-white/60">{activity.name}</span>
+        <div className="max-w-6xl mx-auto">
+            {/* Breadcrumbs & Navigation */}
+            <div className="flex items-center justify-between mb-6">
+                <Link
+                    href="/activities"
+                    className="flex items-center gap-2 text-sm font-bold text-neutral-400 hover:text-primary transition-colors group"
+                >
+                    <div className="w-8 h-8 rounded-full border border-neutral-100 flex items-center justify-center group-hover:bg-primary/5 transition-colors">
+                        <ChevronLeft size={16} />
                     </div>
-                    <h2 className="text-2xl font-bold text-white tracking-tight">{activity.name}</h2>
-                    <p className="text-white/40 text-sm">{new Date(activity.startTime).toLocaleString()}</p>
-                </div>
-
-                <div className="flex items-center gap-4">
-                    {currentGear && (
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg">
-                            <Tag size={14} className="text-white/40" />
-                            <span className="text-sm font-medium text-white/70">{currentGear.name}</span>
-                        </div>
-                    )}
-                    <EditActivityDialog
-                        activity={{
-                            id: activity.id,
-                            name: activity.name,
-                            gearId: activity.gearId
-                        }}
-                        allGear={allGear}
-                    />
+                    Back to Activities
+                </Link>
+                <div className="flex items-center gap-2">
+                    <Button variant="secondary" className="px-3 h-9">
+                        <Share2 size={16} />
+                    </Button>
+                    <Button variant="secondary" className="px-3 h-9">
+                        <MoreHorizontal size={16} />
+                    </Button>
                 </div>
             </div>
 
-            {/* Key Metrics Strip */}
-            <div className="flex items-center gap-3 py-3 mb-1 border-white/5">
-                <div className="flex items-center gap-2">
-                    <MapPin size={14} className="text-white/40" />
-                    <span className="text-white font-bold">{formatDistance(activity.distance)}</span>
-                    <span className="text-white/40 text-xs">km</span>
+            {/* Title Section */}
+            <div className="mb-8">
+                <div className="flex items-start justify-between gap-4 mb-2">
+                    <h1 className="text-4xl font-extrabold text-foreground tracking-tight">{activity.name || "Morning Session"}</h1>
+                    <div className="flex items-center gap-3">
+                        {currentGear && (
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100/50 rounded-lg border border-neutral-200 shadow-sm">
+                                <Tag size={12} className="text-neutral-400" />
+                                <span className="text-xs font-bold text-neutral-600 uppercase tracking-widest">{currentGear.name}</span>
+                            </div>
+                        )}
+                        <EditActivityDialog
+                            activity={{
+                                id: activity.id,
+                                name: activity.name,
+                                gearId: activity.gearId
+                            }}
+                            allGear={allGear}
+                        />
+                    </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Clock size={14} className="text-white/40" />
-                    <span className="text-white font-bold font-mono">{formatDuration(activity.duration)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <TrendingUp size={14} className="text-white/40" />
-                    <span className="text-white font-bold">{formatPace(activity.distance! / activity.duration!)}</span>
-                    <span className="text-white/40 text-xs">/km</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Mountain size={14} className="text-green-400" />
-                    <span className="text-white font-bold">{activity.elevationGain || 0}</span>
-                    <span className="text-white/30 text-xs">m</span>
-                </div>
-            </div>
-
-            {/* Physiological Data - Compact */}
-            <div className="flex items-center gap-8 py-1 mb-4 border-white/5 text-sm">
-                <div className="flex items-center gap-2">
-                    <Heart size={14} className="text-red-400" />
-                    <span className="text-white/40">Avg HR</span>
-                    <span className="text-white font-bold">{activity.averageHr || '--'}</span>
-                    <span className="text-white/30 text-xs">bpm</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Heart size={14} className="text-red-500" />
-                    <span className="text-white/40">Max HR</span>
-                    <span className="text-white font-bold">{activity.maxHr || '--'}</span>
-                    <span className="text-white/30 text-xs">bpm</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Zap size={14} className="text-yellow-400" />
-                    <span className="text-white/40">Avg Power</span>
-                    <span className="text-white font-bold">{activity.averagePower || '--'}</span>
-                    <span className="text-white/30 text-xs">W</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Zap size={14} className="text-primary" />
-                    <span className="text-primary font-bold">{totalLoad}</span>
-                    <span className="text-white/40 text-xs">Load</span>
+                <div className="flex items-center gap-4 text-sm font-bold text-neutral-400">
+                    <div className="flex items-center gap-1.5 uppercase tracking-widest text-[10px]">
+                        <Calendar size={12} />
+                        {new Date(activity.startTime).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    </div>
+                    <div className="flex items-center gap-1.5 uppercase tracking-widest text-[10px]">
+                        <Clock size={12} />
+                        {new Date(activity.startTime).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                    </div>
                 </div>
             </div>
 
-            {/* Splits & Map */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <div className="col-span-1 border border-white/5 rounded-xl overflow-hidden bg-white/[0.02] flex flex-col h-[400px]">
-                    <div className="p-3 border-b border-white/5 bg-white/[0.02]">
-                        <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">
+            {/* Performance Metric Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+                <MetricCard
+                    label="Distance"
+                    value={formatDistance(activity.distance)}
+                    unit="KM"
+                    icon="📍"
+                    primary
+                />
+                <MetricCard
+                    label="Pace"
+                    value={formatPace(activity.distance! / activity.duration!)}
+                    unit="/KM"
+                    icon="⏱️"
+                />
+                <MetricCard
+                    label="Duration"
+                    value={formatDuration(activity.duration)}
+                    icon="🕒"
+                />
+                <MetricCard
+                    label="Elevation"
+                    value={activity.elevationGain || 0}
+                    unit="M"
+                    icon="🏔️"
+                    className="text-emerald-600"
+                />
+                <MetricCard
+                    label="Load"
+                    value={totalLoad}
+                    unit="TSS"
+                    icon="⚡"
+                    className="text-primary"
+                />
+                <MetricCard
+                    label="Avg HR"
+                    value={activity.averageHr || '--'}
+                    unit="BPM"
+                    icon="❤️"
+                    className="text-rose-600"
+                />
+            </div>
+
+            {/* Map and Splits Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <Card className="lg:col-span-2 overflow-hidden p-0 h-[450px]">
+                    <div className="w-full h-full relative">
+                        <ActivityMap samples={samples} />
+                    </div>
+                </Card>
+                <Card className="flex flex-col h-[450px] p-0">
+                    <div className="p-4 border-b border-neutral-100 flex items-center justify-between">
+                        <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] flex items-center gap-2">
                             <TrendingUp size={12} className="text-primary" />
-                            Splits (1km)
+                            Split Analysis
                         </h3>
                     </div>
-                    <div className="flex-1 overflow-y-auto custom-scrollbar">
-                        <table className="w-full text-[11px]">
-                            <thead className="sticky top-0 bg-[#0a0a0c] z-10">
-                                <tr className="text-white/30 border-b border-white/5">
-                                    <th className="py-2 px-3 text-left">KM</th>
-                                    <th className="py-2 px-2 text-right">Pace</th>
-                                    <th className="py-2 px-2 text-right">Elev</th>
-                                    <th className="py-2 px-2 text-right">Avg HR</th>
-                                    <th className="py-2 px-2 text-right pr-3">Max HR</th>
+                    <div className="flex-1 overflow-y-auto">
+                        <table className="w-full text-[11px] border-collapse">
+                            <thead className="sticky top-0 bg-white z-10 border-b border-neutral-100">
+                                <tr className="text-neutral-400 font-bold uppercase tracking-widest">
+                                    <th className="py-3 px-4 text-left">KM</th>
+                                    <th className="py-3 px-2 text-right">Pace</th>
+                                    <th className="py-3 px-2 text-right">Elev</th>
+                                    <th className="py-3 px-4 text-right">HR</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/[0.03]">
+                            <tbody className="divide-y divide-neutral-50">
                                 {splits.map((s, i) => (
-                                    <tr key={i} className="hover:bg-white/[0.03] transition-colors">
-                                        <td className="py-2.5 px-3 text-white/50">{s.km}</td>
-                                        <td className="py-2.5 px-2 text-right text-white font-mono">{formatPaceSecs(s.pace)}</td>
-                                        <td className="py-2.5 px-2 text-right text-green-400">{s.elev}m</td>
-                                        <td className="py-2.5 px-2 text-right text-white">{s.avgHr || '--'}</td>
-                                        <td className="py-2.5 px-2 text-right text-white/60 pr-3">{s.maxHr || '--'}</td>
+                                    <tr key={i} className="hover:bg-neutral-50 transition-colors group">
+                                        <td className="py-3 px-4 font-bold text-neutral-400">{s.km}</td>
+                                        <td className="py-3 px-2 text-right text-foreground font-mono font-bold group-hover:text-primary transition-colors">{formatPaceSecs(s.pace)}</td>
+                                        <td className="py-3 px-2 text-right text-neutral-500 font-medium">{s.elev}m</td>
+                                        <td className="py-3 px-4 text-right text-foreground font-bold">{s.avgHr || '--'}</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
-                </div>
-                <div className="lg:col-span-2 h-[400px] rounded-xl overflow-hidden border border-white/5">
-                    <ActivityMap samples={samples} />
-                </div>
+                </Card>
             </div>
 
-            {/* Chart */}
-            <div className="mb-6">
-                <h3 className="text-sm font-bold text-white/60 mb-3">Pace, HR & Elevation</h3>
-                <div className="h-[300px] bg-white/[0.02] rounded-xl p-4">
+            {/* Analysis Chart */}
+            <Card className="mb-8 overflow-hidden flex flex-col items-stretch">
+                <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em]">Detailed Session Analytics</h3>
+                    <div className="flex items-center gap-4 text-[10px] font-bold">
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary" /> PACE</span>
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-rose-500" /> HR</span>
+                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500" /> ELEV</span>
+                    </div>
+                </div>
+                <div className="h-[350px]">
                     <ActivityChart samples={samples} />
                 </div>
-            </div>
-        </>
+            </Card>
+        </div>
     );
 }

@@ -2,8 +2,10 @@ import { db } from "@/lib/db";
 import { gear, activities } from "@/lib/schema";
 import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { Footprints, Bike, Plus } from "lucide-react";
+import { Footprints, Bike, Plus, Trash2, ChevronRight } from "lucide-react";
 import { randomUUID } from "crypto";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 export const dynamic = "force-dynamic";
 
@@ -46,74 +48,87 @@ export default async function GearPage() {
     }
 
     return (
-        <>
-            <div className="flex items-center justify-between mb-6">
+        <div className="max-w-5xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h2 className="text-2xl font-bold text-white tracking-tight">Gear Tracking</h2>
-                    <p className="text-white/40 text-sm">Manage your equipment and monitor usage</p>
+                    <h2 className="text-3xl font-bold text-foreground tracking-tight">Gear Tracking</h2>
+                    <p className="text-sm text-neutral-500 font-medium">Monitor equipment mileage and performance stats.</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-4">
                     {gearStats.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-white/10 p-12 text-center">
-                            <Footprints className="mx-auto text-white/10 mb-4" size={48} />
-                            <p className="text-white/30">No gear added yet.</p>
+                        <div className="rounded-2xl border-2 border-dashed border-neutral-100 p-16 text-center bg-neutral-50/50">
+                            <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4 text-neutral-400">
+                                <Footprints size={32} />
+                            </div>
+                            <h3 className="text-xl font-bold text-foreground mb-2">No Gear Tracked</h3>
+                            <p className="text-neutral-500 max-w-xs mx-auto mb-0 font-medium">Add your first pair of shoes or bike to start tracking metrics.</p>
                         </div>
                     ) : (
-                        <div className="space-y-2">
+                        <div className="grid grid-cols-1 gap-4">
                             {gearStats.map((item) => (
-                                <div key={item.id} className="flex items-center justify-between py-3 px-4 bg-white/[0.02] hover:bg-white/[0.04] rounded-lg transition">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-primary">
-                                            {item.type === "Ride" ? <Bike size={16} /> : <Footprints size={16} />}
+                                <Card key={item.id} className="group hover:border-primary/20 transition-all p-5">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-2xl bg-neutral-50 flex items-center justify-center text-neutral-400 group-hover:text-primary group-hover:bg-primary/5 transition-all">
+                                                {item.type === "Ride" ? <Bike size={24} /> : <Footprints size={24} />}
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-foreground text-lg mb-0.5">{item.name}</h4>
+                                                <p className="text-xs text-neutral-400 font-bold uppercase tracking-widest">{item.brand} {item.model}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 className="font-bold text-white text-sm">{item.name}</h4>
-                                            <p className="text-xs text-white/40">{item.brand} {item.model}</p>
+                                        <div className="flex items-center gap-8">
+                                            <div className="text-right">
+                                                <span className="block text-2xl font-black text-foreground">{(item.realDistance / 1000).toFixed(0)}</span>
+                                                <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-[0.2em]">KILOMETERS</span>
+                                            </div>
+                                            <ChevronRight size={20} className="text-neutral-200 group-hover:text-primary transition-colors" />
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-white font-bold">{(item.realDistance / 1000).toFixed(1)} km</p>
-                                    </div>
-                                </div>
+                                </Card>
                             ))}
                         </div>
                     )}
                 </div>
 
-                <div className="bg-white/[0.02] rounded-xl p-5 h-fit sticky top-8">
-                    <h3 className="font-bold text-white mb-4 text-sm flex items-center gap-2">
-                        <Plus size={14} className="text-primary" />
-                        Add New Gear
-                    </h3>
-                    <form action={addGear} className="space-y-3">
-                        <div>
-                            <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Type</label>
-                            <select name="type" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-white text-sm outline-none mt-1">
-                                <option value="Run" className="bg-background">Running Shoes</option>
-                                <option value="Ride" className="bg-background">Bike</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Name</label>
-                            <input name="name" required className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-white text-sm outline-none mt-1" />
-                        </div>
-                        <div>
-                            <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Brand</label>
-                            <input name="brand" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-white text-sm outline-none mt-1" />
-                        </div>
-                        <div>
-                            <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Model</label>
-                            <input name="model" className="w-full bg-white/5 border border-white/10 rounded-lg p-2.5 text-white text-sm outline-none mt-1" />
-                        </div>
-                        <button type="submit" className="w-full py-2.5 bg-primary text-black font-bold rounded-lg text-sm shadow-[0_0_20px_rgba(0,229,255,0.4)] transition mt-2">
-                            Add Gear
-                        </button>
-                    </form>
+                <div>
+                    <Card className="sticky top-8">
+                        <h3 className="font-bold text-foreground mb-6 text-sm flex items-center gap-2 uppercase tracking-widest">
+                            <Plus size={14} className="text-primary" />
+                            Add Equipment
+                        </h3>
+                        <form action={addGear} className="space-y-5">
+                            <div>
+                                <label className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold mb-1.5 block">Category</label>
+                                <select name="type" className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-3 text-foreground text-sm outline-none focus:border-primary/30 transition-colors appearance-none">
+                                    <option value="Run">Running Shoes</option>
+                                    <option value="Ride">Bike / Cycling</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold mb-1.5 block">Nickame</label>
+                                <input name="name" placeholder="e.g. My Racing Flats" required className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-3 text-foreground text-sm outline-none focus:border-primary/30 transition-colors" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold mb-1.5 block">Brand</label>
+                                    <input name="brand" placeholder="Nike" className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-3 text-foreground text-sm outline-none focus:border-primary/30 transition-colors" />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold mb-1.5 block">Model</label>
+                                    <input name="model" placeholder="Vaporfly" className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-3 text-foreground text-sm outline-none focus:border-primary/30 transition-colors" />
+                                </div>
+                            </div>
+                            <Button type="submit" className="w-full py-4 mt-2">
+                                Register Gear
+                            </Button>
+                        </form>
+                    </Card>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
