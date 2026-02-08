@@ -109,8 +109,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
     <>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-foreground tracking-tight">Welcome back, {athlete?.name?.split(' ')[0] || "Athlete"}</h2>
-          <p className="text-sm text-neutral-500 font-medium">Here's your performance overview for the last {daysToShow} days.</p>
+          <h2 className="text-2xl font-bold text-foreground tracking-tight">Welcome back, {athlete?.name?.split(' ')[0] || "Athlete"}</h2>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1 bg-neutral-100 rounded-lg p-1">
@@ -135,32 +134,33 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
         </div>
       </div>
 
-      {/* Primary Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-        {performanceStats.map((stat, i) => (
-          <MetricCard
-            key={i}
-            label={stat.label}
-            value={stat.value}
-            unit={stat.unit}
-            icon={stat.icon as any}
-            primary={i === 0}
-          />
-        ))}
-      </div>
-
-      {/* Training Status Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-        {trainingStats.map((stat, i) => (
-          <MetricCard
-            key={i}
-            label={stat.label}
-            value={stat.value}
-            unit={stat.sublabel}
-            trend={stat.tendency}
-            className={stat.color}
-          />
-        ))}
+      {/* Unified Compact Metrics Bar */}
+      <div className="mb-8 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex gap-4 min-w-max">
+          {performanceStats.map((stat, i) => (
+            <MetricCard
+              key={`perf-${i}`}
+              label={stat.label}
+              value={stat.value}
+              unit={stat.unit}
+              icon={stat.icon as any}
+              primary={i === 0}
+              compact
+            />
+          ))}
+          <div className="w-[1px] bg-neutral-100 mx-2 self-stretch" />
+          {trainingStats.map((stat, i) => (
+            <MetricCard
+              key={`train-${i}`}
+              label={stat.label}
+              value={stat.value}
+              unit={stat.sublabel}
+              trend={stat.tendency}
+              className={stat.color}
+              compact
+            />
+          ))}
+        </div>
       </div>
 
       {/* Charts Row */}
