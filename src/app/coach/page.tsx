@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Send, Bot, User, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,13 +11,40 @@ interface Message {
     actions?: string[];
 }
 
-export default function CoachPage() {
+function CoachChat() {
+    const searchParams = useSearchParams();
+    const initialMessageParam = searchParams.get("initial_message");
+    const actionsParam = searchParams.get("actions");
+
     const [input, setInput] = useState("");
-    const [messages, setMessages] = useState<Message[]>([
-        { role: "assistant", content: "Hello! I'm your AI Performance Coach. I have access to your daily metrics. How are you feeling today?" }
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Initialize messages
+    useEffect(() => {
+        if (messages.length === 0) {
+            if (initialMessageParam) {
+                let actions = [];
+                try {
+                    if (actionsParam) actions = JSON.parse(actionsParam);
+                } catch (e) {
+                    console.error("Failed to parse actions", e);
+                }
+                setMessages([
+                    {
+                        role: "assistant",
+                        content: initialMessageParam,
+                        actions: actions.length > 0 ? actions : undefined
+                    }
+                ]);
+            } else {
+                setMessages([
+                    { role: "assistant", content: "Hello! I'm your AI Performance Coach. I have access to your daily metrics. How are you feeling today?" }
+                ]);
+            }
+        }
+    }, [initialMessageParam, actionsParam, messages.length]);
 
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -148,5 +176,17 @@ export default function CoachPage() {
                 </div>
             </div >
         </>
+    );
+}
+
+export default function CoachPage() {
+    return (
+        <Suspense fallback={
+            <div className="h-[calc(100vh-8rem)] flex items-center justify-center bg-white rounded-3xl border border-neutral-100 shadow-xl">
+                <Bot size={48} className="text-primary animate-pulse" />
+            </div>
+        }>
+            <CoachChat />
+        </Suspense>
     );
 }

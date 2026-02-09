@@ -225,7 +225,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
                         {action}
                       </div>
                     ))}
-                    <Link href="/coach">
+                    <Link href={`/coach?initial_message=${encodeURIComponent(insight.message)}&actions=${encodeURIComponent(JSON.stringify(insight.actionItems || []))}`}>
                       <Button variant="ghost" className="text-xs ml-2">
                         Discuss with Coach <Bot size={14} className="ml-1" />
                       </Button>
