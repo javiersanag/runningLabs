@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Activity, Bike, Calendar, ChevronRight, Flame, Heart, TrendingUp, Trophy, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function LeftPanel({ athlete, stats, dailyMetric }: { athlete: any, stats: any, dailyMetric: any }) {
+export function LeftPanel({ athlete, stats, dailyMetric, streakDays, streakLabels }: { athlete: any, stats: any, dailyMetric: any, streakDays: boolean[], streakLabels: string[] }) {
     const ref = useRef<HTMLDivElement>(null);
     const [stickyTop, setStickyTop] = useState(96); // Default top-24 (96px)
 
@@ -31,8 +31,9 @@ export function LeftPanel({ athlete, stats, dailyMetric }: { athlete: any, stats
 
     const initials = athlete?.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || "RL";
 
-    // Mock streak data for visualization
-    const streakDays = [true, true, false, true, true, true, false]; // Last 7 days
+    // Use passed streak data instead of mock
+    const displayStreak = streakDays || [false, false, false, false, false, false, false];
+    const displayLabels = streakLabels || ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
     return (
         <div
@@ -46,7 +47,7 @@ export function LeftPanel({ athlete, stats, dailyMetric }: { athlete: any, stats
         >
             {/* Identity Card */}
             <Card className="p-0 overflow-hidden">
-                <div className="h-20 bg-gradient-to-r from-primary/10 to-blue-600/10" />
+                <div className="h-10 bg-gradient-to-r from-primary/10 to-blue-600/10" />
                 <div className="px-6 pb-6 -mt-10 relative">
                     <div className="w-20 h-20 rounded-full bg-white p-1 shadow-md mb-3">
                         <div className="w-full h-full rounded-full bg-primary flex items-center justify-center text-white font-black text-2xl">
@@ -54,15 +55,13 @@ export function LeftPanel({ athlete, stats, dailyMetric }: { athlete: any, stats
                         </div>
                     </div>
                     <h2 className="text-xl font-black text-foreground">{athlete?.name}</h2>
-                    <p className="text-xs text-neutral-400 font-bold uppercase tracking-widest mb-4">Endurance Athlete</p>
-
                     <div className="flex gap-4 pt-4 border-t border-neutral-100">
                         <div>
-                            <p className="text-2xl font-black text-foreground">{stats.totalActivities || 0}</p>
+                            <p className="text-xl font-black text-foreground">{stats.totalActivities || 0}</p>
                             <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Activities</p>
                         </div>
                         <div>
-                            <p className="text-2xl font-black text-foreground">{stats.thisMonth || 0}</p>
+                            <p className="text-xl font-black text-foreground">{stats.thisMonth || 0}</p>
                             <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Last 30d</p>
                         </div>
                     </div>
@@ -76,17 +75,16 @@ export function LeftPanel({ athlete, stats, dailyMetric }: { athlete: any, stats
                         <Flame size={14} className="text-primary" />
                         Activity Streak
                     </h3>
-                    <span className="text-xs font-bold text-foreground">4 Weeks</span>
                 </div>
                 <div className="flex justify-between gap-1">
-                    {streakDays.map((active, i) => (
+                    {displayStreak.map((active, i) => (
                         <div key={i} className="flex flex-col items-center gap-1.5 flex-1">
                             <div className={cn(
                                 "w-full aspect-square rounded-md transition-all",
                                 active ? "bg-primary" : "bg-neutral-100"
                             )} />
                             <span className="text-[8px] font-bold text-neutral-300 uppercase">
-                                {['S', 'M', 'T', 'W', 'T', 'F', 'S'][i]}
+                                {displayLabels[i]}
                             </span>
                         </div>
                     ))}
@@ -107,7 +105,7 @@ export function LeftPanel({ athlete, stats, dailyMetric }: { athlete: any, stats
                             <span className="font-bold text-primary">{Math.round(dailyMetric?.ctl || 0)}</span>
                         </div>
                         <div className="h-1.5 w-full bg-neutral-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary" style={{ width: '65%' }} />
+                            <div className="h-full bg-primary" style={{ width: `${Math.min(100, ((dailyMetric?.ctl || 0) / 100) * 100)}%` }} />
                         </div>
                     </div>
                     <div>
@@ -116,7 +114,7 @@ export function LeftPanel({ athlete, stats, dailyMetric }: { athlete: any, stats
                             <span className="font-bold text-purple-500">{Math.round(dailyMetric?.atl || 0)}</span>
                         </div>
                         <div className="h-1.5 w-full bg-neutral-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-purple-500" style={{ width: '40%' }} />
+                            <div className="h-full bg-purple-500" style={{ width: `${Math.min(100, ((dailyMetric?.atl || 0) / 150) * 100)}%` }} />
                         </div>
                     </div>
                     <div>
@@ -127,25 +125,39 @@ export function LeftPanel({ athlete, stats, dailyMetric }: { athlete: any, stats
                                 (dailyMetric?.tsb || 0) >= 0 ? "text-success" : "text-warning"
                             )}>{Math.round(dailyMetric?.tsb || 0)}</span>
                         </div>
-                        <div className="flex items-center gap-1 mt-1">
-                            <div className="h-1.5 w-1/2 bg-neutral-100 rounded-l-full overflow-hidden flex justify-end">
-                                {/* Negative bars logic would go here */}
-                            </div>
-                            <div className="h-2 w-[1px] bg-neutral-200" />
-                            <div className="h-1.5 w-1/2 bg-neutral-100 rounded-r-full overflow-hidden">
-                                {/* Positive bars logic */}
-                            </div>
+                        <div className="flex items-center gap-0.5 mt-1 h-1.5 w-full bg-neutral-100 rounded-full overflow-hidden relative">
+                            {/* Center mark */}
+                            <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-neutral-300 z-10" />
+
+                            {/* TSB Bar */}
+                            <div
+                                className={cn(
+                                    "absolute h-full",
+                                    (dailyMetric?.tsb || 0) >= 0 ? "bg-success" : "bg-warning"
+                                )}
+                                style={{
+                                    left: (dailyMetric?.tsb || 0) >= 0 ? '50%' : `${50 + Math.max(-50, (dailyMetric?.tsb || 0))}%`,
+                                    width: `${Math.min(50, Math.abs(dailyMetric?.tsb || 0))}%`
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-neutral-100">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs">
-                            0.9
+                        <div className={cn(
+                            "w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xs",
+                            (dailyMetric?.acwr || 1) >= 0.8 && (dailyMetric?.acwr || 1) <= 1.3
+                                ? "bg-green-100 text-green-600"
+                                : "bg-amber-100 text-amber-600"
+                        )}>
+                            {(dailyMetric?.acwr || 0).toFixed(2)}
                         </div>
                         <div>
-                            <p className="text-xs font-bold text-foreground">Optimal Load</p>
+                            <p className="text-xs font-bold text-foreground">
+                                {(dailyMetric?.acwr || 1) >= 0.8 && (dailyMetric?.acwr || 1) <= 1.3 ? "Optimal Load" : "Risk of Injury"}
+                            </p>
                             <p className="text-[10px] text-neutral-400 font-bold uppercase">ACWR Ratio</p>
                         </div>
                     </div>

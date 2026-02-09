@@ -15,8 +15,8 @@ interface CardProps {
 export function Card({ children, className, hoverable = false, padding = "normal" }: CardProps) {
     const paddingMap: Record<string, string> = {
         none: "p-0",
-        compact: "p-1",
-        normal: "p-6",
+        compact: "p-2",
+        normal: "p-3",
     };
 
     const paddingClass = paddingMap[padding] || padding;

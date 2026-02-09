@@ -26,7 +26,6 @@ export default async function FeedPage() {
     });
 
     // 4. Calculate Stats (Quick Check)
-    // In a real app, this might be a separate fast query or pre-calculated
     const stats = {
         totalActivities: await db.$count(activities, eq(activities.athleteId, "default_athlete")),
         thisMonth: activityList.filter(a => {
@@ -36,11 +35,34 @@ export default async function FeedPage() {
         }).length
     };
 
+    // 5. Calculate Streak (Last 7 Days)
+    const now = new Date();
+    const streakData = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(now);
+        // Important: Use i-6 so today (i=6) has offset 0, and 6 days ago (i=0) has offset -6
+        d.setDate(d.getDate() - (6 - i));
+        const dStr = d.toISOString().split('T')[0];
+        const dayLabel = d.toLocaleDateString('en-US', { weekday: 'narrow' }); // 'M', 'T', 'W', etc.
+        return {
+            active: activityList.some(a => a.startTime.startsWith(dStr)),
+            label: dayLabel
+        };
+    });
+
+    const streakDays = streakData.map(d => d.active);
+    const streakLabels = streakData.map(d => d.label);
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 relative">
             {/* Left Panel - Sticky behavior handled internally */}
             <div className="hidden md:block md:col-span-4 lg:col-span-3">
-                <LeftPanel athlete={athlete} stats={stats} dailyMetric={latestMetric} />
+                <LeftPanel
+                    athlete={athlete}
+                    stats={stats}
+                    dailyMetric={latestMetric}
+                    streakDays={streakDays}
+                    streakLabels={streakLabels}
+                />
             </div>
 
             {/* Main Feed */}

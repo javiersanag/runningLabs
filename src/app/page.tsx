@@ -214,7 +214,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
                     </form>
                   </div>
 
-                  <p className="text-neutral-600 text-sm mb-6 leading-relaxed max-w-3xl font-medium">
+                  <p className="text-neutral-600 text-sm mb-6 leading-relaxed max-w-4xl font-medium">
                     {insight.message}
                   </p>
 

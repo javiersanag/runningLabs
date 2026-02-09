@@ -8,8 +8,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 
 const items = [
-    { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Feed", href: "/feed", icon: Layers },
+    { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Activities", href: "/activities", icon: Activity },
     { label: "Gear", href: "/gear", icon: Footprints },
     { label: "Coach", href: "/coach", icon: Bot },
