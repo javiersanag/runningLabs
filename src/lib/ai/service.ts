@@ -58,6 +58,7 @@ Only return the JSON object. Do not wrap it in markdown code blocks.
         const response = result.response;
         const text = response.text();
         const jsonString = text.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        return JSON.parse(jsonString);
     } catch (error) {
         console.error("Gemini API Error:", error);
         return {
