@@ -37,18 +37,18 @@ export default async function FeedPage() {
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 relative items-start">
-            {/* Left Panel - Sticky */}
-            <div className="hidden md:block md:col-span-4 lg:col-span-3 sticky top-24">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 relative">
+            {/* Left Panel - Sticky behavior handled internally */}
+            <div className="hidden md:block md:col-span-4 lg:col-span-3">
                 <LeftPanel athlete={athlete} stats={stats} dailyMetric={latestMetric} />
             </div>
 
             {/* Main Feed */}
             <div className="md:col-span-8 lg:col-span-6">
-                <h2 className="text-xl font-black text-foreground mb-6 flex items-center gap-2">
-                    Running Feed
+                <h2 className="text-l font-black text-foreground mb-6 flex items-center gap-2">
+                    Activity Feed
                     <span className="text-xs bg-neutral-100 text-neutral-500 px-2 py-1 rounded-full font-bold">
-                        {activityList.length} New
+                        {activityList.length} Activities
                     </span>
                 </h2>
 

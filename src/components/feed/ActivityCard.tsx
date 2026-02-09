@@ -104,17 +104,17 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                             variant="primary" // Changed to primary for visibility in this demo
                             className="text-xs h-8 px-3 bg-neutral-100 text-neutral-600 hover:bg-neutral-200 shadow-none border border-neutral-200"
                             onClick={handleGenerateInsight}
-                            disabled={isPending}
+                        // disabled={isPending}
                         >
-                            <Sparkles size={12} className={`mr-1.5 ${isPending ? 'animate-spin' : ''}`} />
-                            {isPending ? 'Analyzing...' : 'Generate Analysis'}
+                            {/* <Sparkles size={8} className={`mr-1.5 ${isPending ? 'animate-spin' : ''}`} /> */}
+                            {isPending ? 'Analyzing...' : 'AI Analysis'}
                         </Button>
                     </div>
                 )}
             </div>
 
             {/* Footer Actions */}
-            <div className="px-4 py-3 bg-neutral-50/50 border-t border-neutral-100 flex items-center justify-between text-neutral-400">
+            {/* <div className="px-4 py-3 bg-neutral-50/50 border-t border-neutral-100 flex items-center justify-between text-neutral-400">
                 <div className="flex gap-4">
                     <button className="flex items-center gap-1.5 text-xs font-bold hover:text-primary transition-colors">
                         <Heart size={14} /> Like
@@ -127,6 +127,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                     View Details
                 </Link>
             </div>
+            */}
         </Card>
     );
 }

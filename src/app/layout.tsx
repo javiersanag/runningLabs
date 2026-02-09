@@ -16,7 +16,7 @@ import { db } from "@/lib/db";
 import { Shell } from "@/components/layout/Shell";
 
 export const metadata: Metadata = {
-  title: "RunningLabs",
+  title: "Khronos",
   description: "Athletic Intelligence Platform",
 };
 

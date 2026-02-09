@@ -22,7 +22,7 @@ export function Sidebar({ athlete }: { athlete: any }) {
             <div className="mb-8 px-4 py-2">
                 <Link href="/">
                     <h1 className="text-2xl font-bold text-primary tracking-tight">
-                        RunningLabs
+                        Khronos
                     </h1>
                 </Link>
                 <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-[0.2em] mt-1">Performance Beta</p>

@@ -26,11 +26,11 @@ export function Navbar({ athlete }: { athlete: any }) {
             <div className="flex items-center gap-4">
                 <Link href="/" className="flex items-center gap-2">
                     <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">
-                        RunningLabs
+                        Khronos
                     </h1>
                 </Link>
                 <div className="hidden md:block h-6 w-[1px] bg-neutral-200" />
-                <p className="hidden md:block text-[10px] text-neutral-400 font-bold uppercase tracking-[0.2em]">Performance Beta</p>
+                <p className="hidden md:block text-[10px] text-neutral-400 font-bold uppercase tracking-[0.2em]">Alpha</p>
             </div>
 
             {/* Desktop Navigation */}

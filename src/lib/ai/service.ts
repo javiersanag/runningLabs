@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Updated model name to a likely valid one, or keep preview if sure
+const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" }); // Updated model name to a likely valid one, or keep preview if sure
 
 /**
  * AI Coach Service
@@ -58,7 +58,6 @@ Only return the JSON object. Do not wrap it in markdown code blocks.
         const response = result.response;
         const text = response.text();
         const jsonString = text.replace(/^```json\s*/, "").replace(/\s*```$/, "");
-        return JSON.parse(jsonString);
     } catch (error) {
         console.error("Gemini API Error:", error);
         return {
@@ -98,6 +97,7 @@ Only return JSON.
         const response = result.response;
         const text = response.text();
         const jsonString = text.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        console.log(jsonString);
         return JSON.parse(jsonString);
     } catch (error) {
         console.error("Gemini Insight API Error:", error);
@@ -110,7 +110,7 @@ Only return JSON.
 
 export async function generateActivityOneLiner(context: string): Promise<string> {
     const prompt = `
-        Analyze this activity in ONE short, punchy sentence (max 15 words). 
+        Analyze this activity in two short, punchy sentences (max 30 words each). 
         Focus on the effort, intensity, or a specific highlight. 
         Be encouraging but analytical. 
         Example: "Strong aerobic base building with consistent heart rate control."

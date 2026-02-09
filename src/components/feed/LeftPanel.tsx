@@ -1,18 +1,49 @@
 "use client";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Card } from "@/components/ui/Card";
-import { Link } from "@/lib/utils"; // Using lucide icons mostly
 import { Activity, Bike, Calendar, ChevronRight, Flame, Heart, TrendingUp, Trophy, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function LeftPanel({ athlete, stats, dailyMetric }: { athlete: any, stats: any, dailyMetric: any }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const [stickyTop, setStickyTop] = useState(96); // Default top-24 (96px)
+
+    useEffect(() => {
+        const updateStickyPos = () => {
+            if (!ref.current) return;
+            const height = ref.current.scrollHeight;
+            const vh = window.innerHeight;
+
+            // If the panel is taller than the viewport, we stick to the bottom
+            // Otherwise, we stick to the top with a margin
+            if (height > vh - 120) { // accounting for some margin
+                setStickyTop(vh - height - 32);
+            } else {
+                setStickyTop(96);
+            }
+        };
+
+        updateStickyPos();
+        window.addEventListener("resize", updateStickyPos);
+        return () => window.removeEventListener("resize", updateStickyPos);
+    }, [athlete, stats, dailyMetric]);
+
     const initials = athlete?.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || "RL";
 
     // Mock streak data for visualization
     const streakDays = [true, true, false, true, true, true, false]; // Last 7 days
 
     return (
-        <div className="space-y-6">
+        <div
+            ref={ref}
+            className="space-y-6 transition-all duration-300"
+            style={{
+                position: 'sticky',
+                top: `${stickyTop}px`,
+                alignSelf: 'start'
+            }}
+        >
             {/* Identity Card */}
             <Card className="p-0 overflow-hidden">
                 <div className="h-20 bg-gradient-to-r from-primary/10 to-blue-600/10" />
@@ -135,7 +166,7 @@ export function LeftPanel({ athlete, stats, dailyMetric }: { athlete: any, stats
             </Card>
 
             <p className="text-center text-[10px] text-neutral-300 font-bold uppercase tracking-widest">
-                RunningLabs v0.9 Beta
+                Khronos v0.9 Beta
             </p>
         </div>
     );

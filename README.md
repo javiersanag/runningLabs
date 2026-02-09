@@ -1,8 +1,8 @@
-# 🏃‍♂️ RunningLabs
+# 🏃‍♂️ Khronos
 
 ### Performance Athletics Analytics & Training Intelligence
 
-**RunningLabs** is a state-of-the-art performance tracking ecosystem designed for endurance athletes. It transforms raw activity data from FIT and CSV files into actionable training insights using advanced physiological modeling (CTL, ATL, TSB) and workload analysis (ACWR).
+**Khronos** is a state-of-the-art performance tracking ecosystem designed for endurance athletes. It transforms raw activity data from FIT and CSV files into actionable training insights using advanced physiological modeling (CTL, ATL, TSB) and workload analysis (ACWR).
 
 ---
 
@@ -68,7 +68,7 @@ Open [http://localhost:3000](http://localhost:3000) to view your dashboard.
 
 ## ✨ Design Philosophy
 
-RunningLabs follows the **Antigravity Premium** design standard:
+Khronos follows the **Antigravity Premium** design standard:
 - **Glassmorphism**: Translucent panels with background blur for depth.
 - **Micro-interactions**: Subtle Framer Motion transitions for every user action.
 - **Data-First**: Clean, high-contrast typography ensuring performance metrics remain the focus.
