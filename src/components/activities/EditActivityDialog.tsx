@@ -33,7 +33,8 @@ export function EditActivityDialog({ activity, allGear }: EditActivityDialogProp
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            await updateActivity(activity.id, {
+            await updateActivity({
+                id: activity.id,
                 name,
                 gearId: gearId === "" ? null : gearId
             });

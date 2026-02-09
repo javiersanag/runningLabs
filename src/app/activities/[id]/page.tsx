@@ -131,14 +131,14 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                     </div>
                     Back to Activities
                 </Link>
-                <div className="flex items-center gap-2">
+                {/*   <div className="flex items-center gap-2">
                     <Button variant="secondary" className="px-3 h-9">
                         <Share2 size={16} />
                     </Button>
                     <Button variant="secondary" className="px-3 h-9">
                         <MoreHorizontal size={16} />
                     </Button>
-                </div>
+                </div> */}
             </div>
 
             {/* Title Section */}
