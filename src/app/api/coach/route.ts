@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { askCoach } from "@/lib/ai/service";
 import { db } from "@/lib/db";
 import { dailyMetrics, activities } from "@/lib/schema";
@@ -16,9 +17,9 @@ export async function POST(req: Request) {
         });
 
         const recentActs = await db.query.activities.findMany({
-             where: (t, { eq }) => eq(t.athleteId, "default_athlete"),
-             orderBy: [desc(activities.startTime)],
-             limit: 3
+            where: (t, { eq }) => eq(t.athleteId, "default_athlete"),
+            orderBy: [desc(activities.startTime)],
+            limit: 3
         });
 
         const context = {
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json(response);
     } catch (e: unknown) {
-        console.error("Error in coach API:", e);
+        logger.error("Error in coach API", e);
         return NextResponse.json({ message: "Error processing request" }, { status: 500 });
     }
 }

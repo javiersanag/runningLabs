@@ -7,6 +7,7 @@ import { FitnessChart } from "@/components/charts/FitnessChart";
 import { IntensityChart } from "@/components/charts/IntensityChart";
 import { refreshAiInsightAction } from "@/app/actions/activities";
 import { MetricCard } from "@/components/ui/MetricCard";
+import { logger } from "@/lib/logger";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
@@ -35,7 +36,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
     today = chartData.length > 0 ? chartData[chartData.length - 1] : null;
     periodHistory = chartData.slice(-daysToShow);
   } catch (e) {
-    console.error("Failed to fetch metrics", e);
+    logger.error("Failed to fetch metrics", e);
   }
 
   // Calculate performance data for the selected period

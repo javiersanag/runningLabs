@@ -1,4 +1,5 @@
 import { db } from "./db";
+import { logger } from "@/lib/logger";
 import { activities, dailyMetrics, athletes } from "./schema";
 import { calculateNextCTL, calculateNextATL } from "./metrics";
 import { eq, gte, asc, desc } from "drizzle-orm";
@@ -83,7 +84,7 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
 
         // Load is either TSS (Power) or TRIMP (HR) fallback. 
         // We shouldn't add them as it doubles the daily stress.
-        const dailyLoad = data.load; 
+        const dailyLoad = data.load;
 
         // Calculate new metrics
         currentCtl = calculateNextCTL(currentCtl, dailyLoad);
@@ -163,7 +164,7 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
             };
 
             const insight = await generateTrainingInsight(context);
-            
+
             await db.update(athletes)
                 .set({
                     lastAiInsight: JSON.stringify(insight),
@@ -172,6 +173,6 @@ export async function recalculateMetricsChain(startDateStr: string, athleteId: s
                 .where(eq(athletes.id, athleteId));
         }
     } catch (aiError) {
-        console.error("Failed to generate AI insight:", aiError);
+        logger.error("Failed to generate AI insight", aiError);
     }
 }

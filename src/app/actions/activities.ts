@@ -1,5 +1,7 @@
 "use server";
 
+import { logger } from "@/lib/logger";
+
 import { db } from "@/lib/db";
 import { activities, athletes } from "@/lib/schema";
 import { eq } from "drizzle-orm";
@@ -35,7 +37,7 @@ export async function refreshAiInsightAction() {
         revalidatePath("/");
 
     } catch (e) {
-        console.error("Failed to refresh insight", e);
+        logger.error("Failed to refresh insight", e);
     }
 }
 
@@ -82,7 +84,7 @@ export async function generateActivityInsight(activityId: string) {
         return { success: true, insight };
 
     } catch (error) {
-        console.error("Error generating insight:", error);
+        logger.error("Error generating insight", error);
         return { success: false, error: "Failed to generate insight" };
     }
 }
@@ -101,7 +103,7 @@ export async function updateActivity(data: any) {
         revalidatePath("/feed");
         return { success: true };
     } catch (error) {
-        console.error("Failed to update activity", error);
+        logger.error("Failed to update activity", error);
         return { success: false, error: "Failed to update" };
     }
 }
@@ -113,7 +115,7 @@ export async function deleteActivity(id: string) {
         revalidatePath("/feed");
         return { success: true };
     } catch (error) {
-        console.error("Failed to delete activity", error);
+        logger.error("Failed to delete activity", error);
         return { success: false, error: "Failed to delete" };
     }
 }

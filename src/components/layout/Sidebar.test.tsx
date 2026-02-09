@@ -25,19 +25,19 @@ describe('Sidebar Component', () => {
         expect(screen.getByText('RL')).toBeInTheDocument(); // Default initials
         expect(screen.getByText('New Athlete')).toBeInTheDocument();
     });
-    
+
     it('should highlight the active link', () => {
         // We mocked usePathname to return '/'
         render(<Sidebar athlete={{ name: 'Test User' }} />);
-        
+
         // "Dashboard" link should have the active class (checking via text matching for now or class presence)
         // The active class contains "bg-primary/10"
-        
+
         // Find the link by its text
         const dashboardLink = screen.getByText('Dashboard').closest('a');
-        const analyticsLink = screen.getByText('Analytics').closest('a');
+        const activitiesLink = screen.getByText('Activities').closest('a');
 
-        expect(dashboardLink).toHaveClass('bg-primary/10');
-        expect(analyticsLink).not.toHaveClass('bg-primary/10');
+        expect(dashboardLink).toHaveClass('bg-primary');
+        expect(activitiesLink).not.toHaveClass('bg-primary');
     });
 });

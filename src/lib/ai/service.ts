@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { logger } from "@/lib/logger";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" }); // Updated model name to a likely valid one, or keep preview if sure
@@ -60,7 +61,7 @@ Only return the JSON object. Do not wrap it in markdown code blocks.
         const jsonString = text.replace(/^```json\s*/, "").replace(/\s*```$/, "");
         return JSON.parse(jsonString);
     } catch (error) {
-        console.error("Gemini API Error:", error);
+        logger.error("Gemini API Error", error);
         return {
             message: "I'm having trouble analyzing your data right now. Please try again later.",
             actionItems: ["Check back later"]
@@ -98,10 +99,10 @@ Only return JSON.
         const response = result.response;
         const text = response.text();
         const jsonString = text.replace(/^```json\s*/, "").replace(/\s*```$/, "");
-        console.log(jsonString);
+        logger.info("Gemini Insight Response", jsonString);
         return JSON.parse(jsonString);
     } catch (error) {
-        console.error("Gemini Insight API Error:", error);
+        logger.error("Gemini Insight API Error", error);
         return {
             message: "Analyze your training patterns to see your current trend.",
             actionItems: ["Keep training consistently"]
@@ -123,7 +124,7 @@ export async function generateActivityOneLiner(context: string): Promise<string>
         const response = result.response;
         return response.text().trim();
     } catch (error) {
-        console.error("Gemini Activity Insight Error:", error);
+        logger.error("Gemini Activity Insight Error", error);
         return "Great effort! Keep up the consistency.";
     }
 }

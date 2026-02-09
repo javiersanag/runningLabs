@@ -1,5 +1,7 @@
 "use server";
 
+import { logger } from "@/lib/logger";
+
 import { db } from "@/lib/db";
 import { activities, athletes } from "@/lib/schema";
 import { parseFitFile } from "@/lib/parser";
@@ -141,7 +143,7 @@ export async function uploadActivity(formData: FormData) {
 
         return { success: true, id };
     } catch (error: any) {
-        console.error("Upload error:", error);
+        logger.error("Upload error", error);
         return { success: false, error: error.message };
     }
 }
