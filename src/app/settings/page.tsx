@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { getCurrentUser } from "@/lib/session";
 import { eq } from "drizzle-orm";
 import { DeleteAccountSection } from "@/components/settings/DeleteAccountSection";
+import { ChangePasswordSection } from "@/components/settings/ChangePasswordSection";
 
 export const dynamic = "force-dynamic";
 
@@ -165,6 +166,7 @@ export default async function SettingsPage() {
                         </form>
                     </Card>
 
+                    <ChangePasswordSection />
                     <DeleteAccountSection />
                 </div>
             </div>

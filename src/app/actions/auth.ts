@@ -141,3 +141,61 @@ export async function deleteAccount() {
 
     redirect("/register");
 }
+
+const changePasswordSchema = z.object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z.string().min(8, "New password must be at least 8 characters")
+        .regex(/[A-Z]/, "New password must contain at least one uppercase letter")
+        .regex(/[0-9]/, "New password must contain at least one number"),
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+});
+
+export async function changePassword(formData: FormData) {
+    const user = await getCurrentUser();
+    if (!user) {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    const rawData = {
+        currentPassword: formData.get("currentPassword"),
+        newPassword: formData.get("newPassword"),
+        confirmPassword: formData.get("confirmPassword"),
+    };
+
+    const result = changePasswordSchema.safeParse(rawData);
+    if (!result.success) {
+        return { success: false, errors: result.error.flatten().fieldErrors };
+    }
+
+    const { currentPassword, newPassword } = result.data;
+
+    try {
+        // 1. Verify current password
+        const dbUser = await db.query.athletes.findFirst({
+            where: (t, { eq }) => eq(t.id, user.id)
+        });
+
+        if (!dbUser || !dbUser.passwordHash) {
+            return { success: false, error: "User not found" };
+        }
+
+        const isCurrentValid = await verifyPassword(currentPassword, dbUser.passwordHash);
+        if (!isCurrentValid) {
+            return { success: false, errors: { currentPassword: ["Incorrect current password"] } };
+        }
+
+        // 2. Hash and update
+        const hashedNewPassword = await hashPassword(newPassword);
+        await db.update(athletes)
+            .set({ passwordHash: hashedNewPassword })
+            .where(eq(athletes.id, user.id));
+
+        return { success: true };
+    } catch (error) {
+        console.error("Password change error:", error);
+        return { success: false, error: "Internal server error" };
+    }
+}
