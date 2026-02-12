@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Activity, Bot, Settings, LayoutDashboard, Footprints, Layers, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 
 const items = [
@@ -18,7 +18,27 @@ const items = [
 export function Navbar({ athlete }: { athlete: any }) {
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
     const initials = athlete?.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || "RL";
+
+    // Close dropdown on click outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    // Close dropdown when path changes
+    useEffect(() => {
+        setIsDropdownOpen(false);
+        setIsMobileMenuOpen(false);
+    }, [pathname]);
 
     return (
         <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-neutral-100 z-50 px-4 md:px-8 flex items-center justify-between">
@@ -55,20 +75,45 @@ export function Navbar({ athlete }: { athlete: any }) {
                 })}
             </nav>
 
-            {/* Right Side: Profile & Settings */}
+            {/* Right Side: Profile Dropdown */}
             <div className="flex items-center gap-4">
-                <Link href="/settings" className="text-neutral-400 hover:text-primary transition-colors hidden md:block">
-                    <Settings size={20} />
-                </Link>
+                <div className="relative" ref={dropdownRef}>
+                    <button
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        className="flex items-center gap-3 pl-4 border-l border-neutral-100 hover:opacity-80 transition-opacity"
+                    >
+                        <div className="text-right hidden sm:block">
+                            <p className="text-sm font-bold text-foreground leading-none">{athlete?.name || "Athlete"}</p>
+                            <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider leading-none mt-1">Free Plan</p>
+                        </div>
+                        <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-blue-200">
+                            {initials}
+                        </div>
+                    </button>
 
-                <div className="flex items-center gap-3 pl-4 border-l border-neutral-100">
-                    <div className="text-right hidden sm:block">
-                        <p className="text-sm font-bold text-foreground leading-none">{athlete?.name || "Athlete"}</p>
-                        <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider leading-none mt-1">Free Plan</p>
-                    </div>
-                    <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-blue-200">
-                        {initials}
-                    </div>
+                    {/* Desktop Dropdown Menu */}
+                    {isDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white border border-neutral-100 rounded-xl shadow-xl py-2 animate-in fade-in zoom-in-95 duration-200 z-[60]">
+                            <div className="px-4 py-2 border-b border-neutral-50 md:hidden">
+                                <p className="text-sm font-bold text-foreground">{athlete?.name || "Athlete"}</p>
+                                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">Free Plan</p>
+                            </div>
+                            <Link
+                                href="/settings"
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-neutral-600 hover:text-primary hover:bg-primary/5 transition-colors"
+                            >
+                                <Settings size={16} />
+                                Settings
+                            </Link>
+                            <button
+                                className="w-full flex items-center gap-2 px-4 py-2 text-sm font-bold text-neutral-600 hover:text-red-500 hover:bg-red-50 transition-colors"
+                                onClick={() => {/* Handle Logout */ }}
+                            >
+                                <X size={16} />
+                                Logout
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -113,5 +158,6 @@ export function Navbar({ athlete }: { athlete: any }) {
                 </div>
             )}
         </header>
+
     );
 }

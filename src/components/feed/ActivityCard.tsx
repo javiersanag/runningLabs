@@ -3,7 +3,20 @@
 import Link from "next/link";
 import { formatDistance, formatDuration, formatPace } from "@/lib/utils";
 import { Activity, MapPin, Clock, Zap, TrendingUp, Sparkles, MessageSquare, Heart } from "lucide-react";
-import ActivityMapInner from "@/components/charts/ActivityMapInner";
+import dynamic from "next/dynamic";
+
+const ActivityMapInner = dynamic(
+    () => import("@/components/charts/ActivityMapInner"),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="w-full h-full bg-neutral-50 flex items-center justify-center text-neutral-400">
+                <p className="text-xs font-bold uppercase tracking-widest">Loading Map...</p>
+            </div>
+        )
+    }
+);
+
 import { MetricCard } from "@/components/ui/MetricCard";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
