@@ -84,7 +84,6 @@ export function Navbar({ athlete }: { athlete: any }) {
                     >
                         <div className="text-right hidden sm:block">
                             <p className="text-sm font-bold text-foreground leading-none">{athlete?.name || "Athlete"}</p>
-                            <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider leading-none mt-1">Free Plan</p>
                         </div>
                         <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-blue-200">
                             {initials}
