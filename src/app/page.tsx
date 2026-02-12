@@ -11,15 +11,16 @@ import { logger } from "@/lib/logger";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
+import { getCurrentUser } from "@/lib/session";
+
 export const dynamic = "force-dynamic";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
   const { period = '7d' } = await searchParams;
   const daysToShow = period === '30d' ? 30 : 7;
 
-  const athlete = await db.query.athletes.findFirst({
-    where: (t, { eq }) => eq(t.id, "default_athlete")
-  });
+  const athlete = await getCurrentUser();
+  if (!athlete) return null;
 
   let chartData: any[] = [];
   let today: any = null;
@@ -27,7 +28,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
 
   try {
     const history = await db.query.dailyMetrics.findMany({
-      where: (t, { eq }) => eq(t.athleteId, "default_athlete"),
+      where: (t, { eq }) => eq(t.athleteId, athlete.id),
       orderBy: [desc(dailyMetrics.date)],
       limit: 90
     });
@@ -110,7 +111,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
     <>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-foreground tracking-tight">Welcome back, {athlete?.name?.split(' ')[0] || "Athlete"}</h2>
+          <h2 className="text-2xl font-bold text-foreground tracking-tight">Welcome back, {athlete?.firstName || "Athlete"}</h2>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1 bg-neutral-100 rounded-lg p-1">

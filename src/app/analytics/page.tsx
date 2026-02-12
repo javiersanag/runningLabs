@@ -2,12 +2,16 @@ import { FitnessChart } from "@/components/charts/FitnessChart";
 import { db } from "@/lib/db";
 import { dailyMetrics } from "@/lib/schema";
 import { desc } from "drizzle-orm";
+import { getCurrentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function AnalyticsPage() {
+    const user = await getCurrentUser();
+    if (!user) return null;
+
     const history = await db.query.dailyMetrics.findMany({
-        where: (t, { eq }) => eq(t.athleteId, "default_athlete"),
+        where: (t, { eq }) => eq(t.athleteId, user.id),
         orderBy: [desc(dailyMetrics.date)],
         limit: 180
     });

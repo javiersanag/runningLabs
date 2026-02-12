@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-import { db } from "@/lib/db";
+import { getCurrentUser } from "@/lib/session";
 import { Shell } from "@/components/layout/Shell";
 
 export const metadata: Metadata = {
@@ -25,9 +25,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const athlete = await db.query.athletes.findFirst({
-    where: (t, { eq }) => eq(t.id, "default_athlete")
-  });
+  const athlete = await getCurrentUser();
+
+  if (!athlete) {
+    return (
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          {children}
+        </body>
+      </html>
+    );
+  }
 
   return (
     <html lang="en">

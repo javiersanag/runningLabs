@@ -6,12 +6,16 @@ import { Footprints, Bike, Plus, Trash2, ChevronRight } from "lucide-react";
 import { randomUUID } from "crypto";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { getCurrentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function GearPage() {
+    const user = await getCurrentUser();
+    if (!user) return null;
+
     const allGearRaw = await db.query.gear.findMany({
-        where: (t, { eq }) => eq(t.athleteId, "default_athlete")
+        where: (t, { eq }) => eq(t.athleteId, user.id)
     });
 
     const gearStats = await Promise.all(allGearRaw.map(async (item) => {
@@ -29,6 +33,9 @@ export default async function GearPage() {
 
     async function addGear(formData: FormData) {
         "use server";
+        const sessionUser = await getCurrentUser();
+        if (!sessionUser) return;
+
         const name = formData.get("name") as string;
         const type = formData.get("type") as string;
         const brand = formData.get("brand") as string;
@@ -36,7 +43,7 @@ export default async function GearPage() {
 
         await db.insert(gear).values({
             id: randomUUID(),
-            athleteId: "default_athlete",
+            athleteId: sessionUser.id,
             name,
             type,
             brand,

@@ -3,31 +3,31 @@ import { activities, dailyMetrics, athletes } from "@/lib/schema";
 import { desc, eq } from "drizzle-orm";
 import { LeftPanel } from "@/components/feed/LeftPanel";
 import { ActivityCard } from "@/components/feed/ActivityCard";
+import { getCurrentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function FeedPage() {
     // 1. Fetch Athlete
-    const athlete = await db.query.athletes.findFirst({
-        where: (t, { eq }) => eq(t.id, "default_athlete")
-    });
+    const athlete = await getCurrentUser();
+    if (!athlete) return null;
 
     // 2. Fetch Activities
     const activityList = await db.query.activities.findMany({
-        where: (t, { eq }) => eq(t.athleteId, "default_athlete"),
+        where: (t, { eq }) => eq(t.athleteId, athlete.id),
         orderBy: [desc(activities.startTime)],
         limit: 20
     });
 
     // 3. Fetch Latest Metrics
     const latestMetric = await db.query.dailyMetrics.findFirst({
-        where: (t, { eq }) => eq(t.athleteId, "default_athlete"),
+        where: (t, { eq }) => eq(t.athleteId, athlete.id),
         orderBy: [desc(dailyMetrics.date)]
     });
 
     // 4. Calculate Stats (Quick Check)
     const stats = {
-        totalActivities: await db.$count(activities, eq(activities.athleteId, "default_athlete")),
+        totalActivities: await db.$count(activities, eq(activities.athleteId, athlete.id)),
         thisMonth: activityList.filter(a => {
             const date = new Date(a.startTime);
             const now = new Date();

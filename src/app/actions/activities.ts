@@ -8,14 +8,15 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { generateActivityOneLiner, generateTrainingInsight } from "@/lib/ai/service";
 
+import { getCurrentUser } from "@/lib/session";
+
 // --- AI Actions ---
 
 export async function refreshAiInsightAction() {
     try {
         // 1. Fetch Context
-        const athlete = await db.query.athletes.findFirst({
-            where: (t, { eq }) => eq(t.id, "default_athlete")
-        });
+        const athlete = await getCurrentUser();
+        if (!athlete) return;
 
         // Mock context for now or fetch real data
         const context = {
@@ -32,7 +33,7 @@ export async function refreshAiInsightAction() {
                 lastAiInsight: JSON.stringify(insight),
                 lastAiInsightDate: new Date().toISOString()
             })
-            .where(eq(athletes.id, "default_athlete"));
+            .where(eq(athletes.id, athlete.id));
 
         revalidatePath("/");
 

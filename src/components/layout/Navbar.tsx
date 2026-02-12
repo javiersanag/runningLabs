@@ -6,6 +6,7 @@ import { Activity, Bot, Settings, LayoutDashboard, Footprints, Layers, Menu, X }
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
+import { logoutUser } from "@/app/actions/auth";
 
 const items = [
     { label: "Feed", href: "/feed", icon: Layers },
@@ -21,7 +22,9 @@ export function Navbar({ athlete }: { athlete: any }) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const initials = athlete?.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || "RL";
+    const { firstName, lastName } = athlete || {};
+    const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Athlete";
+    const initials = (firstName?.[0] || "") + (lastName?.[0] || "") || "RL";
 
     // Close dropdown on click outside
     useEffect(() => {
@@ -83,7 +86,7 @@ export function Navbar({ athlete }: { athlete: any }) {
                         className="flex items-center gap-3 pl-4 border-l border-neutral-100 hover:opacity-80 transition-opacity"
                     >
                         <div className="text-right hidden sm:block">
-                            <p className="text-sm font-bold text-foreground leading-none">{athlete?.name || "Athlete"}</p>
+                            <p className="text-sm font-bold text-foreground leading-none">{fullName}</p>
                         </div>
                         <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-blue-200">
                             {initials}
@@ -94,7 +97,7 @@ export function Navbar({ athlete }: { athlete: any }) {
                     {isDropdownOpen && (
                         <div className="absolute right-0 mt-2 w-48 bg-white border border-neutral-100 rounded-xl shadow-xl py-2 animate-in fade-in zoom-in-95 duration-200 z-[60]">
                             <div className="px-4 py-2 border-b border-neutral-50 md:hidden">
-                                <p className="text-sm font-bold text-foreground">{athlete?.name || "Athlete"}</p>
+                                <p className="text-sm font-bold text-foreground">{fullName}</p>
                                 <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">Free Plan</p>
                             </div>
                             <Link
@@ -106,11 +109,14 @@ export function Navbar({ athlete }: { athlete: any }) {
                             </Link>
                             <button
                                 className="w-full flex items-center gap-2 px-4 py-2 text-sm font-bold text-neutral-600 hover:text-red-500 hover:bg-red-50 transition-colors"
-                                onClick={() => {/* Handle Logout */ }}
+                                onClick={async () => {
+                                    await logoutUser();
+                                }}
                             >
                                 <X size={16} />
                                 Logout
                             </button>
+
                         </div>
                     )}
                 </div>

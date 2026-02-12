@@ -4,33 +4,36 @@ import { revalidatePath } from "next/cache";
 import { User, Settings, Save, Shield, Activity, Bell } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { getCurrentUser } from "@/lib/session";
+import { eq } from "drizzle-orm";
+import { DeleteAccountSection } from "@/components/settings/DeleteAccountSection";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-    const athlete = await db.query.athletes.findFirst({
-        where: (t, { eq }) => eq(t.id, "default_athlete")
-    });
+    const athlete = await getCurrentUser();
+    if (!athlete) return null;
 
     async function updateProfile(formData: FormData) {
         "use server";
-        const name = formData.get("name") as string;
+        const sessionUser = await getCurrentUser();
+        if (!sessionUser) return;
+
+        const firstName = formData.get("firstName") as string;
+        const lastName = formData.get("lastName") as string;
         const age = parseInt(formData.get("age") as string);
         const ftp = parseInt(formData.get("ftp") as string);
         const maxHr = parseInt(formData.get("maxHr") as string);
         const weight = parseFloat(formData.get("weight") as string);
 
-        await db.insert(athletes).values({
-            id: "default_athlete",
-            name: name || "Performance Athlete",
+        await db.update(athletes).set({
+            firstName: firstName || "Athlete",
+            lastName: lastName || null,
             age,
             ftp,
             maxHr,
             weight
-        }).onConflictDoUpdate({
-            target: athletes.id,
-            set: { name, age, ftp, maxHr, weight }
-        });
+        }).where(eq(athletes.id, sessionUser.id));
 
         revalidatePath("/settings");
         revalidatePath("/");
@@ -76,15 +79,27 @@ export default async function SettingsPage() {
                         </div>
 
                         <form action={updateProfile} className="space-y-8">
-                            <div className="space-y-2">
-                                <label className="text-[10px] text-neutral-400 uppercase tracking-[0.2em] font-bold block ml-1">Display Name</label>
-                                <input
-                                    name="name"
-                                    type="text"
-                                    defaultValue={athlete?.name || "Performance Athlete"}
-                                    className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-4 text-foreground font-medium focus:border-primary/30 outline-none transition-all shadow-sm"
-                                    placeholder="Enter your name"
-                                />
+                            <div className="grid grid-cols-2 gap-8">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] text-neutral-400 uppercase tracking-[0.2em] font-bold block ml-1">First Name</label>
+                                    <input
+                                        name="firstName"
+                                        type="text"
+                                        defaultValue={athlete.firstName}
+                                        className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-4 text-foreground font-medium focus:border-primary/30 outline-none transition-all shadow-sm"
+                                        placeholder="Jane"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] text-neutral-400 uppercase tracking-[0.2em] font-bold block ml-1">Last Name</label>
+                                    <input
+                                        name="lastName"
+                                        type="text"
+                                        defaultValue={athlete.lastName || ""}
+                                        className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-4 text-foreground font-medium focus:border-primary/30 outline-none transition-all shadow-sm"
+                                        placeholder="Doe"
+                                    />
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-8">
@@ -93,7 +108,7 @@ export default async function SettingsPage() {
                                     <input
                                         name="age"
                                         type="number"
-                                        defaultValue={athlete?.age || 30}
+                                        defaultValue={athlete.age || 30}
                                         className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-4 text-foreground font-medium focus:border-primary/30 outline-none transition-all shadow-sm"
                                     />
                                 </div>
@@ -103,7 +118,7 @@ export default async function SettingsPage() {
                                         name="weight"
                                         type="number"
                                         step="0.1"
-                                        defaultValue={athlete?.weight || 70}
+                                        defaultValue={athlete.weight || 70}
                                         className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-4 text-foreground font-medium focus:border-primary/30 outline-none transition-all shadow-sm"
                                     />
                                 </div>
@@ -115,7 +130,7 @@ export default async function SettingsPage() {
                                     <input
                                         name="ftp"
                                         type="number"
-                                        defaultValue={athlete?.ftp || 250}
+                                        defaultValue={athlete.ftp || 250}
                                         className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-4 text-foreground font-medium focus:border-primary/30 outline-none transition-all shadow-sm"
                                     />
                                 </div>
@@ -124,10 +139,21 @@ export default async function SettingsPage() {
                                     <input
                                         name="maxHr"
                                         type="number"
-                                        defaultValue={athlete?.maxHr || 190}
+                                        defaultValue={athlete.maxHr || 190}
                                         className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-4 text-foreground font-medium focus:border-primary/30 outline-none transition-all shadow-sm"
                                     />
                                 </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] text-neutral-400 uppercase tracking-[0.2em] font-bold block ml-1">Email</label>
+                                <input
+                                    type="email"
+                                    disabled
+                                    value={athlete.email}
+                                    className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-4 text-neutral-500 font-medium cursor-not-allowed"
+                                />
+                                <p className="text-xs text-neutral-400 ml-1">Email cannot be changed.</p>
                             </div>
 
                             <div className="pt-4">
@@ -138,6 +164,8 @@ export default async function SettingsPage() {
                             </div>
                         </form>
                     </Card>
+
+                    <DeleteAccountSection />
                 </div>
             </div>
         </div>

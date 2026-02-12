@@ -3,7 +3,10 @@ import { text, integer, sqliteTable, real } from "drizzle-orm/sqlite-core";
 
 export const athletes = sqliteTable("athletes", {
     id: text("id").primaryKey(),
-    name: text("name").notNull(),
+    firstName: text("first_name").notNull(),
+    lastName: text("last_name"),
+    email: text("email").notNull().unique(),
+    passwordHash: text("password_hash").notNull(),
     age: integer("age"),
     ftp: integer("ftp").default(250),
     maxHr: integer("max_hr").default(190),

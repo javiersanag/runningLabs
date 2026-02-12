@@ -9,8 +9,14 @@ import { revalidatePath } from "next/cache";
 import { randomUUID } from "crypto";
 import { recalculateMetricsChain } from "@/lib/analytics";
 import { calculateTSS, calculateTRIMP } from "@/lib/metrics";
+import { getCurrentUser } from "@/lib/session";
 
 export async function uploadActivity(formData: FormData) {
+    const user = await getCurrentUser();
+    if (!user) {
+        return { success: false, error: "Unauthorized" };
+    }
+
     const file = formData.get("file") as File;
 
     if (!file) {
@@ -29,26 +35,15 @@ export async function uploadActivity(formData: FormData) {
 
         const fitData = await parseFitFile(buffer);
 
-        // 2. Ensure Athlete exists (Auto-init for MVP)
-        let athlete = await db.query.athletes.findFirst({
-            where: (table, { eq }) => eq(table.id, "default_athlete")
-        });
+        // 2. Use Authenticated Athlete
+        const athlete = user;
+        // No need to fetch again, we have user from session.
+        // But if we need latest DB state (e.g. weight/ftp changed), user object from session might be stale?
+        // getCurrentUser fetches from DB every time in my implementation?
+        // Let's check session.ts later. It does fetch from DB.
 
-        if (!athlete) {
-            await db.insert(athletes).values({
-                id: "default_athlete",
-                name: "Performance Athlete",
-                ftp: 250,
-                maxHr: 190,
-                weight: 70
-            });
-            athlete = await db.query.athletes.findFirst({
-                where: (table, { eq }) => eq(table.id, "default_athlete")
-            });
-        }
-
-        const ftp = athlete?.ftp || 250;
-        const maxHr = athlete?.maxHr || 190;
+        const ftp = athlete.ftp || 250;
+        const maxHr = athlete.maxHr || 190;
         const restHr = 60;
 
         // 3. Extract Metrics
@@ -118,7 +113,7 @@ export async function uploadActivity(formData: FormData) {
 
         await db.insert(activities).values({
             id: id,
-            athleteId: "default_athlete",
+            athleteId: user.id,
             name: `${session.sport || 'Activity'} ${new Date(session.start_time).toLocaleDateString()}`,
             type: session.sport || "Run",
             startTime: startTimeStr,
@@ -136,7 +131,7 @@ export async function uploadActivity(formData: FormData) {
         });
 
         // 6. Trigger Analytics Engine
-        await recalculateMetricsChain(startTimeStr.split('T')[0], "default_athlete");
+        await recalculateMetricsChain(startTimeStr.split('T')[0], user.id);
 
         revalidatePath("/");
         revalidatePath("/activities");
@@ -147,4 +142,3 @@ export async function uploadActivity(formData: FormData) {
         return { success: false, error: error.message };
     }
 }
-

@@ -1,0 +1,11 @@
+{
+  "id": "default_athlete",
+  "name": "Javi",
+  "age": 44,
+  "ftp": 250,
+  "max_hr": 190,
+  "weight": 70,
+  "last_ai_insight": "{\"message\":\"Your current physiological status indicates a significant 'overreaching' state. With a CTL (Fitness) of 15 and an ATL (Fatigue) of 38, your Training Stress Balance (Form) has dropped to -23. This has pushed your Acute:Chronic Workload Ratio (ACWR) to approximately 2.53, which is well above the 1.5 'danger zone' for injury risk. This spike is primarily driven by the recent jump to a 10km run—effectively doubling your previous average volume—before your chronic fitness base was ready to support it. You are currently gaining fitness quickly, but your musculoskeletal system is under high stress.\",\"actionItems\":[\"Prioritize 48 hours of complete rest or low-impact active recovery (e.g., walking or mobility) to allow your TSB to trend back toward -10.\",\"Cap your next three runs at 5-6km to stabilize your workload and avoid further ATL spikes.\",\"Maintain a low-intensity (Zone 2) focus for the remainder of the week to bridge the gap between your current fatigue and your building fitness base.\"]}",
+  "last_ai_insight_date": "2026-02-08T16:04:02.878Z",
+  "created_at": "2026-02-05 22:56:25"
+}

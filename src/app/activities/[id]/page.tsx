@@ -10,20 +10,23 @@ import { EditActivityDialog } from "@/components/activities/EditActivityDialog";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { MetricCard } from "@/components/ui/MetricCard";
+import { getCurrentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function ActivityDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
+    const user = await getCurrentUser();
+    if (!user) return null;
 
     const activity = await db.query.activities.findFirst({
-        where: (t, { eq }) => eq(t.id, id)
+        where: (t, { eq, and }) => and(eq(t.id, id), eq(t.athleteId, user.id))
     });
 
     if (!activity) notFound();
 
     const allGear = await db.query.gear.findMany({
-        where: (t, { eq }) => eq(t.athleteId, "default_athlete")
+        where: (t, { eq }) => eq(t.athleteId, user.id)
     });
 
     const currentGear = allGear.find(g => g.id === activity.gearId);
