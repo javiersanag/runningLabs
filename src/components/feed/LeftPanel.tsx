@@ -11,14 +11,16 @@ export function LeftPanel({
     dailyMetric,
     streakDays,
     streakLabels,
-    latestActivity
+    latestActivity,
+    activeGoal
 }: {
     athlete: any,
     stats: any,
     dailyMetric: any,
     streakDays: boolean[],
     streakLabels: string[],
-    latestActivity?: any
+    latestActivity?: any,
+    activeGoal?: any
 }) {
     const ref = useRef<HTMLDivElement>(null);
     const [stickyTop, setStickyTop] = useState(96); // Default top-24 (96px)
@@ -195,17 +197,32 @@ export function LeftPanel({
             </Card>
 
             {/* Goals CTA */}
-            <Card className="bg-neutral-900 text-white border-neutral-800">
-                <div className="flex items-center gap-3 mb-3">
-                    <Trophy size={16} className="text-yellow-400" />
-                    <h3 className="text-xs font-black uppercase tracking-widest">Next Goal</h3>
-                </div>
-                <p className="font-bold text-sm mb-4">Sub-20 5K Attempt</p>
-                <div className="w-full bg-neutral-800 rounded-full h-1.5 mb-2">
-                    <div className="bg-yellow-400 h-1.5 rounded-full" style={{ width: '75%' }} />
-                </div>
-                <p className="text-[10px] text-neutral-400 text-right font-bold uppercase tracking-wider">Week 6 of 8</p>
-            </Card>
+            <Link href="/training" className="block">
+                <Card className="bg-neutral-900 text-white border-neutral-800 hover:bg-neutral-800 transition-colors cursor-pointer group">
+                    <div className="flex items-center gap-3 mb-3">
+                        <Trophy size={16} className="text-yellow-400 group-hover:scale-110 transition-transform" />
+                        <h3 className="text-xs font-black uppercase tracking-widest">Next Goal</h3>
+                    </div>
+                    {activeGoal ? (
+                        <>
+                            <p className="font-bold text-sm mb-4 leading-snug">{activeGoal.name}</p>
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex-1 bg-neutral-800 rounded-full h-1.5">
+                                    <div className="bg-yellow-400 h-1.5 rounded-full" style={{ width: '40%' }} />
+                                </div>
+                                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider whitespace-nowrap">
+                                    {new Date(activeGoal.targetDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                </p>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="py-2">
+                            <p className="font-bold text-sm mb-1">No active goal</p>
+                            <p className="text-[10px] text-neutral-400 font-medium">Set a goal to start training.</p>
+                        </div>
+                    )}
+                </Card>
+            </Link>
 
             <p className="text-center text-[10px] text-neutral-300 font-bold uppercase tracking-widest">
                 Khronos v0.9 Beta

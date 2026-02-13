@@ -75,3 +75,27 @@ export const dailyMetrics = sqliteTable("daily_metrics", {
     readinessScore: integer("readiness_score"),
     createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const goals = sqliteTable("goals", {
+    id: text("id").primaryKey(),
+    athleteId: text("athlete_id").references(() => athletes.id),
+    type: text("type").notNull(), // 'Personal' | 'Race'
+    name: text("name").notNull(),
+    targetDate: text("target_date").notNull(),
+    targetMetric: text("target_metric"), // e.g., 'Sub-20 5K'
+    targetValue: real("target_value"),
+    raceUrl: text("race_url"),
+    raceDetails: text("race_details"), // JSON: { distance, elevationGain, profile, city }
+    predictions: text("predictions"), // JSON: { predictedTime, benchmark5k, benchmark10k }
+    status: text("status").default('Active'), // 'Active', 'Completed', 'Upcoming'
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const trainingPlans = sqliteTable("training_plans", {
+    id: text("id").primaryKey(),
+    goalId: text("goal_id").references(() => goals.id),
+    athleteId: text("athlete_id").references(() => athletes.id),
+    weeksJson: text("weeks_json").notNull(), // Structured workout plan
+    isActive: integer("is_active", { mode: 'boolean' }).default(true),
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+});

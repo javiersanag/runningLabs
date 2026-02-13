@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import { activities, dailyMetrics, athletes } from "@/lib/schema";
-import { desc, eq } from "drizzle-orm";
+import { activities, dailyMetrics, athletes, goals } from "@/lib/schema";
+import { desc, eq, and } from "drizzle-orm";
 import { LeftPanel } from "@/components/feed/LeftPanel";
 import { ActivityCard } from "@/components/feed/ActivityCard";
 import { getCurrentUser } from "@/lib/session";
@@ -54,6 +54,12 @@ export default async function FeedPage() {
 
     const latestActivity = activityList[0];
 
+    // 6. Fetch Active Goal
+    const activeGoal = await db.query.goals.findFirst({
+        where: (t, { and, eq }) => and(eq(t.athleteId, athlete.id), eq(t.status, 'Active')),
+        orderBy: [desc(goals.createdAt)]
+    });
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 relative">
             {/* Left Panel - Sticky behavior handled internally */}
@@ -65,6 +71,7 @@ export default async function FeedPage() {
                     streakDays={streakDays}
                     streakLabels={streakLabels}
                     latestActivity={latestActivity}
+                    activeGoal={activeGoal}
                 />
             </div>
 
