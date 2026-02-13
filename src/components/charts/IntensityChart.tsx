@@ -28,7 +28,7 @@ export function IntensityChart({ data }: IntensityChartProps) {
                         type="category"
                         stroke="#e5e5e5"
                         fontSize={10}
-                        width={40}
+                        width={30}
                         tickLine={false}
                         axisLine={false}
                         tick={{ fill: '#888888', fontWeight: 600 }}
@@ -46,7 +46,7 @@ export function IntensityChart({ data }: IntensityChartProps) {
                         fontSize={10}
                         tickLine={false}
                         axisLine={false}
-                        width={50}
+                        width={40}
                         tick={{ fill: '#888888', fontWeight: 800 }}
                     />
                     <Tooltip
@@ -64,7 +64,7 @@ export function IntensityChart({ data }: IntensityChartProps) {
                             "Duration"
                         ]}
                     />
-                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={18}>
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}

@@ -1,4 +1,4 @@
-import { Activity, Zap, TrendingUp, Clock, TrendingDown, Minus, Bot, Sparkles, RotateCw, MapPin, Timer, Heart, Flame } from "lucide-react";
+import { Activity, Zap, TrendingUp, Clock, TrendingDown, Minus, Bot, Sparkles, RotateCw, MapPin, Timer, Heart, Flame, Info } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { dailyMetrics } from "@/lib/schema";
@@ -10,6 +10,7 @@ import { MetricCard } from "@/components/ui/MetricCard";
 import { logger } from "@/lib/logger";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
 import { getCurrentUser } from "@/lib/session";
 
@@ -152,35 +153,48 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
           ))}
           <div className="w-[1px] bg-neutral-100 mx-2 self-stretch" />
           {trainingStats.map((stat, i) => (
-            <MetricCard
-              key={`train-${i}`}
-              label={stat.label}
-              value={stat.value}
-              unit={stat.sublabel}
-              trend={stat.tendency}
-              className={stat.color}
-              compact
-            />
+            <div key={`train-container-${i}`} className="flex flex-col gap-1 items-start">
+              <MetricCard
+                key={`train-${i}`}
+                label={stat.label}
+                value={stat.value}
+                unit={stat.sublabel}
+                trend={stat.tendency}
+                className={stat.color}
+                compact
+              />
+              <InfoTooltip
+                className="ml-2"
+                content={
+                  stat.label === "Fitness" ? "Chronic Training Load (CTL): A 42-day rolling average of daily strain. Represents long-term fitness." :
+                    stat.label === "Fatigue" ? "Acute Training Load (ATL): A 7-day rolling average of daily strain. Represents short-term stress." :
+                      stat.label === "Form" ? "Training Stress Balance (TSB): Fitness minus Fatigue. Positive means fresh, negative means fatigued." :
+                        "Readiness score based on current recovery and training balance."
+                }
+              />
+            </div>
           ))}
         </div>
       </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <Card className="lg:col-span-2 flex flex-col h-[400px]">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Fitness & Freshness</h3>
-            <div className="flex items-center gap-4 text-[10px] font-bold">
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500" /> CTL</span>
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-500" /> ATL</span>
+        <Card className="lg:col-span-2 flex flex-col h-[320px]">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-widest">Fitness & Freshness</h3>
+              <InfoTooltip content="Long-term relationship between Fitness (CTL), Fatigue (ATL), and Form (TSB/Bars)." />
             </div>
           </div>
           <div className="flex-1 min-h-0">
             <FitnessChart data={periodHistory} />
           </div>
         </Card>
-        <Card className="flex flex-col h-[400px]">
-          <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest mb-6">Intensity Distribution</h3>
+        <Card className="flex flex-col h-[320px]">
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Intensity Distribution</h3>
+            <InfoTooltip content="Time spent in each heart rate zone during the selected period." />
+          </div>
           <div className="flex-1 min-h-0">
             <IntensityChart data={intensityData} />
           </div>

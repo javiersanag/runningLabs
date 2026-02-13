@@ -76,7 +76,7 @@ export function FitnessChart({ data }: FitnessChartProps) {
                     <Legend
                         verticalAlign="top"
                         align="right"
-                        wrapperStyle={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', paddingBottom: '20px' }}
+                        wrapperStyle={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', paddingBottom: '10px' }}
                         iconType="circle"
                     />
 
