@@ -29,7 +29,11 @@ export function MetricCard({
 }: MetricCardProps) {
     return (
         <Card
-            className={cn("flex flex-col gap-0.5 min-w-[120px]", className)}
+            className={cn(
+                "flex flex-col gap-0.5",
+                compact ? "min-w-[90px] flex-1" : "min-w-[120px]",
+                className
+            )}
             hoverable
             padding={compact ? "compact" : "normal"}
         >

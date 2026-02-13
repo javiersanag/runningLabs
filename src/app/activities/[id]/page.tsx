@@ -178,24 +178,27 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
             </div>
 
             {/* Performance Metric Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+            <div className="flex flex-nowrap gap-3 mb-8 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
                 <MetricCard
                     label="Distance"
                     value={formatDistance(activity.distance)}
                     unit="KM"
                     icon="📍"
                     primary
+                    compact
                 />
                 <MetricCard
                     label="Pace"
                     value={formatPace(activity.distance! / activity.duration!)}
                     unit="/KM"
                     icon="⏱️"
+                    compact
                 />
                 <MetricCard
                     label="Duration"
                     value={formatDuration(activity.duration)}
                     icon="🕒"
+                    compact
                 />
                 <MetricCard
                     label="Elevation"
@@ -203,6 +206,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                     unit="M"
                     icon="🏔️"
                     className="text-emerald-600"
+                    compact
                 />
                 <MetricCard
                     label="Load"
@@ -210,6 +214,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                     unit="TSS"
                     icon="⚡"
                     className="text-primary"
+                    compact
                 />
                 <MetricCard
                     label="Avg HR"
@@ -217,6 +222,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                     unit="BPM"
                     icon="❤️"
                     className="text-rose-600"
+                    compact
                 />
             </div>
 
