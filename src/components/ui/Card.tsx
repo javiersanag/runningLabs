@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
-interface CardProps {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
     children: ReactNode;
     className?: string;
     hoverable?: boolean;
@@ -12,7 +12,7 @@ interface CardProps {
  * Premium Card component following the design style guide.
  * Clean background, subtle shadow, and mild border radius.
  */
-export function Card({ children, className, hoverable = false, padding = "normal" }: CardProps) {
+export function Card({ children, className, hoverable = false, padding = "normal", ...props }: CardProps) {
     const paddingMap: Record<string, string> = {
         none: "p-0",
         compact: "p-2",
@@ -29,6 +29,7 @@ export function Card({ children, className, hoverable = false, padding = "normal
                 hoverable && "hover:shadow-lg hover:border-primary/20",
                 className
             )}
+            {...props}
         >
             {children}
         </div>

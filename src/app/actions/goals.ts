@@ -120,6 +120,12 @@ export async function generatePlanAction(goalId: string) {
             limit: 20
         });
 
+        // 2b. Fetch All Active Goals (to account for intermediate races)
+        const allGoals = await db.query.goals.findMany({
+            where: eq(goals.athleteId, athlete.id),
+            orderBy: [desc(goals.targetDate)]
+        });
+
         const context = {
             ctl: latestMetric?.ctl || 0,
             atl: latestMetric?.atl || 0,
@@ -135,15 +141,19 @@ export async function generatePlanAction(goalId: string) {
 
         // 3. Generate Predictions
         const raceDetails = goal.raceDetails ? JSON.parse(goal.raceDetails) : null;
-        const predictions = await predictPerformance(context, raceDetails);
-
-        // 4. Update Goal with Predictions
-        await db.update(goals)
-            .set({ predictions: JSON.stringify(predictions) })
-            .where(eq(goals.id, goalId));
+        let predictions = null;
+        if (!goal.predictions) {
+            predictions = await predictPerformance(context, raceDetails);
+            // Update Goal with Predictions if missing
+            await db.update(goals)
+                .set({ predictions: JSON.stringify(predictions) })
+                .where(eq(goals.id, goalId));
+        } else {
+            predictions = JSON.parse(goal.predictions);
+        }
 
         // 5. Generate Training Plan
-        const plan = await createTrainingPlan(context, goal);
+        const plan = await createTrainingPlan(context, goal, allGoals);
         if (plan) {
             const planId = randomUUID();
             // Deactivate old plans for this goal if any
@@ -165,5 +175,47 @@ export async function generatePlanAction(goalId: string) {
     } catch (error) {
         logger.error("Generate Plan Action Error", error);
         return { success: false, error: "Failed to generate training plan." };
+    }
+}
+
+/**
+ * Updates an existing goal.
+ */
+export async function updateGoalAction(goalId: string, data: { name: string; targetMetric: string; targetValue: number }) {
+    try {
+        await db.update(goals)
+            .set({
+                name: data.name,
+                targetMetric: data.targetMetric,
+                targetValue: data.targetValue,
+            })
+            .where(eq(goals.id, goalId));
+
+        revalidatePath("/training");
+        revalidatePath("/dashboard");
+        return { success: true };
+    } catch (error) {
+        logger.error("Update Goal Action Error", error);
+        return { success: false, error: "Failed to update goal." };
+    }
+}
+
+/**
+ * Deletes a goal and its associated training plans.
+ */
+export async function deleteGoalAction(goalId: string) {
+    try {
+        // 1. Delete associated training plans
+        await db.delete(trainingPlans).where(eq(trainingPlans.goalId, goalId));
+
+        // 2. Delete the goal
+        await db.delete(goals).where(eq(goals.id, goalId));
+
+        revalidatePath("/training");
+        revalidatePath("/dashboard");
+        return { success: true };
+    } catch (error) {
+        logger.error("Delete Goal Action Error", error);
+        return { success: false, error: "Failed to delete goal." };
     }
 }

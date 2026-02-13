@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Settings, X, Trash2, Check, Footprints, Type } from "lucide-react";
+import { Settings, X, Trash2, Check, Footprints, Type, Trophy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { updateActivity, deleteActivity } from "@/app/actions/activities";
+import { cn } from "@/lib/utils";
 
 interface Gear {
     id: string;
@@ -16,6 +17,7 @@ interface EditActivityDialogProps {
         id: string;
         name: string;
         gearId: string | null;
+        isRace: boolean;
     };
     allGear: Gear[];
 }
@@ -29,6 +31,7 @@ export function EditActivityDialog({ activity, allGear }: EditActivityDialogProp
     const [isDeleting, setIsDeleting] = useState(false);
     const [name, setName] = useState(activity.name);
     const [gearId, setGearId] = useState(activity.gearId || "");
+    const [isRace, setIsRace] = useState(activity.isRace || false);
 
     const handleSave = async () => {
         setIsSaving(true);
@@ -36,7 +39,8 @@ export function EditActivityDialog({ activity, allGear }: EditActivityDialogProp
             await updateActivity({
                 id: activity.id,
                 name,
-                gearId: gearId === "" ? null : gearId
+                gearId: gearId === "" ? null : gearId,
+                isRace
             });
             setIsOpen(false);
         } catch (error) {
@@ -139,6 +143,38 @@ export function EditActivityDialog({ activity, allGear }: EditActivityDialogProp
                                             <Footprints size={20} />
                                         </div>
                                     </div>
+                                </div>
+
+                                {/* Is Race Toggle */}
+                                <div className="space-y-2.5">
+                                    <label className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] flex items-center gap-2 ml-1">
+                                        <Trophy size={14} />
+                                        Activity Type
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsRace(!isRace)}
+                                        className={cn(
+                                            "w-full flex items-center justify-between px-5 py-4 rounded-2xl border transition-all duration-300 font-bold text-sm",
+                                            isRace
+                                                ? "bg-amber-50 border-amber-200 text-amber-700 shadow-sm"
+                                                : "bg-neutral-50 border-neutral-100 text-neutral-400"
+                                        )}
+                                    >
+                                        <span className="flex items-center gap-3">
+                                            <Trophy size={18} className={isRace ? "text-amber-500" : "text-neutral-300"} />
+                                            {isRace ? "Race Event" : "Standard Training"}
+                                        </span>
+                                        <div className={cn(
+                                            "w-10 h-6 rounded-full relative transition-colors duration-300 p-1",
+                                            isRace ? "bg-amber-500" : "bg-neutral-200"
+                                        )}>
+                                            <div className={cn(
+                                                "w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-300",
+                                                isRace ? "translate-x-4" : "translate-x-0"
+                                            )} />
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
 

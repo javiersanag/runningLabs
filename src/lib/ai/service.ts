@@ -215,44 +215,61 @@ export async function predictPerformance(context: CoachContext, raceDetails?: an
 /**
  * Generates a structured training plan based on goal and current fitness.
  */
-export async function createTrainingPlan(context: CoachContext, goal: any): Promise<any> {
+export async function createTrainingPlan(context: CoachContext, goal: any, allGoals: any[] = []): Promise<any> {
     const { ctl, atl, tsb, recentActivities } = context;
+    const today = new Date();
+    const targetDate = new Date(goal.targetDate);
+    const diffTime = Math.abs(targetDate.getTime() - today.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const weeksToGoal = Math.ceil(diffDays / 7);
+    const planDurationWeeks = Math.min(weeksToGoal, 8); // Max 8 weeks
+
+    // Format other goals for context
+    const otherGoalsContext = allGoals
+        .filter(g => g.id !== goal.id && new Date(g.targetDate) > today)
+        .map(g => `- ${g.name} (${g.type}) on ${g.targetDate}`)
+        .join("\n");
+
     const prompt = `
-        You are an expert endurance sports coach. 
-        Create a structured 8-week training plan for an athlete with the following profile:
+        You are an expert endurance sports coach.
+        Create a structured training plan starting from TODAY (${today.toISOString().split('T')[0]}).
+
+        Athlete Profile:
         - Current Fitness (CTL): ${Math.round(ctl)}
-        - Current Fatigue (ATL): ${Math.round(atl)}
-        - Current Form (TSB): ${Math.round(tsb)}
-        - Recent Load Trend: ${recentActivities.length} sessions in last 45 days.
+        - Recent Load: ${recentActivities.length} sessions in last 45 days.
 
-        Athlete Goal:
+        Primary Goal:
         - Name: ${goal.name}
-        - Type: ${goal.type}
-        - Target Metric: ${goal.targetMetric}
-        - Target Date: ${goal.targetDate}
-        ${goal.raceDetails ? `- Race Elevation: ${goal.raceDetails.elevationGain}m` : ""}
+        - Date: ${goal.targetDate} (${weeksToGoal} weeks away)
+        - Elevation: ${goal.raceDetails ? goal.raceDetails.elevationGain + 'm' : "N/A"}
 
-        The plan must include:
-        - 8 weeks of training.
-        - Each week should have 3-6 sessions.
-        - Session types: 'Easy Run', 'Intervals', 'Tempo', 'Long Run', 'Rest'.
-        - For each session, specify: 'day' (1-7), 'type', 'description', 'durationMinutes', 'intensity' (base/moderate/hard).
-        - Ensure a logical progression (increasing volume/intensity) followed by a 1-2 week taper if it's a Race goal.
+        ${otherGoalsContext ? `Other Upcoming Races (Integrate these/Treat as tune-ups):\n${otherGoalsContext}` : ""}
 
-        Format the response as a JSON object:
+        Constraints:
+        - Plan Duration: Exactly ${planDurationWeeks} weeks.
+        - Start Date: ${today.toISOString().split('T')[0]}.
+        - End Date: ${planDurationWeeks === weeksToGoal ? goal.targetDate : "8 weeks from now"}.
+        - Assume MONDAY is the first day of the week (Day 1).
+        - Update the plan to account for specific race dates if they fall within this period.
+
+        Output Requirements:
+        - JSON format.
+        - For each session, you MUST provide the specific "date" (YYYY-MM-DD).
+        - Session types: 'Easy Run', 'Intervals', 'Tempo', 'Long Run', 'Rest', 'Race', 'Tune-up Race'.
+        - Intensity: 'base', 'moderate', 'hard', 'race'.
+
+        Format:
         {
-          "planName": "Name for the plan",
+          "planName": "8-Week Plan to ${goal.name}",
           "weeks": [
             {
               "weekNumber": 1,
-              "focus": "Aerobic Base",
+              "focus": "Base Building",
               "sessions": [
-                { "day": 1, "type": "Rest", "description": "Full recovery", "durationMinutes": 0, "intensity": "base" },
-                { "day": 2, "type": "Easy Run", "description": "30 mins at aerobic pace", "durationMinutes": 30, "intensity": "base" }
+                { "date": "2024-01-01", "day": "Monday", "type": "Rest", "description": "Recovery", "durationMinutes": 0, "intensity": "base" },
                 ...
               ]
             }
-            ...
           ]
         }
         Only return the JSON object.

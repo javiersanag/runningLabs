@@ -7,11 +7,16 @@ import { Calendar as CalendarIcon, Target, Trophy, Sparkles, MapPin, Zap, Chevro
 import { GoalManager } from "@/components/training/GoalManager";
 import { TrainingCalendar } from "@/components/training/TrainingCalendar";
 import { PredictionCard } from "@/components/training/PredictionCard";
+import { RaceCalendar } from "@/components/training/RaceCalendar";
+import { EditGoalDialog } from "@/components/training/EditGoalDialog";
 import { generatePlanAction } from "@/app/actions/goals";
+import { cn } from "@/lib/utils";
 
-export function TrainingPageClient({ initialGoals, activePlan, latestActiveGoal }: { initialGoals: any[], activePlan: any, latestActiveGoal: any }) {
+export function TrainingPageClient({ initialGoals, raceActivities = [], activePlan, latestActiveGoal }: { initialGoals: any[], raceActivities?: any[], activePlan: any, latestActiveGoal: any }) {
     const [isAddingGoal, setIsAddingGoal] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isRaceCalendarOpen, setIsRaceCalendarOpen] = useState(false);
+    const [editingGoal, setEditingGoal] = useState<any | null>(null);
 
     const handleGeneratePlan = async (goalId: string) => {
         setIsGenerating(true);
@@ -32,7 +37,7 @@ export function TrainingPageClient({ initialGoals, activePlan, latestActiveGoal 
                     <p className="text-neutral-500 font-medium leading-relaxed">Plan your season, set objectives, and track your progress.</p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="secondary">
+                    <Button variant="secondary" onClick={() => setIsRaceCalendarOpen(true)}>
                         <CalendarIcon size={16} className="mr-2" />
                         Race Calendar
                     </Button>
@@ -56,7 +61,11 @@ export function TrainingPageClient({ initialGoals, activePlan, latestActiveGoal 
                     {/* Left: Active Plan & Calendar */}
                     <div className="lg:col-span-2 space-y-8">
                         {activePlan ? (
-                            <TrainingCalendar plan={activePlan} />
+                            <TrainingCalendar
+                                plan={activePlan}
+                                isGenerating={isGenerating}
+                                onRegenerate={() => latestActiveGoal && handleGeneratePlan(latestActiveGoal.id)}
+                            />
                         ) : (
                             <Card padding="normal" className="min-h-[500px] flex flex-col items-center justify-center text-center border-2 border-dashed border-neutral-100">
                                 <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6 animate-pulse">
@@ -103,7 +112,16 @@ export function TrainingPageClient({ initialGoals, activePlan, latestActiveGoal 
                             <div className="space-y-4">
                                 {initialGoals.length > 0 ? (
                                     initialGoals.map(goal => (
-                                        <Card key={goal.id} padding="compact" hoverable className={goal.id === latestActiveGoal?.id ? "border-primary/20 bg-primary/[0.02]" : ""}>
+                                        <Card
+                                            key={goal.id}
+                                            padding="compact"
+                                            hoverable
+                                            className={cn(
+                                                "cursor-pointer transition-all",
+                                                goal.id === latestActiveGoal?.id ? "border-primary/20 bg-primary/[0.02]" : ""
+                                            )}
+                                            onClick={() => setEditingGoal(goal)}
+                                        >
                                             <div className="flex items-start justify-between">
                                                 <div>
                                                     <div className="flex items-center gap-2 mb-1">
@@ -119,12 +137,9 @@ export function TrainingPageClient({ initialGoals, activePlan, latestActiveGoal 
                                                 <div className="text-right">
                                                     <div className="text-xs font-black text-foreground">{goal.targetMetric}</div>
                                                     {goal.id !== latestActiveGoal?.id && (
-                                                        <button
-                                                            className="text-[9px] font-black text-primary uppercase mt-2 hover:underline"
-                                                            onClick={() => {/* setActiveGoal logic if needed */ }}
-                                                        >
-                                                            Make Active
-                                                        </button>
+                                                        <p className="text-[9px] font-black text-primary uppercase mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            Click to Manage
+                                                        </p>
                                                     )}
                                                 </div>
                                             </div>
@@ -139,6 +154,24 @@ export function TrainingPageClient({ initialGoals, activePlan, latestActiveGoal 
                         </div>
                     </div>
                 </div>
+            )}
+
+            <RaceCalendar
+                goals={initialGoals}
+                activities={raceActivities}
+                isOpen={isRaceCalendarOpen}
+                onClose={() => setIsRaceCalendarOpen(false)}
+            />
+
+            {editingGoal && (
+                <EditGoalDialog
+                    goal={editingGoal}
+                    isOpen={!!editingGoal}
+                    onClose={() => {
+                        setEditingGoal(null);
+                        window.location.reload(); // Refresh to reflect changes
+                    }}
+                />
             )}
         </>
     );

@@ -24,6 +24,15 @@ export default async function TrainingPage() {
         orderBy: [desc(trainingPlans.createdAt)]
     });
 
+    // Fetch race activities for the calendar
+    const raceActivities = await db.query.activities.findMany({
+        where: and(
+            eq(activities.athleteId, athlete.id),
+            eq(activities.isRace, true)
+        ),
+        orderBy: [desc(activities.startTime)]
+    });
+
     // Use predictions from the most recent active goal
     const latestActiveGoal = currentGoals.find(g => g.status === 'Active');
 
@@ -31,6 +40,7 @@ export default async function TrainingPage() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
             <TrainingPageClient
                 initialGoals={currentGoals}
+                raceActivities={raceActivities}
                 activePlan={activePlan}
                 latestActiveGoal={latestActiveGoal || currentGoals[0]}
             />
