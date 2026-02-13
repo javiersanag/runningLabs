@@ -52,6 +52,8 @@ export default async function FeedPage() {
     const streakDays = streakData.map(d => d.active);
     const streakLabels = streakData.map(d => d.label);
 
+    const latestActivity = activityList[0];
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 relative">
             {/* Left Panel - Sticky behavior handled internally */}
@@ -62,6 +64,7 @@ export default async function FeedPage() {
                     dailyMetric={latestMetric}
                     streakDays={streakDays}
                     streakLabels={streakLabels}
+                    latestActivity={latestActivity}
                 />
             </div>
 

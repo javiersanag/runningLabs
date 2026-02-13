@@ -65,7 +65,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                         </h3>
                         <p className="text-xs text-neutral-400 font-bold uppercase tracking-wider mt-1">
                             {new Date(activity.startTime).toLocaleDateString(undefined, {
-                                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
                             })} • {activity.type}
                         </p>
                     </div>

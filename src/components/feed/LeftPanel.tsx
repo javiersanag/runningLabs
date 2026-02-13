@@ -1,11 +1,25 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Activity, Bike, Calendar, ChevronRight, Flame, Heart, TrendingUp, Trophy, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function LeftPanel({ athlete, stats, dailyMetric, streakDays, streakLabels }: { athlete: any, stats: any, dailyMetric: any, streakDays: boolean[], streakLabels: string[] }) {
+export function LeftPanel({
+    athlete,
+    stats,
+    dailyMetric,
+    streakDays,
+    streakLabels,
+    latestActivity
+}: {
+    athlete: any,
+    stats: any,
+    dailyMetric: any,
+    streakDays: boolean[],
+    streakLabels: string[],
+    latestActivity?: any
+}) {
     const ref = useRef<HTMLDivElement>(null);
     const [stickyTop, setStickyTop] = useState(96); // Default top-24 (96px)
 
@@ -55,8 +69,23 @@ export function LeftPanel({ athlete, stats, dailyMetric, streakDays, streakLabel
                             {initials}
                         </div>
                     </div>
-                    <h2 className="text-xl font-black text-foreground">{athlete?.name}</h2>
-                    <div className="flex gap-4 pt-4 border-t border-neutral-100">
+                    <h2 className="text-l font-black text-foreground">{athlete?.firstName}</h2>
+                    {latestActivity && (
+                        <div className="mt-1 flex items-center gap-1.5 text-xs font-bold text-neutral-400 group">
+                            {/* <Activity size={10} className="text-primary/60" /> */}
+                            <Link
+                                href={`/activities/${latestActivity.id}`}
+                                className="hover:text-primary transition-colors truncate"
+                                title={`View ${latestActivity.name}`}
+                            >
+                                {latestActivity.name} - {new Date(latestActivity.startTime).toLocaleDateString(undefined, {
+                                    month: 'short', day: 'numeric', year: 'numeric'
+                                })}
+                            </Link>
+                            <ChevronRight size={10} className="text-neutral-300 group-hover:text-primary transition-colors" />
+                        </div>
+                    )}
+                    <div className="flex gap-4 pt-4 mt-4 border-t border-neutral-100">
                         <div>
                             <p className="text-xl font-black text-foreground">{stats.totalActivities || 0}</p>
                             <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Activities</p>
