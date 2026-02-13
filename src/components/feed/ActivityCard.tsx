@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { formatDistance, formatDuration, formatPace } from "@/lib/utils";
-import { Activity, MapPin, Clock, Zap, TrendingUp, Sparkles, MessageSquare, Heart, RefreshCw } from "lucide-react";
+import { Activity, MapPin, Clock, Zap, TrendingUp, Sparkles, MessageSquare, Heart, RefreshCw, Trophy } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const ActivityMapInner = dynamic(
@@ -63,10 +63,16 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                         <h3 className="font-bold text-foreground text-lg leading-tight hover:text-primary transition-colors">
                             <Link href={`/activities/${activity.id}`}>{activity.name}</Link>
                         </h3>
-                        <p className="text-xs text-neutral-400 font-bold uppercase tracking-wider mt-1">
+                        <p className="text-xs text-neutral-400 font-bold uppercase tracking-wider mt-1 flex items-center gap-2">
                             {new Date(activity.startTime).toLocaleDateString(undefined, {
                                 month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
                             })} • {activity.type}
+                            {activity.isRace && (
+                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-100 text-amber-600 text-[10px] font-black border border-amber-200">
+                                    <Trophy size={10} />
+                                    Race Event
+                                </span>
+                            )}
                         </p>
                     </div>
                 </div>

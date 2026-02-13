@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { activities } from "@/lib/schema";
 import { desc } from "drizzle-orm";
-import { Activity, Plus, ChevronRight, MapPin, Clock, Zap } from "lucide-react";
+import { Activity, Plus, ChevronRight, MapPin, Clock, Zap, Trophy } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
@@ -77,9 +77,17 @@ export default async function ActivitiesPage() {
                                         <td className="py-5 px-6">
                                             <Link href={`/activities/${act.id}`} className="block">
                                                 <div className="flex flex-col">
-                                                    <span className="text-foreground font-bold group-hover:text-primary transition-colors mb-0.5">
-                                                        {act.name || "Morning Run"}
-                                                    </span>
+                                                    <div className="flex items-center gap-2 mb-0.5">
+                                                        <span className="text-foreground font-bold group-hover:text-primary transition-colors">
+                                                            {act.name || "Morning Run"}
+                                                        </span>
+                                                        {act.isRace && (
+                                                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-600 text-[9px] font-black uppercase tracking-wider border border-amber-200 shadow-sm">
+                                                                <Trophy size={10} />
+                                                                Race
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <span className="text-[11px] text-neutral-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
                                                         {formatDate(act.startTime)}
                                                     </span>

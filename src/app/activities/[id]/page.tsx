@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { activities, gear } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { MapPin, Clock, Zap, TrendingUp, Heart, Mountain, Tag, ChevronLeft, Calendar, Share2, MoreHorizontal } from "lucide-react";
+import { MapPin, Clock, Zap, TrendingUp, Heart, Mountain, Tag, ChevronLeft, Calendar, Share2, MoreHorizontal, Trophy } from "lucide-react";
 import Link from "next/link";
 import { ActivityChart } from "@/components/charts/ActivityChart";
 import ActivityMap from "@/components/charts/ActivityMap";
@@ -147,7 +147,15 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
             {/* Title Section */}
             <div className="mb-8">
                 <div className="flex items-start justify-between gap-4 mb-2">
-                    <h1 className="text-4xl font-extrabold text-foreground tracking-tight">{activity.name || "Morning Session"}</h1>
+                    <div className="flex items-center gap-4">
+                        <h1 className="text-4xl font-extrabold text-foreground tracking-tight">{activity.name || "Morning Session"}</h1>
+                        {activity.isRace && (
+                            <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-xl border border-amber-100 shadow-sm">
+                                <Trophy size={20} className="text-amber-500" />
+                                <span className="text-xs font-black text-amber-600 uppercase tracking-widest">Race Activity</span>
+                            </div>
+                        )}
+                    </div>
                     <div className="flex items-center gap-3">
                         {currentGear && (
                             <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100/50 rounded-lg border border-neutral-200 shadow-sm">
@@ -159,7 +167,8 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                             activity={{
                                 id: activity.id,
                                 name: activity.name,
-                                gearId: activity.gearId
+                                gearId: activity.gearId,
+                                isRace: !!activity.isRace
                             }}
                             allGear={allGear}
                         />
