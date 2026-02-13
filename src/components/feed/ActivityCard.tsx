@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { formatDistance, formatDuration, formatPace } from "@/lib/utils";
-import { Activity, MapPin, Clock, Zap, TrendingUp, Sparkles, MessageSquare, Heart } from "lucide-react";
+import { Activity, MapPin, Clock, Zap, TrendingUp, Sparkles, MessageSquare, Heart, RefreshCw } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const ActivityMapInner = dynamic(
@@ -104,8 +104,18 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                         <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
                             <Sparkles size={12} className="text-primary" />
                         </div>
-                        <div>
-                            <p className="text-xs font-bold text-primary mb-0.5">AI Analysis</p>
+                        <div className="flex-1">
+                            <div className="flex justify-between items-start">
+                                <p className="text-xs font-bold text-primary mb-0.5">AI Analysis</p>
+                                <button
+                                    onClick={handleGenerateInsight}
+                                    disabled={isPending}
+                                    className="h-6 w-6 rounded-md flex items-center justify-center text-primary/40 hover:text-primary hover:bg-primary/10 transition-all disabled:opacity-50"
+                                    title="Regenerate Insight"
+                                >
+                                    <RefreshCw size={12} className={isPending ? "animate-spin" : ""} />
+                                </button>
+                            </div>
                             <p className="text-sm text-neutral-600 leading-relaxed font-medium">
                                 {activity.aiInsight}
                             </p>
@@ -117,9 +127,9 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                             variant="primary" // Changed to primary for visibility in this demo
                             className="text-xs h-8 px-3 bg-neutral-100 text-neutral-600 hover:bg-neutral-200 shadow-none border border-neutral-200"
                             onClick={handleGenerateInsight}
-                        // disabled={isPending}
+                            disabled={isPending}
                         >
-                            {/* <Sparkles size={8} className={`mr-1.5 ${isPending ? 'animate-spin' : ''}`} /> */}
+                            <Sparkles size={12} className={`mr-1.5 ${isPending ? 'animate-spin' : ''}`} />
                             {isPending ? 'Analyzing...' : 'AI Analysis'}
                         </Button>
                     </div>
@@ -144,3 +154,4 @@ export function ActivityCard({ activity }: ActivityCardProps) {
         </Card>
     );
 }
+

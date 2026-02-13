@@ -29,7 +29,8 @@ export function LeftPanel({ athlete, stats, dailyMetric, streakDays, streakLabel
         return () => window.removeEventListener("resize", updateStickyPos);
     }, [athlete, stats, dailyMetric]);
 
-    const initials = athlete?.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || "RL";
+    const initials = (athlete?.firstName?.[0] || "") + (athlete?.lastName?.[0] || "") || "RL";
+    // const initials = athlete?.firstName?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || "RL";
 
     // Use passed streak data instead of mock
     const displayStreak = streakDays || [false, false, false, false, false, false, false];

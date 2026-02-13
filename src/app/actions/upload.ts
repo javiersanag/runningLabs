@@ -52,16 +52,20 @@ export async function uploadActivity(formData: FormData) {
 
         const id = randomUUID();
 
+        // Use total_timer_time (active moving time) as the primary duration.
+        // Fallback to total_elapsed_time if timer_time is missing or zero.
+        const duration = session.total_timer_time || session.total_elapsed_time || 0;
+
         // Calculate Training Load
         let tss = session.training_stress_score;
         let trimp = 0;
 
-        if (!tss && session.normalized_power && session.total_elapsed_time) {
-            tss = calculateTSS(session.total_elapsed_time, session.normalized_power, ftp);
+        if (!tss && session.normalized_power && duration) {
+            tss = calculateTSS(duration, session.normalized_power, ftp);
         }
 
         if (session.avg_heart_rate) {
-            trimp = calculateTRIMP(session.total_elapsed_time / 60, session.avg_heart_rate, maxHr, restHr);
+            trimp = calculateTRIMP(duration / 60, session.avg_heart_rate, maxHr, restHr);
         }
 
         // 4. Extract Samples for Charts/Map
@@ -118,7 +122,7 @@ export async function uploadActivity(formData: FormData) {
             type: session.sport || "Run",
             startTime: startTimeStr,
             distance: session.total_distance,
-            duration: session.total_elapsed_time,
+            duration: duration,
             elevationGain: session.total_ascent,
             averageHr: session.avg_heart_rate,
             maxHr: session.max_heart_rate,

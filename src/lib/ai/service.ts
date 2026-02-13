@@ -112,6 +112,7 @@ Only return JSON.
 
 export async function generateActivityOneLiner(context: string): Promise<string> {
     const prompt = `
+        You are an expert endurance sports coach. 
         Analyze this activity in two short, punchy sentences (max 30 words each). 
         Focus on the effort, intensity, or a specific highlight. 
         Be encouraging but analytical. 
