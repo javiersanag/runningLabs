@@ -84,9 +84,7 @@ export async function createGoalAction(formData: FormData) {
  */
 export async function analyzeRaceAction(url: string) {
     try {
-        const response = await fetch(url);
-        const html = await response.text();
-        const raceDetails = await analyzeRaceContent(html);
+        const raceDetails = await analyzeRaceContent(url);
         return { success: true, data: raceDetails };
     } catch (error) {
         logger.error("Analyze Race Action Error", error);

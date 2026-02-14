@@ -174,11 +174,14 @@ export function GoalManager() {
                         <div className="space-y-2">
                             <label className="text-xs font-black text-neutral-400 uppercase tracking-widest">Pace Goal</label>
                             <input
+                                required
                                 name="targetMetric"
                                 className="w-full bg-neutral-50 border-none rounded-xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
-                                placeholder="e.g. 4:30 min/km"
+                                placeholder="MM:SS (min/km)"
+                                pattern="^[0-5]?[0-9]:[0-5][0-9]$"
+                                title="Please enter pace in MM:SS format (e.g., 4:30 or 12:45)"
                                 key={selectedDistance?.label || 'default'}
-                                defaultValue={selectedDistance ? `${selectedDistance.label} Finish` : (analyzedDetails?.distance ? `${analyzedDetails.distance}km Finish` : "")}
+                                defaultValue=""
                             />
                         </div>
 

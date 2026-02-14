@@ -1,8 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { logger } from "@/lib/logger";
-
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" }); // Updated model name to a likely valid one, or keep preview if sure
+const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
 /**
  * AI Coach Service
@@ -105,7 +104,7 @@ Only return JSON.
         logger.error("Gemini Insight API Error", error);
         return {
             message: "Analyze your training patterns to see your current trend.",
-            actionItems: ["Keep training consistently"]
+            actionItems: ["Unable to reach AI Coach, try again later."]
         };
     }
 }
@@ -126,16 +125,17 @@ export async function generateActivityOneLiner(context: string): Promise<string>
         return response.text().trim();
     } catch (error) {
         logger.error("Gemini Activity Insight Error", error);
-        return "Great effort! Keep up the consistency.";
+        return "Unable to reach AI Coach, try again later.";
     }
 }
 
 /**
  * Parses race details from raw HTML content scraped from a race website.
  */
-export async function analyzeRaceContent(html: string): Promise<any> {
+export async function analyzeRaceContent(url: string): Promise<any> {
+    logger.info(url)
     const prompt = `
-        You are an endurance sports data analyst. I will provide you with a raw HTML/Text dump of a race website.
+        You are an endurance sports data analyst. I will provide you with the URL of a race website.
         Your goal is to extract the following information in a structured JSON format:
         - name: The name of the race
         - date: The date of the race (ISO format if possible)
@@ -145,16 +145,22 @@ export async function analyzeRaceContent(html: string): Promise<any> {
         - location: City and country (if found)
 
         If any field is missing, use null.
-        HTML Content:
-        ${html.substring(0, 50000)} // Truncate to avoid context window issues
+        The URL of the race website is the following, please extract all the race details: ${url}
 
         Only return the JSON object. No markdown.
     `;
-
+    logger.info(prompt)
     try {
-        const result = await model.generateContent(prompt);
+        const result = await model.generateContent({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            tools: [{ urlContext: {} }] as any,
+            generationConfig: {
+                responseMimeType: "application/json"
+            }
+        });
         const text = result.response.text();
         const jsonString = text.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+        logger.info(jsonString);
         return JSON.parse(jsonString);
     } catch (error) {
         logger.error("Analyze Race Error", error);
