@@ -11,6 +11,7 @@ import { logger } from "@/lib/logger";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 import { getCurrentUser } from "@/lib/session";
 
@@ -110,32 +111,32 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
 
   return (
     <>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground tracking-tight">Welcome back, {athlete?.firstName || "Athlete"}</h2>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 bg-neutral-100 rounded-lg p-1">
-            <Link
-              href="/?period=7d"
-              className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${period === '7d' ? 'bg-white text-primary shadow-sm' : 'text-neutral-400 hover:text-neutral-600'}`}
-            >
-              7 DAYS
+      <PageHeader
+        title={`Welcome back, ${athlete?.firstName || "Athlete"}`}
+        actions={
+          <>
+            <div className="flex items-center gap-1 bg-neutral-100 rounded-lg p-1">
+              <Link
+                href="/?period=7d"
+                className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${period === '7d' ? 'bg-white text-primary shadow-sm' : 'text-neutral-400 hover:text-neutral-600'}`}
+              >
+                7 DAYS
+              </Link>
+              <Link
+                href="/?period=30d"
+                className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${period === '30d' ? 'bg-white text-primary shadow-sm' : 'text-neutral-400 hover:text-neutral-600'}`}
+              >
+                30 DAYS
+              </Link>
+            </div>
+            <Link href="/upload">
+              <Button>
+                + Upload Activity
+              </Button>
             </Link>
-            <Link
-              href="/?period=30d"
-              className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${period === '30d' ? 'bg-white text-primary shadow-sm' : 'text-neutral-400 hover:text-neutral-600'}`}
-            >
-              30 DAYS
-            </Link>
-          </div>
-          <Link href="/upload">
-            <Button>
-              + Upload Activity
-            </Button>
-          </Link>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Unified Compact Metrics Bar */}
       <div className="mb-8 overflow-x-auto pb-2 scrollbar-hide">

@@ -5,6 +5,7 @@ import { X, Trash2, Check, Target, Type, Trophy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { updateGoalAction, deleteGoalAction } from "@/app/actions/goals";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/Toast";
 
 interface EditGoalDialogProps {
     goal: {
@@ -27,6 +28,7 @@ export function EditGoalDialog({ goal, isOpen, onClose }: EditGoalDialogProps) {
     const [name, setName] = useState(goal.name);
     const [targetMetric, setTargetMetric] = useState(goal.targetMetric || "");
     const [targetValue, setTargetValue] = useState(goal.targetValue?.toString() || "");
+    const { toast } = useToast();
 
     const handleSave = async () => {
         setIsSaving(true);
@@ -39,7 +41,7 @@ export function EditGoalDialog({ goal, isOpen, onClose }: EditGoalDialogProps) {
             if (result.success) {
                 onClose();
             } else {
-                alert("Failed to update goal");
+                toast("Failed to update goal", "error");
             }
         } catch (error) {
             console.error("Failed to update goal", error);
@@ -56,7 +58,7 @@ export function EditGoalDialog({ goal, isOpen, onClose }: EditGoalDialogProps) {
                 if (result.success) {
                     onClose();
                 } else {
-                    alert("Failed to delete goal");
+                    toast("Failed to delete goal", "error");
                 }
             } catch (error) {
                 console.error("Failed to delete goal", error);

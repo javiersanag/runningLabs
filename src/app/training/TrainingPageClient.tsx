@@ -11,19 +11,22 @@ import { RaceCalendar } from "@/components/training/RaceCalendar";
 import { EditGoalDialog } from "@/components/training/EditGoalDialog";
 import { generatePlanAction } from "@/app/actions/goals";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/Toast";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 export function TrainingPageClient({ initialGoals, raceActivities = [], activePlan, latestActiveGoal }: { initialGoals: any[], raceActivities?: any[], activePlan: any, latestActiveGoal: any }) {
     const [isAddingGoal, setIsAddingGoal] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const [isRaceCalendarOpen, setIsRaceCalendarOpen] = useState(false);
     const [editingGoal, setEditingGoal] = useState<any | null>(null);
+    const { toast } = useToast();
 
     const handleGeneratePlan = async (goalId: string) => {
         setIsGenerating(true);
         const result = await generatePlanAction(goalId);
         setIsGenerating(false);
         if (!result.success) {
-            alert(result.error);
+            toast(result.error || "Failed to generate plan", "error");
         } else {
             window.location.reload(); // Refresh to show new plan
         }
@@ -31,26 +34,26 @@ export function TrainingPageClient({ initialGoals, raceActivities = [], activePl
 
     return (
         <>
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-black text-foreground tracking-tight">Training & Goals</h1>
-                    <p className="text-neutral-500 font-medium leading-relaxed">Plan your season, set objectives, and track your progress.</p>
-                </div>
-                <div className="flex gap-3">
-                    <Button variant="secondary" onClick={() => setIsRaceCalendarOpen(true)}>
-                        <CalendarIcon size={16} className="mr-2" />
-                        Race Calendar
-                    </Button>
-                    <Button onClick={() => setIsAddingGoal(!isAddingGoal)} variant={isAddingGoal ? "secondary" : "primary"}>
-                        {isAddingGoal ? "Back to Dashboard" : (
-                            <>
-                                <Target size={16} className="mr-2" />
-                                Set a Goal
-                            </>
-                        )}
-                    </Button>
-                </div>
-            </div>
+            <PageHeader
+                title="Training & Goals"
+                subtitle="Plan your season, set objectives, and track your progress."
+                actions={
+                    <div className="flex gap-3">
+                        <Button variant="secondary" onClick={() => setIsRaceCalendarOpen(true)}>
+                            <CalendarIcon size={16} className="mr-2" />
+                            Race Calendar
+                        </Button>
+                        <Button onClick={() => setIsAddingGoal(!isAddingGoal)} variant={isAddingGoal ? "secondary" : "primary"}>
+                            {isAddingGoal ? "Back to Dashboard" : (
+                                <>
+                                    <Target size={16} className="mr-2" />
+                                    Set a Goal
+                                </>
+                            )}
+                        </Button>
+                    </div>
+                }
+            />
 
             {isAddingGoal ? (
                 <div className="max-w-2xl mx-auto py-8">

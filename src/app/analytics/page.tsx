@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { dailyMetrics } from "@/lib/schema";
 import { desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/session";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -21,10 +22,11 @@ export default async function AnalyticsPage() {
     return (
         <>
             <div className="max-w-6xl mx-auto">
-                <div className="mb-10">
-                    <h2 className="text-3xl font-bold text-foreground tracking-tight">Advanced Analytics</h2>
-                    <p className="text-neutral-500 font-medium">Long-term fitness and performance trends (180-day view)</p>
-                </div>
+                <PageHeader
+                    title="Advanced Analytics"
+                    subtitle="Long-term fitness and performance trends (180-day view)"
+                    className="mb-10"
+                />
 
                 {/* Main Chart */}
                 <div className="mb-12">

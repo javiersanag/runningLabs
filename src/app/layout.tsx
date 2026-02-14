@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 
 import { getCurrentUser } from "@/lib/session";
 import { Shell } from "@/components/layout/Shell";
+import { Providers } from "@/components/layout/Providers";
 
 export const metadata: Metadata = {
   title: "Khronos",
@@ -31,7 +32,9 @@ export default async function RootLayout({
     return (
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          {children}
+          <Providers>
+            {children}
+          </Providers>
         </body>
       </html>
     );
@@ -40,9 +43,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Shell athlete={athlete}>
-          {children}
-        </Shell>
+        <Providers>
+          <Shell athlete={athlete}>
+            {children}
+          </Shell>
+        </Providers>
       </body>
     </html>
   );

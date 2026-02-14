@@ -7,6 +7,7 @@ import { randomUUID } from "crypto";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { getCurrentUser } from "@/lib/session";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -56,12 +57,10 @@ export default async function GearPage() {
 
     return (
         <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h2 className="text-3xl font-bold text-foreground tracking-tight">Gear Tracking</h2>
-                    <p className="text-sm text-neutral-500 font-medium">Monitor equipment mileage and performance stats.</p>
-                </div>
-            </div>
+            <PageHeader
+                title="Gear Tracking"
+                subtitle="Monitor equipment mileage and performance stats."
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-4">

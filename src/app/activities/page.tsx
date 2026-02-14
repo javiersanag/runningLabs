@@ -4,6 +4,7 @@ import { desc } from "drizzle-orm";
 import { Activity, Plus, ChevronRight, MapPin, Clock, Zap, Trophy } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -30,18 +31,18 @@ export default async function ActivitiesPage() {
 
     return (
         <>
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h2 className="text-3xl font-bold text-foreground tracking-tight">Activities</h2>
-                    <p className="text-sm text-neutral-500 font-medium">Your historical training data and session details.</p>
-                </div>
-                <Link href="/upload">
-                    <Button className="flex items-center gap-2">
-                        <Plus size={16} />
-                        Upload Session
-                    </Button>
-                </Link>
-            </div>
+            <PageHeader
+                title="Activities"
+                subtitle="Your historical training data and session details."
+                actions={
+                    <Link href="/upload">
+                        <Button className="flex items-center gap-2">
+                            <Plus size={16} />
+                            Upload Session
+                        </Button>
+                    </Link>
+                }
+            />
 
             {list.length === 0 ? (
                 <div className="rounded-2xl border-2 border-dashed border-neutral-100 p-16 text-center bg-neutral-50/50">
