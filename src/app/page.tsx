@@ -1,4 +1,4 @@
-import { Activity, Zap, TrendingUp, Clock, TrendingDown, Minus, Bot, Sparkles, RotateCw, MapPin, Timer, Heart, Flame, Info } from "lucide-react";
+import { Activity, Zap, TrendingUp, Clock, TrendingDown, Minus, Bot, Sparkles, RotateCw, MapPin, Timer, Heart, Flame, Info, Upload, Rocket } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { dailyMetrics } from "@/lib/schema";
@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 import { getCurrentUser } from "@/lib/session";
 
@@ -114,7 +115,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
       <PageHeader
         title={`Welcome back, ${athlete?.firstName || "Athlete"}`}
         actions={
-          <>
+          <div className="flex gap-2">
+            <Link href="/upload">
+              <Button variant="primary" className="gap-2">
+                <Upload size={16} />
+                <span className="hidden sm:inline">Upload Activity</span>
+              </Button>
+            </Link>
             <div className="flex items-center gap-1 bg-neutral-100 rounded-lg p-1">
               <Link
                 href="/?period=7d"
@@ -129,153 +136,163 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
                 30 DAYS
               </Link>
             </div>
-            <Link href="/upload">
-              <Button>
-                + Upload Activity
-              </Button>
-            </Link>
-          </>
+          </div>
         }
       />
 
-      {/* Unified Compact Metrics Bar */}
-      <div className="mb-8 overflow-x-auto pb-2 scrollbar-hide">
-        <div className="flex gap-4 min-w-max">
-          {performanceStats.map((stat, i) => (
-            <MetricCard
-              key={`perf-${i}`}
-              label={stat.label}
-              value={stat.value}
-              unit={stat.unit}
-              icon={stat.icon as any}
-              primary={i === 0}
-              compact
-            />
-          ))}
-          <div className="w-[1px] bg-neutral-100 mx-2 self-stretch" />
-          {trainingStats.map((stat, i) => (
-            <div key={`train-container-${i}`} className="flex flex-col gap-1 items-start">
-              <MetricCard
-                key={`train-${i}`}
-                label={stat.label}
-                value={stat.value}
-                unit={stat.sublabel}
-                trend={stat.tendency}
-                className={stat.color}
-                compact
-              />
-              <InfoTooltip
-                className="ml-2"
-                content={
-                  stat.label === "Fitness" ? "Chronic Training Load (CTL): A 42-day rolling average of daily strain. Represents long-term fitness." :
-                    stat.label === "Fatigue" ? "Acute Training Load (ATL): A 7-day rolling average of daily strain. Represents short-term stress." :
-                      stat.label === "Form" ? "Training Stress Balance (TSB): Fitness minus Fatigue. Positive means fresh, negative means fatigued." :
-                        "Readiness score based on current recovery and training balance."
-                }
-              />
+      {chartData.length === 0 ? (
+        <EmptyState
+          icon={Rocket}
+          title="Start Your Journey"
+          description="It looks like you haven't uploaded any activities yet. Upload your first file to unlock powerful analytics and AI coaching."
+          action={{ label: "Upload First Activity", href: "/upload" }}
+        />
+      ) : (
+        <>
+          {/* Unified Compact Metrics Bar */}
+          <div className="mb-8 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="flex gap-4 min-w-max">
+              {performanceStats.map((stat, i) => (
+                <MetricCard
+                  key={`perf-${i}`}
+                  label={stat.label}
+                  value={stat.value}
+                  unit={stat.unit}
+                  icon={stat.icon as any}
+                  primary={i === 0}
+                  compact
+                />
+              ))}
+              <div className="w-[1px] bg-neutral-100 mx-2 self-stretch" />
+              {trainingStats.map((stat, i) => (
+                <div key={`train-container-${i}`} className="flex flex-col gap-1 items-start">
+                  <MetricCard
+                    key={`train-${i}`}
+                    label={stat.label}
+                    value={stat.value}
+                    unit={stat.sublabel}
+                    trend={stat.tendency}
+                    className={stat.color}
+                    compact
+                  />
+                  <InfoTooltip
+                    className="ml-2"
+                    content={
+                      stat.label === "Fitness" ? "Chronic Training Load (CTL): A 42-day rolling average of daily strain. Represents long-term fitness." :
+                        stat.label === "Fatigue" ? "Acute Training Load (ATL): A 7-day rolling average of daily strain. Represents short-term stress." :
+                          stat.label === "Form" ? "Training Stress Balance (TSB): Fitness minus Fatigue. Positive means fresh, negative means fatigued." :
+                            "Readiness score based on current recovery and training balance."
+                    }
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <Card className="lg:col-span-2 flex flex-col h-[250px] md:h-[320px]">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Fitness & Freshness</h3>
-              <InfoTooltip content="Long-term relationship between Fitness (CTL), Fatigue (ATL), and Form (TSB/Bars)." />
-            </div>
-          </div>
-          <div className="flex-1 min-h-0">
-            <FitnessChart data={periodHistory} />
-          </div>
-        </Card>
-        <Card className="flex flex-col h-[250px] md:h-[320px]">
-          <div className="flex items-center gap-2 mb-4">
-            <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Intensity Distribution</h3>
-            <InfoTooltip content="Time spent in each heart rate zone during the selected period." />
-          </div>
-          <div className="flex-1 min-h-0">
-            <IntensityChart data={intensityData} />
-          </div>
-        </Card>
-      </div>
-
-      {/* Secondary Row - Training Insight */}
-      <div className="w-full">
-        <Card className="bg-primary/5 border-primary/10 overflow-hidden relative">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <Bot size={120} className="text-primary" />
           </div>
 
-          {athlete?.lastAiInsight ? (
-            (() => {
-              const insight = JSON.parse(athlete.lastAiInsight);
-              return (
-                <div className="w-full relative z-10">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                      <Zap size={20} />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-foreground">AI Training Insight</h3>
-                      <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
-                        Analyzed {athlete.lastAiInsightDate ? new Date(athlete.lastAiInsightDate).toLocaleDateString() : 'recently'}
-                      </p>
-                    </div>
-                    <form action={refreshAiInsightAction} className="ml-auto">
-                      <button type="submit" className="p-2 hover:bg-primary/10 rounded-lg transition-colors text-primary" title="Refresh Insight">
-                        <RotateCw size={16} />
-                      </button>
-                    </form>
-                  </div>
+          {/* Charts Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <Card className="lg:col-span-2 flex flex-col h-[250px] md:h-[320px]">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Fitness & Freshness</h3>
+                  <InfoTooltip content="Long-term relationship between Fitness (CTL), Fatigue (ATL), and Form (TSB/Bars)." />
+                </div>
+              </div>
+              <div className="flex-1 min-h-0">
+                <FitnessChart data={periodHistory} />
+              </div>
+            </Card>
+            <Card className="flex flex-col h-[250px] md:h-[320px]">
+              <div className="flex items-center gap-2 mb-4">
+                <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Intensity Distribution</h3>
+                <InfoTooltip content="Time spent in each heart rate zone during the selected period." />
+              </div>
+              <div className="flex-1 min-h-0">
+                <IntensityChart data={intensityData} />
+              </div>
+            </Card>
+          </div>
 
-                  <p className="text-neutral-600 text-sm mb-6 leading-relaxed max-w-4xl font-medium">
-                    {insight.message}
-                  </p>
+          {/* Secondary Row - Training Insight */}
+          <div className="w-full">
+            <Card className="bg-primary/5 border-primary/10 overflow-hidden relative">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Bot size={120} className="text-primary" />
+              </div>
 
-                  <div className="flex flex-wrap gap-2 items-center">
-                    {insight.actionItems?.map((action: string, idx: number) => (
-                      <div key={idx} className="flex items-center gap-1.5 text-[11px] font-bold text-primary bg-white border border-primary/20 px-4 py-2 rounded-full shadow-sm">
-                        <Sparkles size={10} />
-                        {action}
+              {athlete?.lastAiInsight ? (
+                (() => {
+                  const insight = JSON.parse(athlete.lastAiInsight);
+                  return (
+                    <div className="w-full relative z-10">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                          <Zap size={20} />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-foreground">AI Training Insight</h3>
+                          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                            Analyzed {athlete.lastAiInsightDate ? new Date(athlete.lastAiInsightDate).toLocaleDateString() : 'recently'}
+                          </p>
+                        </div>
+                        <form action={refreshAiInsightAction} className="ml-auto">
+                          <button type="submit" className="p-2 hover:bg-primary/10 rounded-lg transition-colors text-primary" title="Refresh Insight">
+                            <RotateCw size={16} />
+                          </button>
+                        </form>
                       </div>
-                    ))}
-                    <Link href={`/coach?initial_message=${encodeURIComponent(insight.message)}&actions=${encodeURIComponent(JSON.stringify(insight.actionItems || []))}`}>
-                      <Button variant="ghost" className="text-xs ml-2">
-                        Discuss with Coach <Bot size={14} className="ml-1" />
+
+                      <p className="text-neutral-600 text-sm mb-6 leading-relaxed max-w-4xl font-medium">
+                        {insight.message}
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 items-center">
+                        {insight.actionItems?.map((action: string, idx: number) => (
+                          <div key={idx} className="flex items-center gap-1.5 text-[11px] font-bold text-primary bg-white border border-primary/20 px-4 py-2 rounded-full shadow-sm">
+                            <Sparkles size={10} />
+                            {action}
+                          </div>
+                        ))}
+                        <Link href={`/coach?initial_message=${encodeURIComponent(insight.message)}&actions=${encodeURIComponent(JSON.stringify(insight.actionItems || []))}`}>
+                          <Button variant="ghost" className="text-xs ml-2">
+                            Discuss with Coach <Bot size={14} className="ml-1" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center relative z-10">
+                  <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
+                    <Zap size={32} />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Ready for deeper insights?</h3>
+                  <p className="text-neutral-500 text-sm mb-8 max-w-sm font-medium">
+                    Our AI coach is ready to analyze your recent performance and provide personalized training advice.
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <form action={refreshAiInsightAction}>
+                      <Button type="submit">
+                        Generate First Insight
+                      </Button>
+                    </form>
+                    <Link href="/coach">
+                      <Button variant="secondary">
+                        Open AI Coach
                       </Button>
                     </Link>
                   </div>
                 </div>
-              );
-            })()
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center relative z-10">
-              <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
-                <Zap size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">Ready for deeper insights?</h3>
-              <p className="text-neutral-500 text-sm mb-8 max-w-sm font-medium">
-                Our AI coach is ready to analyze your recent performance and provide personalized training advice.
-              </p>
-              <div className="flex items-center gap-3">
-                <form action={refreshAiInsightAction}>
-                  <Button type="submit">
-                    Generate First Insight
-                  </Button>
-                </form>
-                <Link href="/coach">
-                  <Button variant="secondary">
-                    Open AI Coach
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          )}
-        </Card>
-      </div>
+              )}
+            </Card>
+          </div>
+          <div className="w-full">
+            {/* ... insight card ... */}
+            {/* (Assuming content is closing correctly) */}
+          </div>
+        </>
+      )}
     </>
   );
 }

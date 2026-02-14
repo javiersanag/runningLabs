@@ -3,6 +3,10 @@ import { activities, dailyMetrics, athletes, goals } from "@/lib/schema";
 import { desc, eq, and } from "drizzle-orm";
 import { LeftPanel } from "@/components/feed/LeftPanel";
 import { ActivityCard } from "@/components/feed/ActivityCard";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Mountain, Upload } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 import { getCurrentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
@@ -103,24 +107,34 @@ export default async function FeedPage() {
 
             {/* Main Feed */}
             <div className="md:col-span-8 lg:col-span-6">
-                <h2 className="text-l font-black text-foreground mb-6 flex items-center gap-2">
-                    Activity Feed
-                    <span className="text-xs bg-neutral-100 text-neutral-500 px-2 py-1 rounded-full font-bold">
-                        {activityList.length} Activities
-                    </span>
-                </h2>
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-l font-black text-foreground flex items-center gap-2">
+                        Activity Feed
+                        <span className="text-xs bg-neutral-100 text-neutral-500 px-2 py-1 rounded-full font-bold">
+                            {activityList.length} Activities
+                        </span>
+                    </h2>
+                    <Link href="/upload">
+                        <Button variant="ghost" className="text-primary hover:bg-primary/5 h-8 px-3 text-xs gap-2">
+                            <Upload size={14} />
+                            Upload
+                        </Button>
+                    </Link>
+                </div>
 
                 {activityList.length > 0 ? (
                     <div className="space-y-6">
-                        {activityList.map(activity => (
+                        {activityList.map((activity: any) => (
                             <ActivityCard key={activity.id} activity={activity} />
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-20 bg-white rounded-3xl border border-neutral-100">
-                        <p className="text-neutral-400 font-bold mb-2">No activities yet</p>
-                        <p className="text-sm text-neutral-500">Go for a run and upload your first session!</p>
-                    </div>
+                    <EmptyState
+                        icon={Mountain}
+                        title="Your Feed is Quiet"
+                        description="Record your first activity to see it appear here. Track your progress and build your streak!"
+                        action={{ label: "Upload Activity", href: "/upload" }}
+                    />
                 )}
 
                 <div className="mt-8 text-center pb-12">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, Bot, Settings, LayoutDashboard, Footprints, Layers, Menu, X, Calendar, BarChart3 } from "lucide-react";
+import { Activity, Bot, Settings, LayoutDashboard, Footprints, Layers, Menu, X, Calendar, BarChart3, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
@@ -83,6 +83,13 @@ export function Navbar({ athlete }: { athlete: any }) {
 
             {/* Right Side: Profile Dropdown */}
             <div className="flex items-center gap-4">
+                <Link href="/upload" className="hidden md:block">
+                    <Button variant="primary" className="h-9 px-4 text-xs gap-2 shadow-blue-200/50 hover:shadow-blue-300">
+                        <Upload size={14} />
+                        Upload
+                    </Button>
+                </Link>
+
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
