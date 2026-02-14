@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, Bot, Settings, LayoutDashboard, Footprints, Layers, Menu, X, Calendar } from "lucide-react";
+import { Activity, Bot, Settings, LayoutDashboard, Footprints, Layers, Menu, X, Calendar, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
@@ -13,6 +13,7 @@ const items = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Activities", href: "/activities", icon: Activity },
     { label: "Training", href: "/training", icon: Calendar },
+    { label: "Analytics", href: "/analytics", icon: BarChart3 },
     { label: "Gear", href: "/gear", icon: Footprints },
     { label: "Coach", href: "/coach", icon: Bot },
 ];
@@ -84,6 +85,9 @@ export function Navbar({ athlete }: { athlete: any }) {
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        aria-expanded={isDropdownOpen}
+                        aria-haspopup="true"
+                        aria-label="User menu"
                         className="flex items-center gap-3 pl-4 border-l border-neutral-100 hover:opacity-80 transition-opacity"
                     >
                         <div className="text-right hidden sm:block">
@@ -124,8 +128,10 @@ export function Navbar({ athlete }: { athlete: any }) {
 
                 {/* Mobile Menu Toggle */}
                 <button
-                    className="md:hidden text-neutral-500"
+                    className="md:hidden text-neutral-500 p-2"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    aria-expanded={isMobileMenuOpen}
+                    aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
                 >
                     {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>

@@ -1,29 +1,22 @@
 "use client";
 
 import { loginUser } from "@/app/actions/auth";
-import { useActionState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
-const initialState = {
-    message: "",
-};
-
 export default function LoginPage() {
-    // Basic form action or useTransition?
-    // Since loginUser redirects on success, we just need to handle errors.
-    // If loginUser returns { success: false, error: ... }, we can display it.
-
-    // Simple implementation without useActionState for now to avoid complexity if not needed?
-    // Actually useActionState is good for handling server action results.
-    // But loginUser signature I wrote is `async function loginUser(formData: FormData)`.
-    // It returns a promise.
+    const [error, setError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     async function handleSubmit(formData: FormData) {
+        setError(null);
+        setIsSubmitting(true);
         const result = await loginUser(formData);
+        setIsSubmitting(false);
         if (result?.error) {
-            alert(result.error); // Simple for MVP. Ideally use state for error message.
+            setError(result.error);
         }
     }
 
@@ -34,6 +27,12 @@ export default function LoginPage() {
                     <h2 className="text-3xl font-bold text-foreground tracking-tight">Welcome Back</h2>
                     <p className="mt-2 text-sm text-neutral-500">Sign in to your Khronos account</p>
                 </div>
+
+                {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 text-sm font-medium px-4 py-3 rounded-xl" role="alert">
+                        {error}
+                    </div>
+                )}
 
                 <form action={handleSubmit} className="mt-8 space-y-6">
                     <div className="space-y-4">
@@ -63,8 +62,8 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full py-6 text-base">
-                        Sign in
+                    <Button type="submit" className="w-full py-6 text-base" disabled={isSubmitting}>
+                        {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : "Sign in"}
                     </Button>
                 </form>
 

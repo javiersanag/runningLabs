@@ -116,7 +116,7 @@ export default async function GearPage() {
                                 </select>
                             </div>
                             <div>
-                                <label className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold mb-1.5 block">Nickame</label>
+                                <label className="text-[10px] text-neutral-400 uppercase tracking-widest font-bold mb-1.5 block">Nickname</label>
                                 <input name="name" placeholder="e.g. My Racing Flats" required className="w-full bg-neutral-50 border border-neutral-100 rounded-xl p-3 text-foreground text-sm outline-none focus:border-primary/30 transition-colors" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">

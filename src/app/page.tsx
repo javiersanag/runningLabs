@@ -182,7 +182,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
         <Card className="lg:col-span-2 flex flex-col h-[320px]">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-widest">Fitness & Freshness</h3>
+              <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Fitness & Freshness</h3>
               <InfoTooltip content="Long-term relationship between Fitness (CTL), Fatigue (ATL), and Form (TSB/Bars)." />
             </div>
           </div>

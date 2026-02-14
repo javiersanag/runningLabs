@@ -57,7 +57,7 @@ export function MetricCard({
                 </span>
                 {unit && (
                     <span className={cn(
-                        "font-bold text-neutral-300",
+                        "font-bold text-neutral-400",
                         compact ? "text-[10px]" : "text-sm"
                     )}>
                         {unit}

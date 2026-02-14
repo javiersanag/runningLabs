@@ -14,11 +14,13 @@ export function GoalManager() {
     const [raceUrl, setRaceUrl] = useState("");
     const [analyzedDetails, setAnalyzedDetails] = useState<any>(null);
     const [selectedDistance, setSelectedDistance] = useState<any>(null);
+    const [analyzeError, setAnalyzeError] = useState<string | null>(null);
     const router = useRouter();
 
     const handleAnalyze = async () => {
         if (!raceUrl) return;
         setIsLoading(true);
+        setAnalyzeError(null);
         const result = await analyzeRaceAction(raceUrl);
         setIsLoading(false);
         if (result.success) {
@@ -27,7 +29,7 @@ export function GoalManager() {
                 setSelectedDistance(result.data.distances[0]);
             }
         } else {
-            alert(result.error);
+            setAnalyzeError(result.error || "Analysis failed. Please check the URL.");
         }
     };
 
@@ -121,6 +123,11 @@ export function GoalManager() {
                         <p className="text-[10px] text-neutral-400 font-medium italic">
                             Gemini will scan the website to find date, distance, and elevation profile.
                         </p>
+                        {analyzeError && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 text-sm font-medium px-4 py-3 rounded-xl" role="alert">
+                                {analyzeError}
+                            </div>
+                        )}
                     </div>
                 )}
 

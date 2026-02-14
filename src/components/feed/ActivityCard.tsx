@@ -83,7 +83,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                 <div className="grid grid-cols-3 gap-2 mb-4">
                     <div className="flex flex-col">
                         <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Distance</span>
-                        <span className="text-xl font-black text-foreground">{distanceKm} <span className="text-xs font-bold text-neutral-300">km</span></span>
+                        <span className="text-xl font-black text-foreground">{distanceKm} <span className="text-xs font-bold text-neutral-400">km</span></span>
                     </div>
                     <div className="flex flex-col">
                         <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Time</span>
@@ -92,7 +92,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                     <div className="flex flex-col">
                         <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">{power ? 'Power' : 'Pace'}</span>
                         <span className="text-xl font-black text-foreground">
-                            {power ? `${power}w` : pace} <span className="text-xs font-bold text-neutral-300">{!power ? '/km' : ''}</span>
+                            {power ? `${power}w` : pace} <span className="text-xs font-bold text-neutral-400">{!power ? '/km' : ''}</span>
                         </span>
                     </div>
                 </div>

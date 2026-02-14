@@ -1,18 +1,25 @@
 "use client";
 
 import { registerUser } from "@/app/actions/auth";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 export default function RegisterPage() {
+    const [error, setError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     async function handleSubmit(formData: FormData) {
+        setError(null);
+        setIsSubmitting(true);
         const result = await registerUser(formData);
+        setIsSubmitting(false);
         if (result?.error) {
-            alert(result.error);
+            setError(result.error);
         } else if (result?.errors) {
-            // Zod errors
-            const messages = Object.values(result.errors).flat().join("\n");
-            alert(messages);
+            const messages = Object.values(result.errors).flat().join(". ");
+            setError(messages);
         }
     }
 
@@ -23,6 +30,12 @@ export default function RegisterPage() {
                     <h2 className="text-3xl font-bold text-foreground tracking-tight">Create Account</h2>
                     <p className="mt-2 text-sm text-neutral-500">Join the performance lab</p>
                 </div>
+
+                {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 text-sm font-medium px-4 py-3 rounded-xl" role="alert">
+                        {error}
+                    </div>
+                )}
 
                 <form action={handleSubmit} className="mt-8 space-y-6">
                     <div className="space-y-4">
@@ -78,8 +91,8 @@ export default function RegisterPage() {
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full py-6 text-base">
-                        Register
+                    <Button type="submit" className="w-full py-6 text-base" disabled={isSubmitting}>
+                        {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : "Register"}
                     </Button>
                 </form>
 
