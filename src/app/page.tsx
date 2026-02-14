@@ -19,7 +19,7 @@ import { getCurrentUser } from "@/lib/session";
 export const dynamic = "force-dynamic";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
-  const { period = '7d' } = await searchParams;
+  const { period = '30d' } = await searchParams;
   const daysToShow = period === '30d' ? 30 : 7;
 
   const athlete = await getCurrentUser();

@@ -81,33 +81,7 @@ export default async function FeedPage() {
                 />
             </div>
 
-            {/* Mobile Summary Strip — visible only on small screens */}
-            <div className="md:hidden col-span-1 -mt-2 mb-2">
-                <div className="grid grid-cols-3 gap-2 pb-2">
-                    <div className="bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl px-3 py-3 shadow-sm">
-                        <p className="text-lg font-black text-foreground">{stats.totalActivities}</p>
-                        <p className="text-[9px] text-neutral-400 font-bold uppercase tracking-widest">Activities</p>
-                    </div>
-                    <div className="bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl px-3 py-3 shadow-sm">
-                        <p className="text-lg font-black text-primary">{Math.round(latestMetric?.ctl || 0)}</p>
-                        <p className="text-[9px] text-neutral-400 font-bold uppercase tracking-widest">Fitness</p>
-                    </div>
-                    <div className="bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl px-3 py-3 shadow-sm">
-                        <p className="text-lg font-black text-purple-500">{Math.round(latestMetric?.atl || 0)}</p>
-                        <p className="text-[9px] text-neutral-400 font-bold uppercase tracking-widest">Fatigue</p>
-                    </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl px-3 py-3 shadow-sm">
-                        <p className={`text-lg font-black ${(latestMetric?.tsb || 0) >= 0 ? 'text-success' : 'text-warning'}`}>{Math.round(latestMetric?.tsb || 0)}</p>
-                        <p className="text-[9px] text-neutral-400 font-bold uppercase tracking-widest">Form</p>
-                    </div>
-                    <div className="bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-xl px-3 py-3 shadow-sm">
-                        <p className="text-lg font-black text-foreground">{stats.thisMonth}</p>
-                        <p className="text-[9px] text-neutral-400 font-bold uppercase tracking-widest">Last 30d</p>
-                    </div>
-                </div>
-            </div>
+
 
             {/* Main Feed */}
             <div className="md:col-span-8 lg:col-span-6">
