@@ -34,7 +34,7 @@ export function MetricCard({
         <Card
             className={cn(
                 "flex flex-col gap-0.5 relative group",
-                compact ? "min-w-[100px] flex-1" : "min-w-[120px]",
+                compact ? "min-w-0 flex-1" : "min-w-[120px]",
                 className
             )}
             hoverable

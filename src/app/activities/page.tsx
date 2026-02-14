@@ -61,11 +61,11 @@ export default async function ActivitiesPage() {
                         <table className="w-full text-sm border-collapse">
                             <thead>
                                 <tr className="border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-800/50">
-                                    <th className="text-left py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Activity</th>
-                                    <th className="text-right py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Distance</th>
-                                    <th className="text-right py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Duration</th>
-                                    <th className="text-right py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Elevation</th>
-                                    <th className="text-right py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">TSS</th>
+                                    <th className="text-left py-4 px-3 md:px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Activity</th>
+                                    <th className="text-right py-4 px-3 md:px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Distance</th>
+                                    <th className="text-right py-4 px-3 md:px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Duration</th>
+                                    <th className="text-right py-4 px-3 md:px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em] hidden md:table-cell">Elevation</th>
+                                    <th className="text-right py-4 px-3 md:px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em] hidden md:table-cell">TSS</th>
                                     <th className="w-10"></th>
                                 </tr>
                             </thead>
@@ -75,11 +75,11 @@ export default async function ActivitiesPage() {
                                         key={act.id}
                                         className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-800/50 transition-all cursor-pointer hover-lift"
                                     >
-                                        <td className="py-5 px-6">
+                                        <td className="py-5 px-3 md:px-6">
                                             <Link href={`/activities/${act.id}`} className="block">
                                                 <div className="flex flex-col">
                                                     <div className="flex items-center gap-2 mb-0.5">
-                                                        <span className="text-foreground font-bold group-hover:text-primary transition-colors">
+                                                        <span className="text-foreground font-bold group-hover:text-primary transition-colors text-sm md:text-base">
                                                             {act.name || "Morning Run"}
                                                         </span>
                                                         {act.isRace && (
@@ -95,40 +95,41 @@ export default async function ActivitiesPage() {
                                                 </div>
                                             </Link>
                                         </td>
-                                        <td className="py-5 px-6 text-right">
+                                        <td className="py-5 px-3 md:px-6 text-right">
                                             <div className="flex flex-col items-end">
                                                 <span className="text-foreground font-bold">{formatDistance(act.distance)}</span>
                                                 <span className="text-[10px] text-neutral-400 font-bold uppercase">km</span>
                                             </div>
                                         </td>
-                                        <td className="py-5 px-6 text-right">
+                                        <td className="py-5 px-3 md:px-6 text-right">
                                             <div className="flex flex-col items-end">
                                                 <span className="text-foreground font-bold">{formatDuration(act.duration)}</span>
                                                 <span className="text-[10px] text-neutral-400 font-bold uppercase">h:m</span>
                                             </div>
                                         </td>
-                                        <td className="py-5 px-6 text-right">
+                                        <td className="py-5 px-3 md:px-6 text-right hidden md:table-cell">
                                             <div className="flex flex-col items-end">
                                                 <span className="text-foreground font-bold">{act.elevationGain || "-"}</span>
                                                 <span className="text-[10px] text-neutral-400 font-bold uppercase">m</span>
                                             </div>
                                         </td>
-                                        <td className="py-5 px-6 text-right">
+                                        <td className="py-5 px-3 md:px-6 text-right hidden md:table-cell">
                                             <div className="flex flex-col items-end">
                                                 <span className="text-foreground font-bold">{act.tss || "-"}</span>
                                                 <span className="text-[10px] text-neutral-400 font-bold uppercase">TSS</span>
                                             </div>
                                         </td>
-                                        <td className="py-5 px-6 text-right">
-                                            <ChevronRight size={16} className="text-neutral-300 group-hover:text-primary transition-colors opacity-0 group-hover:opacity-100" />
+                                        <td className="py-5 px-3 md:px-6 text-right">
+                                            <ChevronRight size={16} className="text-neutral-300 group-hover:text-primary transition-colors md:opacity-0 md:group-hover:opacity-100" />
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
-                </div>
-            )}
+                </div >
+            )
+            }
         </>
     );
 }

@@ -151,14 +151,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
                   Upload
                 </Button>
               </Link>
-              <div className="bg-neutral-100 p-1 rounded-lg flex items-center">
+              <div className="bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg flex items-center">
                 <Link href="/?period=7d">
-                  <button className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${period === '7d' ? 'bg-white text-primary shadow-sm' : 'text-neutral-500 hover:text-neutral-700'}`}>
+                  <button className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${period === '7d' ? 'bg-white dark:bg-neutral-700 text-primary shadow-sm' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'}`}>
                     7 Days
                   </button>
                 </Link>
                 <Link href="/?period=30d">
-                  <button className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${period === '30d' ? 'bg-white text-primary shadow-sm' : 'text-neutral-500 hover:text-neutral-700'}`}>
+                  <button className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${period === '30d' ? 'bg-white dark:bg-neutral-700 text-primary shadow-sm' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'}`}>
                     30 Days
                   </button>
                 </Link>
@@ -169,7 +169,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
           {/* Metrics Overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Performance Strip */}
-            <div className="flex gap-2 p-2 bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-x-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-2 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-sm overflow-visible">
               {performanceStats.map((stat) => (
                 <MetricCard
                   key={stat.label}
@@ -185,7 +185,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
             </div>
 
             {/* Training Status Strip - Uses Combined Component */}
-            <div className="flex gap-2 p-2 bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-x-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-2 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-sm overflow-visible">
               {trainingStats.map((stat) => (
                 <MetricCard
                   key={stat.label}
