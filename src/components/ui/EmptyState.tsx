@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 interface EmptyStateProps {
     /** Main illustration icon */
-    icon: LucideIcon;
+    icon: React.ReactNode;
     /** Header text */
     title: string;
     /** Subtitle/body text */
@@ -29,14 +29,14 @@ interface EmptyStateProps {
  * Reusable Empty State component for consistently handling zero-data scenarios.
  * Uses a large icon, clear title/description, and prominent call-to-action.
  */
-export function EmptyState({ icon: Icon, title, description, action, secondaryAction, className }: EmptyStateProps) {
+export function EmptyState({ icon, title, description, action, secondaryAction, className }: EmptyStateProps) {
     return (
         <div className={cn(
             "flex flex-col items-center justify-center text-center p-8 md:p-12 border-2 border-dashed border-neutral-100 rounded-3xl bg-neutral-50/50 animate-in fade-in zoom-in-95 duration-500",
             className
         )}>
             <div className="w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center mb-6">
-                <Icon size={32} className="text-neutral-400" />
+                {icon}
             </div>
             <h3 className="text-xl font-bold text-foreground mb-2">{title}</h3>
             <p className="text-neutral-500 max-w-sm mb-8 leading-relaxed">

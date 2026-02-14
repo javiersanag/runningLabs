@@ -20,10 +20,10 @@ export function Button({ variant = "primary", size = "default", children, classN
     };
 
     const sizes = {
-        default: "px-4 py-2",
-        sm: "px-3 py-1.5 text-xs",
-        lg: "px-6 py-3 text-base",
-        icon: "h-9 w-9 p-0 items-center justify-center flex",
+        default: "h-11 px-5 py-2",
+        sm: "h-9 px-3 text-xs",
+        lg: "h-12 px-8 text-base",
+        icon: "h-11 w-11 p-0 items-center justify-center flex",
     };
 
     return (

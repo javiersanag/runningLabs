@@ -17,11 +17,13 @@ export default async function FeedPage() {
     if (!athlete) return null;
 
     // 2. Fetch Activities
-    const activityList = await db.query.activities.findMany({
+    const data = await db.query.activities.findMany({
         where: (t, { eq }) => eq(t.athleteId, athlete.id),
         orderBy: [desc(activities.startTime)],
         limit: 20
     });
+
+    const activityList: any[] = JSON.parse(JSON.stringify(data));
 
     // 3. Fetch Latest Metrics
     const latestMetric = await db.query.dailyMetrics.findFirst({
@@ -130,12 +132,12 @@ export default async function FeedPage() {
                     </div>
                 ) : (
                     <EmptyState
-                        icon={Mountain}
-                        title="Your Feed is Quiet"
-                        description="Record your first activity to see it appear here. Track your progress and build your streak!"
+                        icon={<Mountain size={32} className="text-neutral-400" />}
+                        title="No Activities Found"
+                        description="It looks like you haven't recorded any activities yet. Time to lace up!"
                         action={{ label: "Upload Activity", href: "/upload" }}
-                    />
-                )}
+                        className="mt-8"
+                    />)}
 
                 <div className="mt-8 text-center pb-12">
                     <p className="text-xs font-bold text-neutral-300 uppercase tracking-widest">You're all caught up</p>

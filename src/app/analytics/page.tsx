@@ -11,11 +11,13 @@ export default async function AnalyticsPage() {
     const user = await getCurrentUser();
     if (!user) return null;
 
-    const history = await db.query.dailyMetrics.findMany({
+    const data = await db.query.dailyMetrics.findMany({
         where: (t, { eq }) => eq(t.athleteId, user.id),
         orderBy: [desc(dailyMetrics.date)],
         limit: 180
     });
+
+    const history = JSON.parse(JSON.stringify(data));
 
     const chartData = history.reverse();
 

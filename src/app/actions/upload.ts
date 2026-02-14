@@ -92,7 +92,7 @@ export async function uploadActivity(formData: FormData) {
         let cumulativeDistanceOffset = 0;
 
         const samples = allRecords.map((r: any) => {
-            let d = r.distance || 0;
+            const d = r.distance || 0;
             // Handle cases where distance might reset per lap
             if (d < lastDistance && lastDistance - d > 10) {
                 cumulativeDistanceOffset += lastDistance;

@@ -26,11 +26,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const athlete = await getCurrentUser();
+  const athleteData = await getCurrentUser();
+  // Serialize for Client Components
+  const athlete = athleteData ? JSON.parse(JSON.stringify(athleteData)) : null;
 
   if (!athlete) {
     return (
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <Providers>
             {children}
@@ -41,7 +43,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <Shell athlete={athlete}>

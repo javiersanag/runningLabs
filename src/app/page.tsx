@@ -1,4 +1,4 @@
-import { Activity, Zap, TrendingUp, Clock, TrendingDown, Minus, Bot, Sparkles, RotateCw, MapPin, Timer, Heart, Flame, Info, Upload, Rocket } from "lucide-react";
+import { Zap, TrendingUp, TrendingDown, Minus, Bot, Sparkles, RotateCw, MapPin, Timer, Heart, Flame, Upload, Rocket } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { dailyMetrics } from "@/lib/schema";
@@ -30,11 +30,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
   let periodHistory: any[] = [];
 
   try {
-    const history = await db.query.dailyMetrics.findMany({
+    const data = await db.query.dailyMetrics.findMany({
       where: (t, { eq }) => eq(t.athleteId, athlete.id),
       orderBy: [desc(dailyMetrics.date)],
       limit: 90
     });
+
+    // Serialize to plain objects (removes Date objects)
+    const history: any[] = JSON.parse(JSON.stringify(data));
 
     chartData = history.reverse();
     today = chartData.length > 0 ? chartData[chartData.length - 1] : null;
@@ -113,7 +116,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
   if (!today && chartData.length === 0) {
     return (
       <EmptyState
-        icon={Rocket}
+        icon={<Rocket size={32} className="text-neutral-400" />}
         title="Start Your Journey"
         description="Upload your first activity to unlock AI-powered insights, fitness tracking, and performance analytics."
         action={{ label: "Upload First Activity", href: "/upload" }}
@@ -126,7 +129,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
     <>
       {chartData.length === 0 ? (
         <EmptyState
-          icon={Rocket}
+          icon={<Rocket size={32} className="text-neutral-400" />}
           title="Start Your Journey"
           description="Upload your first activity to unlock AI-powered insights, fitness tracking, and performance analytics."
           action={{ label: "Upload First Activity", href: "/upload" }}
@@ -231,7 +234,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
 
               {athlete?.lastAiInsight ? (
                 (() => {
-                  const insight = JSON.parse(athlete.lastAiInsight);
+                  let insight = { message: "", actionItems: [] };
+                  try {
+                    insight = JSON.parse(athlete.lastAiInsight);
+                  } catch (e) {
+                    console.error("Failed to parse AI insight", e);
+                  }
+
+                  if (!insight || !insight.message) return null;
+
                   return (
                     <div className="w-full relative z-10">
                       <div className="flex items-center gap-3 mb-4">

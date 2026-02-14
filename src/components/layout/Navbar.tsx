@@ -98,16 +98,16 @@ export function Navbar({ athlete }: { athlete: any }) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="w-9 h-9 rounded-full text-neutral-500 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all"
+                        className="rounded-full text-neutral-500 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all"
                         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                         aria-label="Toggle theme"
                     >
-                        {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+                        {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
                     </Button>
                 )}
 
                 <Link href="/upload" className="hidden md:block">
-                    <Button variant="primary" className="h-9 px-4 text-xs gap-2 shadow-blue-200/50 hover:shadow-blue-300">
+                    <Button variant="primary" className="text-xs gap-2 shadow-blue-200/50 hover:shadow-blue-300">
                         <Upload size={14} />
                         Upload
                     </Button>
@@ -124,7 +124,7 @@ export function Navbar({ athlete }: { athlete: any }) {
                         <div className="text-right hidden sm:block">
                             <p className="text-sm font-bold text-foreground leading-none">{fullName}</p>
                         </div>
-                        <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-blue-200">
+                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-blue-200">
                             {initials}
                         </div>
                     </button>
@@ -149,60 +149,73 @@ export function Navbar({ athlete }: { athlete: any }) {
                                     await logoutUser();
                                 }}
                             >
-                                <X size={16} />
+                                <LayoutDashboard size={16} className="rotate-180" />
                                 Logout
                             </button>
-
                         </div>
                     )}
                 </div>
 
-                {/* Mobile Menu Toggle */}
-                <Tooltip content={isMobileMenuOpen ? "Close menu" : "Open menu"} position="bottom">
-                    <button
-                        className="md:hidden text-neutral-500 p-2"
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        aria-expanded={isMobileMenuOpen}
-                        aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-                    >
-                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
-                </Tooltip>
+                {/* Mobile Menu Button */}
+                <button
+                    className="md:hidden p-3 text-neutral-500 hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    aria-label="Toggle menu"
+                >
+                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
             </div>
 
-            {/* Mobile Navigation Dropdown */}
+            {/* Mobile Navigation Menu */}
             {isMobileMenuOpen && (
-                <div className="absolute top-16 left-0 right-0 bg-white border-b border-neutral-100 p-4 flex flex-col gap-2 md:hidden shadow-xl animate-in slide-in-from-top-2">
-                    {items.map((item) => {
-                        const isActive = pathname === item.href;
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className={cn(
-                                    "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200",
-                                    isActive
-                                        ? "bg-primary text-white shadow-lg shadow-blue-200/50"
-                                        : "text-neutral-500 hover:text-primary hover:bg-primary/5"
-                                )}
-                            >
-                                <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-                                {item.label}
-                            </Link>
-                        );
-                    })}
-                    <Link
-                        href="/settings"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-neutral-500 hover:text-primary hover:bg-primary/5 transition-all duration-200 border-t border-neutral-100 mt-2 pt-4"
-                    >
-                        <Settings size={20} />
-                        Settings
-                    </Link>
+                <div className="absolute top-16 left-0 right-0 bg-white dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 shadow-xl p-4 md:hidden animate-in slide-in-from-top-5 duration-200 z-40">
+                    <nav className="flex flex-col gap-2">
+                        {items.map((item) => {
+                            const isActive = pathname === item.href;
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className={cn(
+                                        "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all",
+                                        isActive
+                                            ? "bg-primary/10 text-primary"
+                                            : "text-neutral-500 hover:text-primary hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                                    )}
+                                >
+                                    <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                                    {item.label}
+                                </Link>
+                            );
+                        })}
+                        <div className="h-[1px] bg-neutral-100 dark:bg-neutral-800 my-2" />
+                        <Link
+                            href="/settings"
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-neutral-500 hover:text-primary hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                        >
+                            <Settings size={18} />
+                            Settings
+                        </Link>
+                        <Link
+                            href="/upload"
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-neutral-500 hover:text-primary hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                        >
+                            <Upload size={18} />
+                            Upload Activity
+                        </Link>
+                        <button
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
+                            onClick={async () => {
+                                await logoutUser();
+                            }}
+                        >
+                            <LayoutDashboard size={18} className="rotate-180" />
+                            Logout
+                        </button>
+                    </nav>
                 </div>
             )}
         </header>
-
     );
 }
