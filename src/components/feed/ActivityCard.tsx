@@ -10,7 +10,7 @@ const ActivityMapInner = dynamic(
     {
         ssr: false,
         loading: () => (
-            <div className="w-full h-full bg-neutral-50 flex items-center justify-center text-neutral-400">
+            <div className="w-full h-full bg-neutral-50 dark:bg-neutral-800 flex items-center justify-center text-neutral-400 dark:text-neutral-500">
                 <p className="text-xs font-bold uppercase tracking-widest">Loading Map...</p>
             </div>
         )
@@ -83,17 +83,17 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                 <div className="px-4 pb-4">
                     <div className="grid grid-cols-3 gap-2 mb-4">
                         <div className="flex flex-col">
-                            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Distance</span>
-                            <span className="text-xl font-black text-foreground">{distanceKm} <span className="text-xs font-bold text-neutral-400">km</span></span>
+                            <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">Distance</span>
+                            <span className="text-xl font-black text-foreground">{distanceKm} <span className="text-xs font-bold text-neutral-500">km</span></span>
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Time</span>
+                            <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">Time</span>
                             <span className="text-xl font-black text-foreground">{formatDuration(activity.duration)}</span>
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">{power ? 'Power' : 'Pace'}</span>
+                            <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">{power ? 'Power' : 'Pace'}</span>
                             <span className="text-xl font-black text-foreground">
-                                {power ? `${power}w` : pace} <span className="text-xs font-bold text-neutral-400">{!power ? '/km' : ''}</span>
+                                {power ? `${power}w` : pace} <span className="text-xs font-bold text-neutral-500">{!power ? '/km' : ''}</span>
                             </span>
                         </div>
                     </div>
@@ -123,7 +123,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                                         <RefreshCw size={12} className={isPending ? "animate-spin" : ""} />
                                     </button>
                                 </div>
-                                <p className="text-sm text-neutral-600 leading-relaxed font-medium">
+                                <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed font-medium">
                                     {activity.aiInsight}
                                 </p>
                             </div>

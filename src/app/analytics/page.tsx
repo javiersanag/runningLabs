@@ -38,7 +38,7 @@ export default async function AnalyticsPage() {
                             <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-400" /><span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Freshness</span></div>
                         </div>
                     </div>
-                    <div className="h-[350px] md:h-[550px] bg-white rounded-3xl p-4 md:p-8 border border-neutral-100 shadow-xl shadow-neutral-100/50">
+                    <div className="h-[350px] md:h-[550px] bg-white dark:bg-neutral-900 rounded-3xl p-4 md:p-8 border border-neutral-100 dark:border-neutral-800 shadow-xl shadow-neutral-100/50 dark:shadow-none">
                         <FitnessChart data={chartData as any} />
                     </div>
                 </div>

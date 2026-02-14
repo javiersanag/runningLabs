@@ -56,11 +56,11 @@ export default async function ActivitiesPage() {
                     </Link>
                 </div>
             ) : (
-                <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
+                <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
                             <thead>
-                                <tr className="border-b border-neutral-100 bg-neutral-50/50">
+                                <tr className="border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-800/50">
                                     <th className="text-left py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Activity</th>
                                     <th className="text-right py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Distance</th>
                                     <th className="text-right py-4 px-6 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Duration</th>
@@ -69,11 +69,11 @@ export default async function ActivitiesPage() {
                                     <th className="w-10"></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100">
+                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                                 {list.map((act) => (
                                     <tr
                                         key={act.id}
-                                        className="group hover:bg-neutral-50/50 transition-all cursor-pointer hover-lift"
+                                        className="group hover:bg-neutral-50/50 dark:hover:bg-neutral-800/50 transition-all cursor-pointer hover-lift"
                                     >
                                         <td className="py-5 px-6">
                                             <Link href={`/activities/${act.id}`} className="block">
@@ -98,31 +98,29 @@ export default async function ActivitiesPage() {
                                         <td className="py-5 px-6 text-right">
                                             <div className="flex flex-col items-end">
                                                 <span className="text-foreground font-bold">{formatDistance(act.distance)}</span>
-                                                <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">KM</span>
+                                                <span className="text-[10px] text-neutral-400 font-bold uppercase">km</span>
                                             </div>
                                         </td>
                                         <td className="py-5 px-6 text-right">
                                             <div className="flex flex-col items-end">
-                                                <span className="text-foreground font-bold font-mono">{formatDuration(act.duration)}</span>
-                                                <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">TIME</span>
+                                                <span className="text-foreground font-bold">{formatDuration(act.duration)}</span>
+                                                <span className="text-[10px] text-neutral-400 font-bold uppercase">h:m</span>
                                             </div>
                                         </td>
                                         <td className="py-5 px-6 text-right">
                                             <div className="flex flex-col items-end">
-                                                <span className="text-neutral-600 font-bold">{act.elevationGain || 0}</span>
-                                                <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">M</span>
+                                                <span className="text-foreground font-bold">{act.elevationGain || "-"}</span>
+                                                <span className="text-[10px] text-neutral-400 font-bold uppercase">m</span>
                                             </div>
                                         </td>
                                         <td className="py-5 px-6 text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <div className="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-bold flex items-center gap-1">
-                                                    <Zap size={10} />
-                                                    {Math.round((act.tss || 0) + (act.trimp || 0))}
-                                                </div>
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-foreground font-bold">{act.tss || "-"}</span>
+                                                <span className="text-[10px] text-neutral-400 font-bold uppercase">TSS</span>
                                             </div>
                                         </td>
                                         <td className="py-5 px-6 text-right">
-                                            <ChevronRight size={16} className="text-neutral-200 group-hover:text-primary transition-colors" />
+                                            <ChevronRight size={16} className="text-neutral-300 group-hover:text-primary transition-colors opacity-0 group-hover:opacity-100" />
                                         </td>
                                     </tr>
                                 ))}

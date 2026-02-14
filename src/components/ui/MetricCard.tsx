@@ -42,12 +42,12 @@ export function MetricCard({
         >
             <div className="flex items-center justify-between gap-1 mb-0.5">
                 <span className={cn(
-                    "font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-1.5",
+                    "font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-1.5",
                     compact ? "text-[10px]" : "text-xs"
                 )}>
                     {icon && <span>{icon}</span>}
                     {label}
-                    {tooltip && <InfoTooltip content={tooltip} size={10} className="text-neutral-300 hover:text-neutral-500 transition-colors" />}
+                    {tooltip && <InfoTooltip content={tooltip} size={10} className="text-neutral-400 hover:text-neutral-600 transition-colors" />}
                 </span>
                 {trend}
             </div>
@@ -61,7 +61,7 @@ export function MetricCard({
                 </span>
                 {unit && (
                     <span className={cn(
-                        "font-bold text-neutral-400",
+                        "font-bold text-neutral-500",
                         compact ? "text-[10px]" : "text-sm"
                     )}>
                         {unit}

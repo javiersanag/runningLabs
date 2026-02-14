@@ -61,7 +61,7 @@ export function Navbar({ athlete }: { athlete: any }) {
             <div className="flex items-center gap-4">
                 <Link href="/" className="flex items-center gap-3">
                     <Logo size={28} className="text-primary" />
-                    <h1 className="text-xl md:text-2xl font-bold text-foreground tracking-tight hidden sm:block">
+                    <h1 className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white tracking-tight hidden sm:block">
                         Khronos
                     </h1>
                 </Link>

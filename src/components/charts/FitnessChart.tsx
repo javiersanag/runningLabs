@@ -64,13 +64,14 @@ export function FitnessChart({ data }: FitnessChartProps) {
                     />
                     <Tooltip
                         contentStyle={{
-                            backgroundColor: '#ffffff',
-                            border: '1px solid #f0f0f0',
+                            backgroundColor: 'var(--card)',
+                            border: '1px solid var(--card-border)',
                             borderRadius: '12px',
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
+                            boxShadow: 'var(--card-shadow)',
+                            color: 'var(--foreground)'
                         }}
-                        itemStyle={{ fontSize: '12px', fontWeight: 600 }}
-                        labelStyle={{ color: '#888', fontWeight: 700, marginBottom: '4px' }}
+                        itemStyle={{ fontSize: '12px', fontWeight: 600, color: 'var(--foreground)' }}
+                        labelStyle={{ color: 'var(--secondary-foreground)', fontWeight: 700, marginBottom: '4px' }}
                         labelFormatter={(value) => format(new Date(value), 'MMM d, yyyy')}
                     />
                     <Legend
