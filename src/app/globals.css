@@ -3,36 +3,70 @@
 
 :root {
   /* Base - Light Mode / Premium Clean */
-  --background: #ffffff !important;
-  --foreground: #111111 !important;
+  --background: #ffffff;
+  --foreground: #111111;
 
   /* Card & Surfaces */
-  --card: #ffffff !important;
-  --card-foreground: #111111 !important;
-  --card-border: #f0f0f0 !important;
-  --card-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05) !important;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --card-border: #f0f0f0;
+  --card-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
 
   /* Brand Colors - Vibrant Blue */
-  --primary: #3b82f6 !important;
-  --primary-foreground: #ffffff !important;
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
 
-  --secondary: #64748b !important;
-  --secondary-foreground: #ffffff !important;
+  --secondary: #64748b;
+  --secondary-foreground: #ffffff;
 
-  --accent: #2563eb !important;
-  --accent-foreground: #ffffff !important;
+  --accent: #2563eb;
+  --accent-foreground: #ffffff;
 
   /* Functional */
-  --success: #10b981 !important;
-  --warning: #f59e0b !important;
-  --danger: #ef4444 !important;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
 
   /* Chart Colors - Premium Palette */
-  --chart-1: #3b82f6 !important;
-  --chart-2: #6366f1 !important;
-  --chart-3: #10b981 !important;
-  --chart-4: #f43f5e !important;
+  --chart-1: #3b82f6;
+  --chart-2: #6366f1;
+  --chart-3: #10b981;
+  --chart-4: #f43f5e;
 }
+
+.dark {
+  /* Base - Dark Mode / Deep Space */
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Card & Surfaces */
+  --card: #171717;
+  --card-foreground: #ededed;
+  --card-border: #262626;
+  --card-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
+
+  /* Brand Colors - Vibrant Blue (Slightly lighter for contrast) */
+  --primary: #60a5fa;
+  --primary-foreground: #000000;
+
+  --secondary: #94a3b8;
+  --secondary-foreground: #000000;
+
+  --accent: #3b82f6;
+  --accent-foreground: #ffffff;
+
+  /* Functional */
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+
+  /* Chart Colors - Premium Palette (Dark) */
+  --chart-1: #60a5fa;
+  --chart-2: #818cf8;
+  --chart-3: #34d399;
+  --chart-4: #fb7185;
+}
+
 
 @theme {
   --color-background: var(--background);
@@ -101,6 +135,7 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -109,6 +144,7 @@ body {
 .hover-lift {
   @apply transition-all duration-200;
 }
+
 .hover-lift:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.08);
@@ -117,15 +153,24 @@ body {
 .press-scale {
   @apply transition-transform duration-150;
 }
+
 .press-scale:active {
   transform: scale(0.97);
 }
 
 /* Number counter spin animation */
 @keyframes count-up {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 .animate-count-up {
   animation: count-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

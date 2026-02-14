@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, Bot, Settings, LayoutDashboard, Footprints, Layers, Menu, X, Calendar, BarChart3, Upload } from "lucide-react";
+import { Activity, Bot, Settings, LayoutDashboard, Footprints, Layers, Menu, X, Calendar, BarChart3, Upload, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { logoutUser } from "@/app/actions/auth";
 import { Tooltip } from "@/components/ui/Tooltip";
+import { Logo } from "@/components/ui/Logo";
+import { useTheme } from "next-themes";
 
 const items = [
     { label: "Feed", href: "/feed", icon: Layers },
@@ -24,10 +26,17 @@ export function Navbar({ athlete }: { athlete: any }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
     const { firstName, lastName } = athlete || {};
     const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Athlete";
     const initials = (firstName?.[0] || "") + (lastName?.[0] || "") || "RL";
+
+    // Prevent hydration mismatch
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Close dropdown on click outside
     useEffect(() => {
@@ -47,15 +56,16 @@ export function Navbar({ athlete }: { athlete: any }) {
     }, [pathname]);
 
     return (
-        <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-neutral-100 z-50 px-4 md:px-8 flex items-center justify-between">
+        <header className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-neutral-900 border-b border-neutral-100 dark:border-neutral-800 z-50 px-4 md:px-8 flex items-center justify-between transition-colors duration-300">
             {/* Logo Section */}
             <div className="flex items-center gap-4">
-                <Link href="/" className="flex items-center gap-2">
-                    <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">
+                <Link href="/" className="flex items-center gap-3">
+                    <Logo size={28} className="text-primary" />
+                    <h1 className="text-xl md:text-2xl font-bold text-foreground tracking-tight hidden sm:block">
                         Khronos
                     </h1>
                 </Link>
-                <div className="hidden md:block h-6 w-[1px] bg-neutral-200" />
+                <div className="hidden md:block h-6 w-[1px] bg-neutral-200 dark:bg-neutral-800" />
                 <p className="hidden md:block text-[10px] text-neutral-400 font-bold uppercase tracking-[0.2em]">Alpha</p>
             </div>
 
@@ -71,7 +81,7 @@ export function Navbar({ athlete }: { athlete: any }) {
                                 "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all duration-200",
                                 isActive
                                     ? "bg-primary/10 text-primary"
-                                    : "text-neutral-500 hover:text-primary hover:bg-primary/5"
+                                    : "text-neutral-500 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800"
                             )}
                         >
                             <item.icon size={16} strokeWidth={isActive ? 2.5 : 2} />
@@ -81,8 +91,21 @@ export function Navbar({ athlete }: { athlete: any }) {
                 })}
             </nav>
 
-            {/* Right Side: Profile Dropdown */}
-            <div className="flex items-center gap-4">
+            {/* Right Side: Profile Dropdown & Actions */}
+            <div className="flex items-center gap-3">
+                {/* Theme Toggle */}
+                {mounted && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-9 h-9 rounded-full text-neutral-500 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all"
+                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                        aria-label="Toggle theme"
+                    >
+                        {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+                    </Button>
+                )}
+
                 <Link href="/upload" className="hidden md:block">
                     <Button variant="primary" className="h-9 px-4 text-xs gap-2 shadow-blue-200/50 hover:shadow-blue-300">
                         <Upload size={14} />
@@ -96,7 +119,7 @@ export function Navbar({ athlete }: { athlete: any }) {
                         aria-expanded={isDropdownOpen}
                         aria-haspopup="true"
                         aria-label="User menu"
-                        className="flex items-center gap-3 pl-4 border-l border-neutral-100 hover:opacity-80 transition-opacity"
+                        className="flex items-center gap-3 pl-4 border-l border-neutral-100 dark:border-neutral-800 hover:opacity-80 transition-opacity"
                     >
                         <div className="text-right hidden sm:block">
                             <p className="text-sm font-bold text-foreground leading-none">{fullName}</p>

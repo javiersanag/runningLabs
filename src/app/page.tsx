@@ -104,10 +104,38 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
   ];
 
   const trainingStats = [
-    { label: "Fitness", sublabel: "CTL", value: fmt(today?.ctl), color: "text-blue-500", tendency: getTendency('ctl') },
-    { label: "Fatigue", sublabel: "ATL", value: fmt(today?.atl), color: "text-purple-500", tendency: getTendency('atl') },
-    { label: "Form", sublabel: "TSB", value: fmt(today?.tsb), color: (today?.tsb || 0) >= 0 ? "text-success" : "text-warning", tendency: getTendency('tsb') },
-    { label: "Readiness", sublabel: "", value: `${Math.round(readiness)}%`, color: readinessColor, tendency: <Minus size={12} className="text-neutral-300" /> },
+    {
+      label: "Fitness",
+      sublabel: "CTL",
+      value: fmt(today?.ctl),
+      color: "text-blue-500",
+      tendency: getTendency('ctl'),
+      tooltip: "Chronic Training Load (CTL): A 42-day rolling average of daily strain. Represents long-term fitness."
+    },
+    {
+      label: "Fatigue",
+      sublabel: "ATL",
+      value: fmt(today?.atl),
+      color: "text-purple-500",
+      tendency: getTendency('atl'),
+      tooltip: "Acute Training Load (ATL): A 7-day rolling average of daily strain. Represents short-term stress."
+    },
+    {
+      label: "Form",
+      sublabel: "TSB",
+      value: fmt(today?.tsb),
+      color: (today?.tsb || 0) >= 0 ? "text-success" : "text-warning",
+      tendency: getTendency('tsb'),
+      tooltip: "Training Stress Balance (TSB): Fitness minus Fatigue. Positive means fresh, negative means fatigued."
+    },
+    {
+      label: "Readiness",
+      sublabel: "",
+      value: `${Math.round(readiness)}%`,
+      color: readinessColor,
+      tendency: <Minus size={12} className="text-neutral-300" />,
+      tooltip: "Readiness score based on current recovery and training balance. Higher is better."
+    },
   ];
 
   return (
@@ -165,26 +193,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
               ))}
               <div className="w-[1px] bg-neutral-100 mx-2 self-stretch" />
               {trainingStats.map((stat, i) => (
-                <div key={`train-container-${i}`} className="flex flex-col gap-1 items-start">
-                  <MetricCard
-                    key={`train-${i}`}
-                    label={stat.label}
-                    value={stat.value}
-                    unit={stat.sublabel}
-                    trend={stat.tendency}
-                    className={stat.color}
-                    compact
-                  />
-                  <InfoTooltip
-                    className="ml-2"
-                    content={
-                      stat.label === "Fitness" ? "Chronic Training Load (CTL): A 42-day rolling average of daily strain. Represents long-term fitness." :
-                        stat.label === "Fatigue" ? "Acute Training Load (ATL): A 7-day rolling average of daily strain. Represents short-term stress." :
-                          stat.label === "Form" ? "Training Stress Balance (TSB): Fitness minus Fatigue. Positive means fresh, negative means fatigued." :
-                            "Readiness score based on current recovery and training balance."
-                    }
-                  />
-                </div>
+                <MetricCard
+                  key={`train-${i}`}
+                  label={stat.label}
+                  value={stat.value}
+                  unit={stat.sublabel}
+                  trend={stat.tendency}
+                  className={stat.color}
+                  compact
+                  tooltip={stat.tooltip}
+                />
               ))}
             </div>
           </div>
