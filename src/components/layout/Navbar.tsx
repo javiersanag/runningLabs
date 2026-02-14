@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { logoutUser } from "@/app/actions/auth";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 const items = [
     { label: "Feed", href: "/feed", icon: Layers },
@@ -127,14 +128,16 @@ export function Navbar({ athlete }: { athlete: any }) {
                 </div>
 
                 {/* Mobile Menu Toggle */}
-                <button
-                    className="md:hidden text-neutral-500 p-2"
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    aria-expanded={isMobileMenuOpen}
-                    aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-                >
-                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
+                <Tooltip content={isMobileMenuOpen ? "Close menu" : "Open menu"} position="bottom">
+                    <button
+                        className="md:hidden text-neutral-500 p-2"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        aria-expanded={isMobileMenuOpen}
+                        aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                    >
+                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </Tooltip>
             </div>
 
             {/* Mobile Navigation Dropdown */}

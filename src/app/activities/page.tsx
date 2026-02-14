@@ -73,7 +73,7 @@ export default async function ActivitiesPage() {
                                 {list.map((act) => (
                                     <tr
                                         key={act.id}
-                                        className="group hover:bg-neutral-50/50 transition-all cursor-pointer"
+                                        className="group hover:bg-neutral-50/50 transition-all cursor-pointer hover-lift"
                                     >
                                         <td className="py-5 px-6">
                                             <Link href={`/activities/${act.id}`} className="block">

@@ -75,7 +75,7 @@ export default async function GearPage() {
                     ) : (
                         <div className="grid grid-cols-1 gap-4">
                             {gearStats.map((item) => (
-                                <Card key={item.id} className="group hover:border-primary/20 transition-all p-5">
+                                <Card key={item.id} className="group hover:border-primary/20 transition-all p-5 hover-lift">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-2xl bg-neutral-50 flex items-center justify-center text-neutral-400 group-hover:text-primary group-hover:bg-primary/5 transition-all">

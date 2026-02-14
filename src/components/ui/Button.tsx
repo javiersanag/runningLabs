@@ -21,7 +21,7 @@ export function Button({ variant = "primary", children, className, ...props }: B
     return (
         <button
             className={cn(
-                "px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none",
+                "px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none press-scale",
                 variants[variant],
                 className
             )}
