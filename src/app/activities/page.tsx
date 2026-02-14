@@ -1,15 +1,20 @@
 import { db } from "@/lib/db";
 import { activities } from "@/lib/schema";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { Activity, Plus, ChevronRight, MapPin, Clock, Zap, Trophy } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { getCurrentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function ActivitiesPage() {
+    const user = await getCurrentUser();
+    if (!user) return null;
+
     const list = await db.query.activities.findMany({
+        where: (t) => eq(t.athleteId, user.id),
         orderBy: [desc(activities.startTime)],
         limit: 50
     });

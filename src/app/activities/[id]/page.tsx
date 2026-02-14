@@ -145,22 +145,22 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
             </div>
 
             {/* Title Section */}
-            <div className="mb-8">
-                <div className="flex items-start justify-between gap-4 mb-2">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-4xl font-extrabold text-foreground tracking-tight">{activity.name || "Morning Session"}</h1>
+            <div className="mb-6 md:mb-8">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 md:gap-4 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-4 min-w-0">
+                        <h1 className="text-xl md:text-4xl font-extrabold text-foreground tracking-tight break-words">{activity.name || "Morning Session"}</h1>
                         {activity.isRace && (
-                            <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-xl border border-amber-100 shadow-sm">
-                                <Trophy size={20} className="text-amber-500" />
-                                <span className="text-xs font-black text-amber-600 uppercase tracking-widest">Race Activity</span>
+                            <div className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-4 py-1 md:py-2 bg-amber-50 rounded-xl border border-amber-100 shadow-sm">
+                                <Trophy size={16} className="text-amber-500 md:w-5 md:h-5" />
+                                <span className="text-[9px] md:text-xs font-black text-amber-600 uppercase tracking-widest">Race</span>
                             </div>
                         )}
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
                         {currentGear && (
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100/50 rounded-lg border border-neutral-200 shadow-sm">
+                            <div className="flex items-center gap-1.5 px-2 md:px-3 py-1 md:py-1.5 bg-neutral-100/50 rounded-lg border border-neutral-200 shadow-sm">
                                 <Tag size={12} className="text-neutral-400" />
-                                <span className="text-xs font-bold text-neutral-600 uppercase tracking-widest">{currentGear.name}</span>
+                                <span className="text-[10px] md:text-xs font-bold text-neutral-600 uppercase tracking-widest">{currentGear.name}</span>
                             </div>
                         )}
                         <EditActivityDialog
@@ -174,7 +174,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                         />
                     </div>
                 </div>
-                <div className="flex items-center gap-4 text-sm font-bold text-neutral-400">
+                <div className="flex flex-wrap items-center gap-2 md:gap-4 text-sm font-bold text-neutral-400">
                     <div className="flex items-center gap-1.5 uppercase tracking-widest text-[10px]">
                         <Calendar size={12} />
                         {new Date(activity.startTime).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -187,7 +187,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
             </div>
 
             {/* Performance Metric Cards */}
-            <div className="flex flex-nowrap gap-3 mb-8 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3 mb-6 md:mb-8">
                 <MetricCard
                     label="Distance"
                     value={formatDistance(activity.distance)}
@@ -251,7 +251,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                     </div>
                     <div className="flex-1 overflow-y-auto">
                         <table className="w-full text-[11px] border-collapse">
-                            <thead className="sticky top-0 bg-white z-10 border-b border-neutral-100">
+                            <thead className="sticky top-0 bg-white dark:bg-neutral-900 z-10 border-b border-neutral-100 dark:border-neutral-800">
                                 <tr className="text-neutral-400 font-bold uppercase tracking-widest">
                                     <th className="py-3 px-4 text-left">KM</th>
                                     <th className="py-3 px-2 text-right">Pace</th>
