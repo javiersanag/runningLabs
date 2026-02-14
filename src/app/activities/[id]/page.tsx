@@ -237,12 +237,12 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
 
             {/* Map and Splits Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <Card className="lg:col-span-2 overflow-hidden p-0 h-[450px]">
+                <Card className="lg:col-span-2 overflow-hidden p-0 h-[300px] md:h-[450px]">
                     <div className="w-full h-full relative">
                         <ActivityMap samples={samples} />
                     </div>
                 </Card>
-                <Card className="flex flex-col h-[450px] p-0">
+                <Card className="flex flex-col h-[300px] md:h-[450px] p-0">
                     <div className="p-4 border-b border-neutral-100 flex items-center justify-between">
                         <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] flex items-center gap-2">
                             <TrendingUp size={12} className="text-primary" />
@@ -284,7 +284,7 @@ export default async function ActivityDetailPage({ params }: { params: Promise<{
                         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500" /> ELEV</span>
                     </div>
                 </div>
-                <div className="h-[350px]">
+                <div className="h-[250px] md:h-[350px]">
                     <ActivityChart samples={samples} />
                 </div>
             </Card>

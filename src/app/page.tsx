@@ -180,7 +180,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <Card className="lg:col-span-2 flex flex-col h-[320px]">
+        <Card className="lg:col-span-2 flex flex-col h-[250px] md:h-[320px]">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Fitness & Freshness</h3>
@@ -191,7 +191,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ p
             <FitnessChart data={periodHistory} />
           </div>
         </Card>
-        <Card className="flex flex-col h-[320px]">
+        <Card className="flex flex-col h-[250px] md:h-[320px]">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Intensity Distribution</h3>
             <InfoTooltip content="Time spent in each heart rate zone during the selected period." />
