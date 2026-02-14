@@ -16,9 +16,9 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
     return bcrypt.compare(password, hash);
 }
 
-export async function createSession(userId: string) {
+export async function createSession(userId: string, mustChangePassword: boolean = false) {
     const expires = new Date(Date.now() + SESSION_DURATION);
-    const session = await new SignJWT({ userId })
+    const session = await new SignJWT({ userId, mustChangePassword })
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .setExpirationTime("30d") // Match cookie duration

@@ -88,6 +88,8 @@ export async function loginUser(formData: FormData) {
 
     const { email, password } = result.data;
 
+    let mustChange = false;
+
     try {
         const user = await db.query.athletes.findFirst({
             where: (t, { eq }) => eq(t.email, email)
@@ -104,11 +106,17 @@ export async function loginUser(formData: FormData) {
             return { success: false, error: "Invalid email or password" };
         }
 
-        await createSession(user.id);
+        mustChange = user.mustChangePassword === 1;
+        await createSession(user.id, mustChange);
 
     } catch (error) {
         console.error("Login error:", error);
         return { success: false, error: "Internal server error" };
+    }
+
+    // Redirect forced-change users to the password reset page
+    if (mustChange) {
+        redirect("/set-new-password");
     }
 
     redirect("/");

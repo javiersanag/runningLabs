@@ -13,6 +13,7 @@ export const athletes = sqliteTable("athletes", {
     weight: real("weight"),
     lastAiInsight: text("last_ai_insight"),
     lastAiInsightDate: text("last_ai_insight_date"),
+    mustChangePassword: integer("must_change_password").default(0),
     createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 

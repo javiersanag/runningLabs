@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, Bot, Settings, LayoutDashboard, Footprints, Layers, Menu, X, Calendar, BarChart3, Upload, Sun, Moon } from "lucide-react";
+import { Activity, Bot, Settings, LayoutDashboard, Footprints, Layers, Menu, X, Calendar, BarChart3, Upload, Sun, Moon, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
@@ -137,6 +137,13 @@ export function Navbar({ athlete }: { athlete: any }) {
                                 <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">Free Plan</p>
                             </div>
                             <Link
+                                href="/profile"
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-neutral-600 hover:text-primary hover:bg-primary/5 transition-colors"
+                            >
+                                <User size={16} />
+                                Profile
+                            </Link>
+                            <Link
                                 href="/settings"
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-neutral-600 hover:text-primary hover:bg-primary/5 transition-colors"
                             >
@@ -191,7 +198,16 @@ export function Navbar({ athlete }: { athlete: any }) {
                         })}
                         <div className="h-[1px] bg-neutral-100 dark:bg-neutral-800 my-2" />
                         <Link
+                            href="/profile"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-neutral-500 hover:text-primary hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                        >
+                            <User size={18} />
+                            Profile
+                        </Link>
+                        <Link
                             href="/settings"
+                            onClick={() => setIsMobileMenuOpen(false)}
                             className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-neutral-500 hover:text-primary hover:bg-neutral-50 dark:hover:bg-neutral-800"
                         >
                             <Settings size={18} />
